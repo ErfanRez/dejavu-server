@@ -4,7 +4,7 @@ const prismadb = require("../lib/prismadb");
 // @route GET /Properties
 // @access Public
 const getAllProperties = async (req, res) => {
-  // Get all users from MongoDB
+  // Get all properties from MySQL DB
   const properties = await prismadb.Property.findMany();
 
   // If no properties
@@ -15,8 +15,8 @@ const getAllProperties = async (req, res) => {
   res.json(properties);
 };
 
-// @desc Create new user
-// @route POST /users
+// @desc Create new property
+// @route POST /property
 // @access Private
 const createNewProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, imageUrl, description } =
@@ -26,7 +26,7 @@ const createNewProperty = async (req, res) => {
 
   // Check for duplicate
 
-  // Create and store new user
+  // Create new property
   const property = await prismadb.Property.create({
     data: {
       title: title,
