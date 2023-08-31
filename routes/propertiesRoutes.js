@@ -5,6 +5,8 @@ const propertiesControllers = require("../controllers/propertiesController");
 router
   .route("/")
   .get(propertiesControllers.getAllProperties)
-  .post(propertiesControllers.createNewProperty);
+  .post(propertiesControllers.createNewProperty)
+  .patch(propertiesControllers.updateProperty)
+  .delete(propertiesControllers.deleteProperty);
 
 module.exports = router;

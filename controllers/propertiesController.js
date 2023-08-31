@@ -96,36 +96,40 @@ const updateProperty = async (req, res) => {
     },
   });
 
-  res.json({ message: `${updatedUser.username} updated` });
+  res.json({ message: `${updatedProperty.title} Property updated` });
 };
 
-// @desc Delete a user
-// @route DELETE /users
+// @desc Delete a property
+// @route DELETE /properties
 // @access Private
-const deleteUser = async (req, res) => {
-  const { id } = req.body;
+const deleteProperty = async (req, res) => {
+  const { propertyId } = req.params;
 
   // Confirm data
-  if (!id) {
-    return res.status(400).json({ message: "User ID Required" });
+  if (!propertyId) {
+    return res.status(400).json({ message: "Property ID Required!" });
   }
 
-  // Does the user still have assigned notes?
-  const note = await Note.findOne({ user: id }).lean().exec();
-  if (note) {
-    return res.status(400).json({ message: "User has assigned notes" });
-  }
+  // ? Does the property still have assigned relations?
 
   // Does the user exist to delete?
-  const user = await User.findById(id).exec();
+  const property = await prismadb.Property.findUnique({
+    where: {
+      id: propertyId,
+    },
+  });
 
-  if (!user) {
-    return res.status(400).json({ message: "User not found" });
+  if (!property) {
+    return res.status(400).json({ message: "Property not found" });
   }
 
-  const result = await user.deleteOne();
+  const result = await prismadb.Property.delete({
+    where: {
+      id: propertyId,
+    },
+  });
 
-  const reply = `Username ${result.username} with ID ${result._id} deleted`;
+  const reply = `Username ${result.title} with ID ${result.id} deleted`;
 
   res.json(reply);
 };
@@ -134,5 +138,5 @@ module.exports = {
   getAllProperties,
   createNewProperty,
   updateProperty,
-  deleteUser,
+  deleteProperty,
 };
