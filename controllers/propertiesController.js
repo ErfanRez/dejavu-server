@@ -2,13 +2,13 @@ const prismadb = require("../lib/prismadb");
 
 // @desc Get all Properties
 // @route GET /Properties
-// @access Public
+//! @access Public
 const getAllProperties = async (req, res) => {
-  // Get all properties from MySQL DB
+  //* Get all properties from MySQL DB
   const properties = await prismadb.Property.findMany();
 
-  // If no properties
-  if (!properties) {
+  //* If no properties
+  if (!properties?.length) {
     return res.status(400).json({ message: "No properties found" });
   }
 
@@ -17,83 +17,84 @@ const getAllProperties = async (req, res) => {
 
 // @desc Create new property
 // @route POST /property
-// @access Private
+//! @access Public
 const createNewProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, imageUrl, description } =
     req.body;
 
-  // Confirm data
+  //* Confirm data
 
-  // Check for duplicate
+  if (!title || !size || !location || !bedrooms || !price || !imageUrl) {
+    res.status(400).json({ message: "All fields are required!" });
+  }
 
-  // Create new property
+  //? Check for duplicate
+
+  //* Create new property
+
   const property = await prismadb.Property.create({
     data: {
-      title: title,
-      size: size,
-      location: location,
-      bedrooms: bedrooms,
-      price: price,
-      imageUrl: imageUrl,
-      description: description,
+      title,
+      size,
+      location,
+      bedrooms,
+      price,
+      imageUrl,
+      description,
     },
   });
 
   if (property) {
-    //created
+    //*created
+
     res.status(201).json({ message: `New property ${title} created` });
   } else {
     res.status(400).json({ message: "Invalid property data received" });
   }
 };
 
-// @desc Update a user
-// @route PATCH /users
-// @access Private
-const updateUser = async (req, res) => {
-  const { id, username, roles, active, password } = req.body;
+// @desc Update a property
+// @route PATCH /property
+//! @access Public
+const updateProperty = async (req, res) => {
+  const { title, size, location, bedrooms, price, imageUrl, description } =
+    req.body;
 
-  // Confirm data
-  if (
-    !id ||
-    !username ||
-    !Array.isArray(roles) ||
-    !roles.length ||
-    typeof active !== "boolean"
-  ) {
+  const { propertyId } = req.params;
+
+  //* Confirm data
+
+  if (!title || !size || !location || !bedrooms || !price || !imageUrl) {
     return res
       .status(400)
-      .json({ message: "All fields except password are required" });
+      .json({ message: "All fields except description are required" });
   }
 
-  // Does the user exist to update?
-  const user = await User.findById(id).exec();
+  //* Does the property exist to update?
 
-  if (!user) {
-    return res.status(400).json({ message: "User not found" });
-  }
-
-  // Check for duplicate
-  const duplicate = await User.findOne({ username })
-    .collation({ locale: "en", strength: 2 })
-    .lean()
-    .exec();
-
-  // Allow updates to the original user
-  if (duplicate && duplicate?._id.toString() !== id) {
-    return res.status(409).json({ message: "Duplicate username" });
-  }
-
-  user.username = username;
-  user.roles = roles;
-  user.active = active;
-
-  if (password) {
-    // Hash password
-    user.password = await bcrypt.hash(password, 10); // salt rounds
-  }
-
-  const updatedUser = await user.save();
+  const updatedProperty = await prismadb.Property.upsert({
+    where: {
+      id: propertyId,
+    },
+    update: {
+      title,
+      size,
+      location,
+      bedrooms,
+      price,
+      imageUrl,
+      description,
+    },
+    create: {
+      title,
+      size,
+      location,
+      bedrooms,
+      price,
+      imageUrl,
+      description,
+    },
+  });
 
   res.json({ message: `${updatedUser.username} updated` });
 };
@@ -132,6 +133,6 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getAllProperties,
   createNewProperty,
-  updateUser,
+  updateProperty,
   deleteUser,
 };
