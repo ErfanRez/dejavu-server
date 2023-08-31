@@ -56,11 +56,11 @@ const createNewProperty = async (req, res) => {
 // @desc Update a property
 // @route PATCH /property
 //! @access Public
-const updateProperty = async (req, res) => {
+const updatedProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, imageUrl, description } =
     req.body;
 
-  const { propertyId } = req.params;
+  const { propertyId } = req.query;
 
   //* Confirm data
 
@@ -103,7 +103,7 @@ const updateProperty = async (req, res) => {
 // @route DELETE /properties
 // @access Private
 const deleteProperty = async (req, res) => {
-  const { propertyId } = req.params;
+  const { propertyId } = req.query;
 
   // Confirm data
   if (!propertyId) {
@@ -137,6 +137,6 @@ const deleteProperty = async (req, res) => {
 module.exports = {
   getAllProperties,
   createNewProperty,
-  updateProperty,
+  updatedProperty,
   deleteProperty,
 };

@@ -6,7 +6,7 @@ router
   .route("/")
   .get(propertiesControllers.getAllProperties)
   .post(propertiesControllers.createNewProperty)
-  .patch(propertiesControllers.updateProperty)
+  .patch(propertiesControllers.updatedProperty)
   .delete(propertiesControllers.deleteProperty);
 
 module.exports = router;
