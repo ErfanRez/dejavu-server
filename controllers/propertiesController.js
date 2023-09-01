@@ -1,13 +1,16 @@
 const prismadb = require("../lib/prismadb");
+const multer = require("multer");
 
 // @desc Get all Properties
 // @route GET /Properties
 //! @access Public
 const getAllProperties = async (req, res) => {
   //* Get all properties from MySQL DB
+
   const properties = await prismadb.Property.findMany();
 
   //* If no properties
+
   if (!properties?.length) {
     return res.status(400).json({ message: "No properties found" });
   }
@@ -19,9 +22,8 @@ const getAllProperties = async (req, res) => {
 // @route POST /property
 //! @access Public
 const createNewProperty = async (req, res) => {
-  const { title, size, location, bedrooms, price, imageUrl, description } =
-    req.body;
-
+  const { title, size, location, bedrooms, price, description } = req.body;
+  const imageUrl = req.file.filename;
   //* Confirm data
 
   if (!title || !size || !location || !bedrooms || !price || !imageUrl) {
