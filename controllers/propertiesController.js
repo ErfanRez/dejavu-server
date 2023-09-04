@@ -46,8 +46,12 @@ const createNewProperty = async (req, res) => {
       location,
       bedrooms: bedroomsInt,
       price,
-      imageUrl,
       description,
+      Image: {
+        create: {
+          url: imageUrl,
+        },
+      },
     },
   });
 
@@ -136,9 +140,9 @@ const deleteProperty = async (req, res) => {
     },
   });
 
-  const reply = `Username ${result.title} with ID ${result.id} deleted`;
-
-  res.json(reply);
+  res.json({
+    message: `Property ${result.title} with ID ${result.id} deleted!`,
+  });
 };
 
 module.exports = {
