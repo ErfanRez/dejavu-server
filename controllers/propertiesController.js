@@ -71,7 +71,7 @@ const createNewProperty = async (req, res) => {
 // @desc Update a property
 // @route PATCH /property
 //! @access Public
-const updatedProperty = async (req, res) => {
+const updateProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, description } = req.body;
 
   const imageUrl = req.file.filename;
@@ -106,17 +106,15 @@ const updatedProperty = async (req, res) => {
       description,
       Images: {
         update: {
-          create: {
-            url: imageUrl,
-          },
+          url: imageUrl,
         },
       },
     },
     create: {
       title,
-      size,
+      size: sizeInt,
       location,
-      bedrooms,
+      bedrooms: bedroomsInt,
       price,
       description,
       Images: {
@@ -168,6 +166,6 @@ const deleteProperty = async (req, res) => {
 module.exports = {
   getAllProperties,
   createNewProperty,
-  updatedProperty,
+  updateProperty,
   deleteProperty,
 };
