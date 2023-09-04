@@ -36,7 +36,7 @@ router
   .route("/")
   .get(propertiesControllers.getAllProperties)
   .post(upload.single("photo"), propertiesControllers.createNewProperty)
-  .patch(propertiesControllers.updateProperty)
+  .patch(upload.single("photo"), propertiesControllers.updateProperty)
   .delete(propertiesControllers.deleteProperty);
 
 module.exports = router;

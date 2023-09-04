@@ -105,8 +105,13 @@ const updateProperty = async (req, res) => {
       price,
       description,
       Images: {
-        update: {
-          url: imageUrl,
+        updateMany: {
+          where: {
+            propertyId,
+          },
+          data: {
+            url: imageUrl,
+          },
         },
       },
     },
