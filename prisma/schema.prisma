@@ -18,11 +18,23 @@ model Property {
   location    String  @db.Text
   bedrooms    Int
   price       String
-  imageUrl    String  @db.Text
+  Images      Image[]
   description String?
 
   creactedAt DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Image {
+  id         String   @id @default(uuid())
+  url        String   @db.Text
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  creadedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  @@index([propertyId])
 }
 
 // model feature {
