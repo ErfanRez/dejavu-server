@@ -23,11 +23,15 @@ const getAllProperties = async (req, res) => {
 //! @access Public
 const createNewProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, description } = req.body;
+
   const imageUrl = req.file.filename;
+
   //* Confirm data
 
   if (!title || !size || !location || !bedrooms || !price || !imageUrl) {
-    res.status(400).json({ message: "All fields are required!" });
+    res
+      .status(400)
+      .json({ message: "All fields except description are required" });
   }
 
   //? Check for duplicate
@@ -47,7 +51,7 @@ const createNewProperty = async (req, res) => {
       bedrooms: bedroomsInt,
       price,
       description,
-      Image: {
+      Images: {
         create: {
           url: imageUrl,
         },
@@ -68,8 +72,9 @@ const createNewProperty = async (req, res) => {
 // @route PATCH /property
 //! @access Public
 const updatedProperty = async (req, res) => {
-  const { title, size, location, bedrooms, price, imageUrl, description } =
-    req.body;
+  const { title, size, location, bedrooms, price, description } = req.body;
+
+  const imageUrl = req.file.filename;
 
   const { propertyId } = req.query;
 
@@ -81,7 +86,12 @@ const updatedProperty = async (req, res) => {
       .json({ message: "All fields except description are required" });
   }
 
-  //* Does the property exist to update?
+  //* convert to int
+
+  const sizeInt = parseInt(size, 10);
+  const bedroomsInt = parseInt(bedrooms, 10);
+
+  //? Does the property exist to update?
 
   const updatedProperty = await prismadb.Property.upsert({
     where: {
@@ -89,12 +99,18 @@ const updatedProperty = async (req, res) => {
     },
     update: {
       title,
-      size,
+      size: sizeInt,
       location,
-      bedrooms,
+      bedrooms: bedroomsInt,
       price,
-      imageUrl,
       description,
+      Images: {
+        update: {
+          create: {
+            url: imageUrl,
+          },
+        },
+      },
     },
     create: {
       title,
@@ -102,8 +118,12 @@ const updatedProperty = async (req, res) => {
       location,
       bedrooms,
       price,
-      imageUrl,
       description,
+      Images: {
+        create: {
+          url: imageUrl,
+        },
+      },
     },
   });
 
