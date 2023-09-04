@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
 const multer = require("multer");
+const path = require("path");
 
 //* image storage config
 
@@ -10,7 +11,7 @@ const imgConfig = multer.diskStorage({
     callback(null, "./uploads");
   },
   filename: (req, file, callback) => {
-    callback(null, `image-${Date.now()}.${file.originalname}`);
+    callback(null, `image-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
@@ -26,6 +27,9 @@ const isImage = (req, file, callback) => {
 var upload = multer({
   storage: imgConfig,
   fileFilter: isImage,
+  limits: {
+    fileSize: Infinity,
+  },
 });
 
 router

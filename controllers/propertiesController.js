@@ -32,14 +32,19 @@ const createNewProperty = async (req, res) => {
 
   //? Check for duplicate
 
+  //* convert to int
+
+  const sizeInt = parseInt(size, 10);
+  const bedroomsInt = parseInt(bedrooms, 10);
+
   //* Create new property
 
   const property = await prismadb.Property.create({
     data: {
       title,
-      size,
+      size: sizeInt,
       location,
-      bedrooms,
+      bedrooms: bedroomsInt,
       price,
       imageUrl,
       description,
@@ -103,18 +108,18 @@ const updatedProperty = async (req, res) => {
 
 // @desc Delete a property
 // @route DELETE /properties
-// @access Private
+//! @access Public
 const deleteProperty = async (req, res) => {
   const { propertyId } = req.query;
 
-  // Confirm data
+  //* Confirm data
   if (!propertyId) {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
   // ? Does the property still have assigned relations?
 
-  // Does the user exist to delete?
+  //* Does the user exist to delete?
   const property = await prismadb.Property.findUnique({
     where: {
       id: propertyId,

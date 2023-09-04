@@ -18,16 +18,17 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
 app.use("/", express.static(path.join(__dirname, "public")));
+app.use("/", express.static(path.join(__dirname, "uploads")));
 
 // ** app.use(express.static());
 
 app.use("/", require("./routes/root"));
 
-app.use("/properties", require("./routes/propertiesRoutes"));
 // app.use("/auth", require("./routes/authRoutes"));
-// app.use("/users", require("./routes/userRoutes"));
-// app.use("/notes", require("./routes/noteRoutes"));
+app.use("/properties", require("./routes/propertiesRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);
