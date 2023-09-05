@@ -13,17 +13,18 @@ const imgConfig = multer.diskStorage({
 });
 
 //* img filter
-const isImage = (req, file, callback) => {
-  if (file.mimetype.startsWith("image")) {
-    callback(null, true);
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/webp") {
+    // Accept only .webp files
+    cb(null, true);
   } else {
-    callback(null, Error("Image format is not correct!"));
+    cb(new Error("Only .webp images are allowed"), false);
   }
 };
 
 const upload = multer({
   storage: imgConfig,
-  fileFilter: isImage,
+  fileFilter: fileFilter,
   limits: {
     fileSize: Infinity,
   },
