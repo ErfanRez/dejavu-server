@@ -24,7 +24,13 @@ const getAllProperties = async (req, res) => {
 const createNewProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, description } = req.body;
 
-  const imageUrl = req.file.filename;
+  // console.log(req.files);
+
+  const imageUrls = [];
+
+  const imageUrl = req.files.map((file) => {
+    imageUrls.push(file.filename);
+  });
 
   //* Confirm data
 
@@ -51,9 +57,11 @@ const createNewProperty = async (req, res) => {
       bedrooms: bedroomsInt,
       price,
       description,
-      Images: {
-        create: {
-          url: imageUrl,
+      images: {
+        createMany: {
+          data: imageUrls.map((imageUrl) => ({
+            url: imageUrl,
+          })),
         },
       },
     },
@@ -74,7 +82,11 @@ const createNewProperty = async (req, res) => {
 const updateProperty = async (req, res) => {
   const { title, size, location, bedrooms, price, description } = req.body;
 
-  const imageUrl = req.file.filename;
+  const imageUrls = [];
+
+  const imageUrl = req.files.map((file) => {
+    imageUrls.push(file.filename);
+  });
 
   const { propertyId } = req.query;
 
@@ -93,39 +105,32 @@ const updateProperty = async (req, res) => {
 
   //? Does the property exist to update?
 
-  const updatedProperty = await prismadb.Property.upsert({
+  const property = await prismadb.Property.findUnique({
     where: {
       id: propertyId,
     },
-    update: {
-      title,
-      size: sizeInt,
-      location,
-      bedrooms: bedroomsInt,
-      price,
-      description,
-      Images: {
-        updateMany: {
-          where: {
-            propertyId,
-          },
-          data: {
-            url: imageUrl,
-          },
-        },
-      },
+  });
+
+  if (!property) {
+    res.status(400).json({ message: "Property not found!" });
+  }
+
+  const updatedProperty = await prismadb.Property.update({
+    where: {
+      id: propertyId,
     },
-    create: {
+    data: {
       title,
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
       price,
       description,
-      Images: {
-        create: {
-          url: imageUrl,
-        },
+      images: {
+        updateMany: imageUrls.map((imageUrl) => ({
+          where: { propertyId },
+          data: { url: imageUrl },
+        })),
       },
     },
   });

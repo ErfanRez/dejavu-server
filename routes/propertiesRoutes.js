@@ -1,42 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
-const multer = require("multer");
-const path = require("path");
-
-//* image storage config
-
-const imgConfig = multer.diskStorage({
-  destination: (req, file, callback) => {
-    callback(null, "./uploads");
-  },
-  filename: (req, file, callback) => {
-    callback(null, `image-${Date.now()}${path.extname(file.originalname)}`);
-  },
-});
-
-//* img filter
-const isImage = (req, file, callback) => {
-  if (file.mimetype.startsWith("image")) {
-    callback(null, true);
-  } else {
-    callback(null, Error("only image is allowed"));
-  }
-};
-
-var upload = multer({
-  storage: imgConfig,
-  fileFilter: isImage,
-  limits: {
-    fileSize: Infinity,
-  },
-});
+const upload = require("../middleware/multerImage");
 
 router
   .route("/")
   .get(propertiesControllers.getAllProperties)
-  .post(upload.single("photo"), propertiesControllers.createNewProperty)
-  .patch(upload.single("photo"), propertiesControllers.updateProperty)
+  .post(upload.array("files", 5), propertiesControllers.createNewProperty)
+  .patch(upload.array("files", 5), propertiesControllers.updateProperty)
   .delete(propertiesControllers.deleteProperty);
 
 module.exports = router;
