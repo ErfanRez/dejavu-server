@@ -128,8 +128,12 @@ const updateProperty = async (req, res) => {
       description,
       images: {
         updateMany: imageUrls.map((imageUrl) => ({
-          where: { propertyId },
-          data: { url: imageUrl },
+          where: {
+            propertyId,
+          },
+          data: {
+            url: imageUrl,
+          },
         })),
       },
     },

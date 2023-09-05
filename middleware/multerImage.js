@@ -2,7 +2,6 @@ const multer = require("multer");
 const path = require("path");
 
 //* image storage config
-
 const imgConfig = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, "./uploads");
@@ -12,21 +11,23 @@ const imgConfig = multer.diskStorage({
   },
 });
 
-//* img filter
-const fileFilter = (req, file, cb) => {
+//* image filter
+const fileFilter = (req, file, callback) => {
   if (file.mimetype === "image/webp") {
-    // Accept only .webp files
-    cb(null, true);
+    //* Accept only .webp files
+    callback(null, true);
   } else {
-    cb(new Error("Only .webp images are allowed"), false);
+    callback(new Error("Only .webp images are allowed"), false);
   }
 };
+
+const fileSizeLimit = 1 * 1024 * 1024;
 
 const upload = multer({
   storage: imgConfig,
   fileFilter: fileFilter,
   limits: {
-    fileSize: Infinity,
+    fileSize: fileSizeLimit,
   },
 });
 
