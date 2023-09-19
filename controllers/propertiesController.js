@@ -1,13 +1,12 @@
 const prismadb = require("../lib/prismadb");
-const multer = require("multer");
 
 // @desc Get all Properties
 // @route GET /Properties
 //! @access Public
 const getAllProperties = async (req, res) => {
-  //* Get all properties from MySQL DB
+  //* Get all properties from DB
 
-  const properties = await prismadb.Property.findMany();
+  const properties = await prismadb.property.findMany();
 
   //* If no properties
 
@@ -49,7 +48,7 @@ const createNewProperty = async (req, res) => {
 
   //* Create new property
 
-  const property = await prismadb.Property.create({
+  const property = await prismadb.property.create({
     data: {
       title,
       size: sizeInt,
@@ -105,7 +104,7 @@ const updateProperty = async (req, res) => {
 
   //? Does the property exist to update?
 
-  const property = await prismadb.Property.findUnique({
+  const property = await prismadb.property.findUnique({
     where: {
       id: propertyId,
     },
@@ -115,7 +114,7 @@ const updateProperty = async (req, res) => {
     res.status(400).json({ message: "Property not found!" });
   }
 
-  const updatedProperty = await prismadb.Property.update({
+  const updatedProperty = await prismadb.property.update({
     where: {
       id: propertyId,
     },
@@ -156,7 +155,7 @@ const deleteProperty = async (req, res) => {
   // ? Does the property still have assigned relations?
 
   //* Does the user exist to delete?
-  const property = await prismadb.Property.findUnique({
+  const property = await prismadb.property.findUnique({
     where: {
       id: propertyId,
     },
@@ -166,7 +165,7 @@ const deleteProperty = async (req, res) => {
     return res.status(400).json({ message: "Property not found" });
   }
 
-  const result = await prismadb.Property.delete({
+  const result = await prismadb.property.delete({
     where: {
       id: propertyId,
     },
