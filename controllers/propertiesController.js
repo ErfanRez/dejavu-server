@@ -6,7 +6,11 @@ const prismadb = require("../lib/prismadb");
 const getAllProperties = async (req, res) => {
   //* Get all properties from DB
 
-  const properties = await prismadb.property.findMany();
+  const properties = await prismadb.property.findMany({
+    include: {
+      images: true,
+    },
+  });
 
   //* If no properties
 
