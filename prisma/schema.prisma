@@ -12,14 +12,14 @@ datasource db {
 }
 
 model Property {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  category    Category @default(Luxury)
+  type        Type    @default(Luxury)
   size        Int
-  location    String   @db.Text
+  location    String  @db.Text
   bedrooms    Int
-  bathrooms   Int
-  parkings    Int
+  bathrooms   Int     @default(1)
+  parkings    Int     @default(1)
   price       String
   rate        Decimal
   images      Image[]
@@ -29,7 +29,7 @@ model Property {
   updatedAt  DateTime @updatedAt
 }
 
-enum Category {
+enum Type {
   Luxury
   Vacational
   Corporate
