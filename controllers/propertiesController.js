@@ -27,7 +27,7 @@ const getAllProperties = async (req, res) => {
 const createNewProperty = async (req, res) => {
   const {
     title,
-    category,
+    type,
     size,
     location,
     bedrooms,
@@ -50,7 +50,7 @@ const createNewProperty = async (req, res) => {
 
   if (
     !title ||
-    !category ||
+    !type ||
     !size ||
     !location ||
     !bedrooms ||
@@ -80,7 +80,7 @@ const createNewProperty = async (req, res) => {
   const property = await prismadb.property.create({
     data: {
       title,
-      category,
+      type,
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
@@ -114,7 +114,7 @@ const createNewProperty = async (req, res) => {
 const updateProperty = async (req, res) => {
   const {
     title,
-    category,
+    type,
     size,
     location,
     bedrooms,
@@ -137,7 +137,7 @@ const updateProperty = async (req, res) => {
 
   if (
     !title ||
-    !category ||
+    !type ||
     !size ||
     !location ||
     !bedrooms ||
@@ -179,7 +179,7 @@ const updateProperty = async (req, res) => {
     },
     data: {
       title,
-      category,
+      type,
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
