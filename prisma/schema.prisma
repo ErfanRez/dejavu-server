@@ -16,7 +16,7 @@ model Property {
   title       String
   category    Category @default(Luxury)
   type        String
-  size        Int
+  area        Int
   location    String   @db.Text
   bedrooms    Int
   bathrooms   Int      @default(1)
