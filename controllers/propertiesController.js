@@ -32,9 +32,9 @@ const createNewProperty = async (req, res) => {
     category,
     size,
     location,
-    bedrooms,
-    parkings,
-    bathrooms,
+    bedroomCount,
+    parkingCount,
+    bathroomCount,
     price,
     rate,
     description,
@@ -56,9 +56,9 @@ const createNewProperty = async (req, res) => {
     !category ||
     !size ||
     !location ||
-    !bedrooms ||
-    !bathrooms ||
-    !parkings ||
+    !bedroomCount ||
+    !bathroomCount ||
+    !parkingCount ||
     !price ||
     !rate ||
     !imageUrls
@@ -73,9 +73,9 @@ const createNewProperty = async (req, res) => {
   //* convert to int
 
   const sizeInt = parseInt(size, 10);
-  const bedroomsInt = parseInt(bedrooms, 10);
-  const bathroomsInt = parseInt(bathrooms, 10);
-  const parkingsInt = parseInt(parkings, 10);
+  const bedroomCountInt = parseInt(bedroomCount, 10);
+  const bathroomCountInt = parseInt(bathroomCount, 10);
+  const parkingCountInt = parseInt(parkingCount, 10);
   const rateDecimal = parseFloat(rate);
 
   //* Create new property
@@ -87,9 +87,9 @@ const createNewProperty = async (req, res) => {
       category,
       size: sizeInt,
       location,
-      bedrooms: bedroomsInt,
-      parkings: parkingsInt,
-      bathrooms: bathroomsInt,
+      bedroomCount: bedroomCountInt,
+      parkingCount: parkingCountInt,
+      bathroomCount: bathroomCountInt,
       price,
       rate: rateDecimal,
       description,
@@ -120,9 +120,9 @@ const updateProperty = async (req, res) => {
     category,
     size,
     location,
-    bedrooms,
-    bathrooms,
-    parkings,
+    bedroomCount,
+    bathroomCount,
+    parkingCount,
     price,
     rate,
     description,
@@ -144,9 +144,9 @@ const updateProperty = async (req, res) => {
     !category ||
     !size ||
     !location ||
-    !bedrooms ||
-    !bathrooms ||
-    !parkings ||
+    !bedroomCount ||
+    !bathroomCount ||
+    !parkingCount ||
     !price ||
     !rate ||
     !imageUrls
@@ -159,9 +159,9 @@ const updateProperty = async (req, res) => {
   //* convert to int
 
   const sizeInt = parseInt(size, 10);
-  const bedroomsInt = parseInt(bedrooms, 10);
-  const bathroomsInt = parseInt(bedrooms, 10);
-  const parkingsInt = parseInt(parkings, 10);
+  const bedroomCountInt = parseInt(bedroomCount, 10);
+  const bathroomCountInt = parseInt(bedroomCount, 10);
+  const parkingCountInt = parseInt(parkingCount, 10);
   const rateDecimal = parseFloat(rate);
 
   //? Does the property exist to update?
@@ -191,9 +191,9 @@ const updateProperty = async (req, res) => {
       type,
       size: sizeInt,
       location,
-      bedrooms: bedroomsInt,
-      bathrooms: bathroomsInt,
-      parkings: parkingsInt,
+      bedroomCount: bedroomCountInt,
+      bathroomCount: bathroomCountInt,
+      parkingCount: parkingCountInt,
       price,
       rate: rateDecimal,
       description,
