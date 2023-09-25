@@ -12,14 +12,15 @@ datasource db {
 }
 
 model Property {
-  id          String  @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
-  type        Type    @default(Luxury)
+  category    Category @default(Luxury)
+  type        String
   size        Int
-  location    String  @db.Text
+  location    String   @db.Text
   bedrooms    Int
-  bathrooms   Int     @default(1)
-  parkings    Int     @default(1)
+  bathrooms   Int      @default(1)
+  parkings    Int      @default(1)
   price       String
   rate        Decimal
   images      Image[]
@@ -29,7 +30,7 @@ model Property {
   updatedAt  DateTime @updatedAt
 }
 
-enum Type {
+enum Category {
   Luxury
   Vacational
   Corporate
@@ -45,6 +46,23 @@ model Image {
   UpdatedAt DateTime @updatedAt
 
   @@index([propertyId])
+}
+
+model Agent {
+  id       String @id @default(uuid())
+  name     String
+  imageUrl String
+
+  creadedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+}
+
+model Type {
+  id    String @id @default(uuid())
+  title String
+
+  creadedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
 }
 
 // model feature {

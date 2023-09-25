@@ -8,6 +8,7 @@ const getAllProperties = async (req, res) => {
 
   const properties = await prismadb.property.findMany({
     include: {
+      type: true,
       images: true,
     },
   });
@@ -28,6 +29,7 @@ const createNewProperty = async (req, res) => {
   const {
     title,
     type,
+    category,
     size,
     location,
     bedrooms,
@@ -42,7 +44,7 @@ const createNewProperty = async (req, res) => {
 
   const imageUrls = [];
 
-  const imageUrl = req.files.map((file) => {
+  req.files.map((file) => {
     imageUrls.push(file.filename);
   });
 
@@ -51,6 +53,7 @@ const createNewProperty = async (req, res) => {
   if (
     !title ||
     !type ||
+    !category ||
     !size ||
     !location ||
     !bedrooms ||
@@ -58,7 +61,7 @@ const createNewProperty = async (req, res) => {
     !parkings ||
     !price ||
     !rate ||
-    !imageUrl
+    !imageUrls
   ) {
     res
       .status(400)
@@ -81,6 +84,7 @@ const createNewProperty = async (req, res) => {
     data: {
       title,
       type,
+      category,
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
@@ -90,11 +94,9 @@ const createNewProperty = async (req, res) => {
       rate: rateDecimal,
       description,
       images: {
-        createMany: {
-          data: imageUrls.map((imageUrl) => ({
-            url: imageUrl,
-          })),
-        },
+        create: imageUrls.map((url) => ({
+          url,
+        })),
       },
     },
   });
@@ -115,6 +117,7 @@ const updateProperty = async (req, res) => {
   const {
     title,
     type,
+    category,
     size,
     location,
     bedrooms,
@@ -127,7 +130,7 @@ const updateProperty = async (req, res) => {
 
   const imageUrls = [];
 
-  const imageUrl = req.files.map((file) => {
+  req.files.map((file) => {
     imageUrls.push(file.filename);
   });
 
@@ -138,6 +141,7 @@ const updateProperty = async (req, res) => {
   if (
     !title ||
     !type ||
+    !category ||
     !size ||
     !location ||
     !bedrooms ||
@@ -145,7 +149,7 @@ const updateProperty = async (req, res) => {
     !parkings ||
     !price ||
     !rate ||
-    !imageUrl
+    !imageUrls
   ) {
     return res
       .status(400)
@@ -156,6 +160,7 @@ const updateProperty = async (req, res) => {
 
   const sizeInt = parseInt(size, 10);
   const bedroomsInt = parseInt(bedrooms, 10);
+  const bathroomsInt = parseInt(bedrooms, 10);
   const parkingsInt = parseInt(parkings, 10);
   const rateDecimal = parseFloat(rate);
 
@@ -164,6 +169,10 @@ const updateProperty = async (req, res) => {
   const property = await prismadb.property.findUnique({
     where: {
       id: propertyId,
+    },
+    include: {
+      type: true,
+      images: true,
     },
   });
 
