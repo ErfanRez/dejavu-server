@@ -34,6 +34,7 @@ const createNewProperty = async (req, res) => {
     parkings,
     bathrooms,
     price,
+    rate,
     description,
   } = req.body;
 
@@ -56,6 +57,7 @@ const createNewProperty = async (req, res) => {
     !bathrooms ||
     !parkings ||
     !price ||
+    !rate ||
     !imageUrl
   ) {
     res
@@ -71,6 +73,7 @@ const createNewProperty = async (req, res) => {
   const bedroomsInt = parseInt(bedrooms, 10);
   const bathroomsInt = parseInt(bathrooms, 10);
   const parkingsInt = parseInt(parkings, 10);
+  const rateDecimal = parseFloat(rate);
 
   //* Create new property
 
@@ -84,6 +87,7 @@ const createNewProperty = async (req, res) => {
       parkings: parkingsInt,
       bathrooms: bathroomsInt,
       price,
+      rate: rateDecimal,
       description,
       images: {
         createMany: {
@@ -117,6 +121,7 @@ const updateProperty = async (req, res) => {
     bathrooms,
     parkings,
     price,
+    rate,
     description,
   } = req.body;
 
@@ -139,6 +144,7 @@ const updateProperty = async (req, res) => {
     !bathrooms ||
     !parkings ||
     !price ||
+    !rate ||
     !imageUrl
   ) {
     return res
@@ -151,6 +157,7 @@ const updateProperty = async (req, res) => {
   const sizeInt = parseInt(size, 10);
   const bedroomsInt = parseInt(bedrooms, 10);
   const parkingsInt = parseInt(parkings, 10);
+  const rateDecimal = parseFloat(rate);
 
   //? Does the property exist to update?
 
@@ -179,6 +186,7 @@ const updateProperty = async (req, res) => {
       bathrooms: bathroomsInt,
       parkings: parkingsInt,
       price,
+      rate: rateDecimal,
       description,
       images: {
         updateMany: imageUrls.map((imageUrl) => ({

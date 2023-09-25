@@ -21,6 +21,7 @@ model Property {
   bathrooms   Int
   parkings    Int
   price       String
+  rate        Decimal
   images      Image[]
   description String?
 
