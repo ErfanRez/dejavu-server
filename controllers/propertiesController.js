@@ -25,7 +25,8 @@ const getAllProperties = async (req, res) => {
 // @route POST /property
 //! @access Public
 const createNewProperty = async (req, res) => {
-  const { title, size, location, bedrooms, price, description } = req.body;
+  const { title, size, location, bedrooms, parkings, price, description } =
+    req.body;
 
   // console.log(req.files);
 
@@ -37,7 +38,15 @@ const createNewProperty = async (req, res) => {
 
   //* Confirm data
 
-  if (!title || !size || !location || !bedrooms || !price || !imageUrl) {
+  if (
+    !title ||
+    !size ||
+    !location ||
+    !bedrooms ||
+    !parkings ||
+    !price ||
+    !imageUrl
+  ) {
     res
       .status(400)
       .json({ message: "All fields except description are required" });
@@ -49,6 +58,7 @@ const createNewProperty = async (req, res) => {
 
   const sizeInt = parseInt(size, 10);
   const bedroomsInt = parseInt(bedrooms, 10);
+  const parkingsInt = parseInt(parkings, 10);
 
   //* Create new property
 
@@ -58,6 +68,7 @@ const createNewProperty = async (req, res) => {
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
+      parkings: parkingsInt,
       price,
       description,
       images: {
@@ -105,6 +116,7 @@ const updateProperty = async (req, res) => {
 
   const sizeInt = parseInt(size, 10);
   const bedroomsInt = parseInt(bedrooms, 10);
+  const parkingsInt = parseInt(parkings, 10);
 
   //? Does the property exist to update?
 
@@ -127,6 +139,7 @@ const updateProperty = async (req, res) => {
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
+      parkings: parkingsInt,
       price,
       description,
       images: {
