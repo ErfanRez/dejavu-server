@@ -19,8 +19,8 @@ model Property {
   area          Int
   location      String   @db.Text
   bedroomCount  Int
-  bathroomCount Int      @default(1)
-  parkingCount  Int      @default(1)
+  bathroomCount Int
+  parkingCount  Int
   price         String
   rate          Decimal
   images        Image[]

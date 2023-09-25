@@ -14,7 +14,7 @@ const imgConfig = multer.diskStorage({
 //* image filter
 const fileFilter = (req, file, callback) => {
   if (file.mimetype === "image/webp") {
-    //* Accept only .webp files
+    //* Accepts only .webp files
     callback(null, true);
   } else {
     callback(new Error("Only .webp images are allowed"), false);
