@@ -25,8 +25,16 @@ const getAllProperties = async (req, res) => {
 // @route POST /property
 //! @access Public
 const createNewProperty = async (req, res) => {
-  const { title, size, location, bedrooms, parkings, price, description } =
-    req.body;
+  const {
+    title,
+    size,
+    location,
+    bedrooms,
+    parkings,
+    bathrooms,
+    price,
+    description,
+  } = req.body;
 
   // console.log(req.files);
 
@@ -43,6 +51,7 @@ const createNewProperty = async (req, res) => {
     !size ||
     !location ||
     !bedrooms ||
+    !bathrooms ||
     !parkings ||
     !price ||
     !imageUrl
@@ -58,6 +67,7 @@ const createNewProperty = async (req, res) => {
 
   const sizeInt = parseInt(size, 10);
   const bedroomsInt = parseInt(bedrooms, 10);
+  const bathroomsInt = parseInt(bathrooms, 10);
   const parkingsInt = parseInt(parkings, 10);
 
   //* Create new property
@@ -69,6 +79,7 @@ const createNewProperty = async (req, res) => {
       location,
       bedrooms: bedroomsInt,
       parkings: parkingsInt,
+      bathrooms: bathroomsInt,
       price,
       description,
       images: {
@@ -94,7 +105,16 @@ const createNewProperty = async (req, res) => {
 // @route PATCH /property
 //! @access Public
 const updateProperty = async (req, res) => {
-  const { title, size, location, bedrooms, price, description } = req.body;
+  const {
+    title,
+    size,
+    location,
+    bedrooms,
+    bathrooms,
+    parkings,
+    price,
+    description,
+  } = req.body;
 
   const imageUrls = [];
 
@@ -106,7 +126,16 @@ const updateProperty = async (req, res) => {
 
   //* Confirm data
 
-  if (!title || !size || !location || !bedrooms || !price || !imageUrl) {
+  if (
+    !title ||
+    !size ||
+    !location ||
+    !bedrooms ||
+    !bathrooms ||
+    !parkings ||
+    !price ||
+    !imageUrl
+  ) {
     return res
       .status(400)
       .json({ message: "All fields except description are required" });
@@ -139,6 +168,7 @@ const updateProperty = async (req, res) => {
       size: sizeInt,
       location,
       bedrooms: bedroomsInt,
+      bathrooms: bathroomsInt,
       parkings: parkingsInt,
       price,
       description,

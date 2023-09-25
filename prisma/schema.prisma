@@ -17,6 +17,7 @@ model Property {
   size        Int
   location    String  @db.Text
   bedrooms    Int
+  bathrooms   Int
   parkings    Int
   price       String
   images      Image[]
