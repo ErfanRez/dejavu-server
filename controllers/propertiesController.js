@@ -29,7 +29,7 @@ const createNewProperty = async (req, res) => {
     title,
     type,
     category,
-    size,
+    area,
     location,
     bedroomCount,
     parkingCount,
@@ -53,7 +53,7 @@ const createNewProperty = async (req, res) => {
     !title ||
     !type ||
     !category ||
-    !size ||
+    !area ||
     !location ||
     !bedroomCount ||
     !bathroomCount ||
@@ -71,7 +71,7 @@ const createNewProperty = async (req, res) => {
 
   //* convert to int
 
-  const sizeInt = parseInt(size, 10);
+  const areaInt = parseInt(area, 10);
   const bedroomCountInt = parseInt(bedroomCount, 10);
   const bathroomCountInt = parseInt(bathroomCount, 10);
   const parkingCountInt = parseInt(parkingCount, 10);
@@ -84,7 +84,7 @@ const createNewProperty = async (req, res) => {
       title,
       type,
       category,
-      size: sizeInt,
+      area: areaInt,
       location,
       bedroomCount: bedroomCountInt,
       parkingCount: parkingCountInt,
@@ -120,7 +120,7 @@ const updateProperty = async (req, res) => {
     title,
     type,
     category,
-    size,
+    area,
     location,
     bedroomCount,
     bathroomCount,
@@ -144,7 +144,7 @@ const updateProperty = async (req, res) => {
     !title ||
     !type ||
     !category ||
-    !size ||
+    !area ||
     !location ||
     !bedroomCount ||
     !bathroomCount ||
@@ -160,7 +160,7 @@ const updateProperty = async (req, res) => {
 
   //* convert to int
 
-  const sizeInt = parseInt(size, 10);
+  const areaInt = parseInt(area, 10);
   const bedroomCountInt = parseInt(bedroomCount, 10);
   const bathroomCountInt = parseInt(bedroomCount, 10);
   const parkingCountInt = parseInt(parkingCount, 10);
@@ -191,7 +191,7 @@ const updateProperty = async (req, res) => {
     data: {
       title,
       type,
-      size: sizeInt,
+      area: areaInt,
       location,
       bedroomCount: bedroomCountInt,
       bathroomCount: bathroomCountInt,
