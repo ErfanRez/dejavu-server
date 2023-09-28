@@ -8,7 +8,6 @@ const getAllProperties = async (req, res) => {
 
   const properties = await prismadb.property.findMany({
     include: {
-      type: true,
       images: true,
     },
   });
@@ -98,6 +97,9 @@ const createNewProperty = async (req, res) => {
           url,
         })),
       },
+    },
+    include: {
+      images: true,
     },
   });
 
@@ -207,6 +209,9 @@ const updateProperty = async (req, res) => {
           },
         })),
       },
+    },
+    include: {
+      images: true,
     },
   });
 
