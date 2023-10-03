@@ -13,7 +13,7 @@ const imgConfig = multer.diskStorage({
 
 //* image filter
 const fileFilter = (req, file, callback) => {
-  if (file.mimetype === "image") {
+  if (file.mimetype.startsWith("image")) {
     callback(null, true);
   } else {
     callback(new Error("Only .webp images are allowed"), false);

@@ -12,7 +12,11 @@ router
     converter,
     propertiesControllers.createNewProperty
   )
-  .patch(upload.array("files", 5), propertiesControllers.updateProperty)
+  .patch(
+    upload.array("files", 5),
+    converter,
+    propertiesControllers.updateProperty
+  )
   .delete(propertiesControllers.deleteProperty);
 
 module.exports = router;
