@@ -16,11 +16,11 @@ const fileFilter = (req, file, callback) => {
   if (file.mimetype.startsWith("image")) {
     callback(null, true);
   } else {
-    callback(new Error("Only .webp images are allowed"), false);
+    callback(new Error("Only images are allowed"), false);
   }
 };
 
-const fileSizeLimit = 2 * 1024 * 1024;
+const fileSizeLimit = 5 * 1024 * 1024;
 
 const upload = multer({
   storage: imgConfig,

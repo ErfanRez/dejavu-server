@@ -7,16 +7,8 @@ const converter = require("../middleware/imageConverter");
 router
   .route("/")
   .get(propertiesControllers.getAllProperties)
-  .post(
-    upload.array("files", 5),
-    converter,
-    propertiesControllers.createNewProperty
-  )
-  .patch(
-    upload.array("files", 5),
-    converter,
-    propertiesControllers.updateProperty
-  )
+  .post(converter, propertiesControllers.createNewProperty) //! use upload.array("files", 5) middleware if needed.
+  .patch(converter, propertiesControllers.updateProperty) //! use upload.array("files", 5) middleware if needed.
   .delete(propertiesControllers.deleteProperty);
 
 module.exports = router;
