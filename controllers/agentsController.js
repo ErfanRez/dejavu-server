@@ -1,6 +1,4 @@
 const prismadb = require("../lib/prismadb");
-const path = require("path");
-const fs = require("fs");
 
 // @desc Get an unique agent
 // @route GET /agents/:id
