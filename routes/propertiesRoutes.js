@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
-const converter = require("../middleware/imageConverter");
+const converter = require("../middleware/imageUploader");
 const fileUpload = require("express-fileupload");
 
 router
