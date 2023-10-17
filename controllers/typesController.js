@@ -1,361 +1,144 @@
 const prismadb = require("../lib/prismadb");
-const path = require("path");
-const fs = require("fs");
 
-// @desc Get an unique property
-// @route GET /Properties/:id
 //! @access Public
-const getPropertyById = async (req, res) => {
-  const { id } = req.params;
+const getAllTypes = async (req, res) => {
+  //* Get all types from DB
 
-  //* Confirm data
-  if (!id) {
-    return res.status(400).json({ message: "Property ID Required!" });
-  }
-
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
-  const property = await prismadb.property.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      images: true,
-      views: true,
-    },
-  });
-
-  if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
-  }
-
-  res.json(property);
-};
-
-// @desc Get all Properties
-// @route GET /Properties
-//! @access Public
-const getAllProperties = async (req, res) => {
-  //* Get all properties from DB
-
-  const properties = await prismadb.property.findMany({
-    include: {
-      images: true,
-      views: true,
-    },
+  const types = await prismadb.type.findMany({
     orderBy: {
       updatedAt: "desc",
     },
   });
 
-  //* If no properties
+  //* If no types
 
-  if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found" });
+  if (!types?.length) {
+    return res.status(400).json({ message: "No types found" });
   }
 
-  res.json(properties);
+  res.json(types);
 };
 
-// @desc Create new property
-// @route POST /property
+// @desc Create new type
+// @route POST /types
 //! @access Public
-const createNewProperty = async (req, res) => {
-  const {
-    title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
-    location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
-    description,
-  } = req.body;
-
-  // console.log(req.files);
-  const convertedImages = req.convertedImages;
+const createNewType = async (req, res) => {
+  const { title } = req.body;
 
   //* Confirm data
 
-  if (
-    !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
-    !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !convertedImages
-  ) {
-    res
-      .status(400)
-      .json({ message: "All fields except description are required" });
+  if (!title) {
+    res.status(400).json({ message: "Type title required!" });
   }
-
-  //* Getting related images' paths
-
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
 
   //? Check for duplicate
-
-  //* converts
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bathroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
-
-  //* Create new property
-
-  const property = await prismadb.property.create({
-    data: {
+  const duplicate = await prismadb.type.findMany({
+    where: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
-      location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      parkingCount: parkingCountInt,
-      bathroomCount: bathroomCountInt,
-      price,
-      rate: rateDecimal,
-      description,
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
-      images: {
-        create: imageUrls.map((url) => ({
-          url,
-        })),
-      },
-    },
-    include: {
-      images: true,
-      views: true,
     },
   });
 
-  if (property) {
+  if (duplicate) {
+    return res.status(409).json({ message: "Type title already exists!" });
+  }
+
+  //* Create new type
+
+  const type = await prismadb.type.create({
+    data: {
+      title,
+    },
+  });
+
+  if (type) {
     //*created
 
-    res.status(201).json({ message: `New property ${title} created.` });
+    res.status(201).json({ message: `New type ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid property data received!" });
+    res.status(400).json({ message: "Invalid type data received!" });
   }
 };
 
-// @desc Update a property
+// @desc Update a type
 // @route PATCH /properties/:id
 //! @access Public
-const updateProperty = async (req, res) => {
-  const {
-    title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
-    location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
-    description,
-    status,
-  } = req.body;
+const updateType = async (req, res) => {
+  const { title } = req.body;
 
   const { id } = req.params;
-
-  const convertedImages = req.convertedImages;
 
   //* Confirm data
 
   if (!id) {
-    return res.status(400).json({ message: "Property ID required!" });
+    return res.status(400).json({ message: "Type ID required!" });
   }
 
-  if (
-    !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
-    !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !status ||
-    !convertedImages
-  ) {
-    return res
-      .status(400)
-      .json({ message: "All fields except description are required!" });
+  if (!title) {
+    return res.status(400).json({ message: "Type title required!" });
   }
 
-  //* Getting related images' paths
+  //? Does the type exist to update?
 
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
-
-  //* converts
-
-  const statusBoolean = JSON.parse(status);
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bedroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
-
-  //? Does the property exist to update?
-
-  const property = await prismadb.property.findUnique({
+  const type = await prismadb.type.findUnique({
     where: {
       id,
     },
   });
 
-  if (!property) {
-    res.status(400).json({ message: "Property not found!" });
+  if (!type) {
+    res.status(400).json({ message: "Type not found!" });
   }
 
-  //* Update property
+  //* Update type
 
-  await prismadb.property.update({
+  const updatedType = await prismadb.type.update({
     where: {
       id,
     },
     data: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
-      location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      bathroomCount: bathroomCountInt,
-      parkingCount: parkingCountInt,
-      price,
-      rate: rateDecimal,
-      description,
-      status: statusBoolean,
-      views: {
-        deleteMany: {},
-      },
-      images: {
-        deleteMany: {},
-      },
     },
   });
 
-  //! update snippet alternative for images
-  // images: {
-  //         updateMany: imageUrls.map((imageUrl) => ({
-  //           where: {
-  //             propertyId,
-  //           },
-  //           data: {
-  //             url: imageUrl,
-  //           },
-  //         })),
-  //       },
-
-  const updatedProperty = await prismadb.property.update({
-    where: {
-      id,
-    },
-    data: {
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
-      images: {
-        create: imageUrls.map((url) => ({
-          url,
-        })),
-      },
-    },
-  });
-
-  res.json({ message: `property ${updatedProperty.title} updated.` });
+  res.json({ message: `type ${updatedType.title} updated.` });
 };
 
-// @desc Delete a property
+// @desc Delete a type
 // @route DELETE /properties/:id
 //! @access Public
-const deleteProperty = async (req, res) => {
+const deleteType = async (req, res) => {
   const { id } = req.params;
 
   //* Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Property ID required!" });
+    return res.status(400).json({ message: "Type ID required!" });
   }
 
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
-  const property = await prismadb.property.findUnique({
+  //* Does the type exist to delete?
+  const type = await prismadb.type.findUnique({
     where: {
       id,
     },
   });
 
-  if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+  if (!type) {
+    return res.status(400).json({ message: "Type not found!" });
   }
 
-  const result = await prismadb.property.delete({
+  const result = await prismadb.type.delete({
     where: {
       id,
     },
   });
-  // Define the path to the property's images folder
-  const imagesFolder = path.join(__dirname, "..", "images", result.title);
-
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
 
   res.json({
-    message: `Property ${result.title} with ID: ${result.id} deleted.`,
+    message: `Type ${result.title} with ID: ${result.id} deleted.`,
   });
 };
 
 module.exports = {
-  getPropertyById,
-  getAllProperties,
-  createNewProperty,
-  updateProperty,
-  deleteProperty,
+  getAllTypes,
+  createNewType,
+  updateType,
+  deleteType,
 };

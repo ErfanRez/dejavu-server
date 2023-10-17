@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 // @desc Get an unique property
-// @route GET /Properties/:id
+// @route GET /properties/:id
 //! @access Public
 const getPropertyById = async (req, res) => {
   const { id } = req.params;
@@ -13,9 +13,7 @@ const getPropertyById = async (req, res) => {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
+  //* Does the property exist to delete?
   const property = await prismadb.property.findUnique({
     where: {
       id,
@@ -33,8 +31,8 @@ const getPropertyById = async (req, res) => {
   res.json(property);
 };
 
-// @desc Get all Properties
-// @route GET /Properties
+// @desc Get all properties
+// @route GET /properties
 //! @access Public
 const getAllProperties = async (req, res) => {
   //* Get all properties from DB
@@ -320,9 +318,7 @@ const deleteProperty = async (req, res) => {
     return res.status(400).json({ message: "Property ID required!" });
   }
 
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
+  //* Does the property exist to delete?
   const property = await prismadb.property.findUnique({
     where: {
       id,
