@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const fspromises = require("fs").promises;
 
-const converter = async (req, res, next) => {
+const uploader = async (req, res, next) => {
   try {
     console.log(req.files);
 
@@ -56,4 +56,4 @@ const converter = async (req, res, next) => {
   next();
 };
 
-module.exports = converter;
+module.exports = uploader;
