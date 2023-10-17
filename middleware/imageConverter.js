@@ -5,11 +5,25 @@ const fspromises = require("fs").promises;
 
 const converter = async (req, res, next) => {
   try {
+    console.log(req.files);
+
+    const imageFiles = req.files.images;
+
+    // Check if files were uploaded successfully
+    if (!imageFiles || !Array.isArray(imageFiles) || imageFiles.length === 0) {
+      throw new Error("No files were uploaded.");
+    }
+
     // Get the uploaded file path
-    const imagePaths = req.files.map((file) => file.path);
+    const imagesData = imageFiles.map((image) => image.data);
 
     // Define the output folder for converted images
-    const outputFolder = path.join(__dirname, "..", "images");
+    const outputFolder = path.join(
+      __dirname,
+      "..",
+      "images",
+      `${req.body.title}`
+    );
 
     // Create the output folder if it doesn't exist
     if (!fs.existsSync(outputFolder)) {
@@ -19,15 +33,17 @@ const converter = async (req, res, next) => {
     const convertedImages = [];
 
     // Process each uploaded image and convert it to WebP format
-    for (const imagePath of imagePaths) {
+    for (const imageData of imagesData) {
       // Generate a unique file name for the WebP image
       const webpFileName = `webp-${Date.now()}.webp`;
 
       // Define the full output file path
       const outputImagePath = path.join(outputFolder, webpFileName);
 
+      console.log(outputImagePath);
+
       // Convert the image to WebP format using Sharp
-      await sharp(imagePath).toFormat("webp").toFile(outputImagePath);
+      await sharp(imageData).toFormat("webp").toFile(outputImagePath);
 
       convertedImages.push(outputImagePath);
     }

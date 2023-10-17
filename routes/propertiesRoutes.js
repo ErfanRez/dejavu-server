@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
-const upload = require("../middleware/multerImage");
 const converter = require("../middleware/imageConverter");
+const fileUpload = require("express-fileupload");
 
 router
+  .use(fileUpload())
   .route("/")
   .get(propertiesControllers.getAllProperties)
   .post(converter, propertiesControllers.createNewProperty) //! use upload.array("files", 5) middleware if needed.

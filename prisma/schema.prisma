@@ -12,31 +12,56 @@ datasource db {
 }
 
 model Property {
-  id            String   @id @default(uuid())
+  id            String           @id @default(uuid())
   title         String
-  category      Category @default(Luxury)
+  category      String
   type          String
+  views         View[]
   area          Int
-  location      String   @db.Text
+  location      String           @db.Text
+  floor         Int
   bedroomCount  Int
   bathroomCount Int
   parkingCount  Int
   price         String
   rate          Decimal
-  images        Image[]
-  description   String?  @db.Text
+  images        PropertyImages[]
+  description   String?          @db.Text
+  status        Boolean          @default(true)
 
   creactedAt DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
 
-enum Category {
-  Luxury
-  Vacational
-  Corporate
+model Category {
+  id    String @id @default(uuid())
+  title String @unique
+
+  creadedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
 }
 
-model Image {
+model Type {
+  id    String @id @default(uuid())
+  title String @unique
+
+  creadedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+}
+
+model View {
+  id         String   @id @default(uuid())
+  title      String
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  creadedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+model PropertyImages {
   id         String   @id @default(uuid())
   url        String   @db.Text
   propertyId String
@@ -48,18 +73,10 @@ model Image {
   @@index([propertyId])
 }
 
-model Agent {
-  id       String @id @default(uuid())
+model Agents {
+  id       String  @id @default(uuid())
   name     String
-  imageUrl String
-
-  creadedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
-}
-
-model Type {
-  id    String @id @default(uuid())
-  title String
+  imageUrl String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
 
   creadedAt DateTime @default(now())
   UpdatedAt DateTime @updatedAt

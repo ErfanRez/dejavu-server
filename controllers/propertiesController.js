@@ -9,6 +9,7 @@ const getAllProperties = async (req, res) => {
   const properties = await prismadb.property.findMany({
     include: {
       images: true,
+      views: true,
     },
   });
 
@@ -27,10 +28,12 @@ const getAllProperties = async (req, res) => {
 const createNewProperty = async (req, res) => {
   const {
     title,
-    type,
-    category,
+    categoryTitle,
+    typeTitle,
+    views,
     area,
     location,
+    floor,
     bedroomCount,
     parkingCount,
     bathroomCount,
@@ -43,18 +46,20 @@ const createNewProperty = async (req, res) => {
 
   const imageUrls = [];
 
-  req.files.map((file) => {
-    imageUrls.push(file.filename);
+  req.files.images.map((file) => {
+    imageUrls.push(file.name);
   });
 
   //* Confirm data
 
   if (
     !title ||
-    !type ||
-    !category ||
+    !categoryTitle ||
+    !typeTitle ||
+    !views ||
     !area ||
     !location ||
+    !floor ||
     !bedroomCount ||
     !bathroomCount ||
     !parkingCount ||
@@ -71,6 +76,7 @@ const createNewProperty = async (req, res) => {
 
   //* convert to int
 
+  const floorInt = parseInt(floor, 10);
   const areaInt = parseInt(area, 10);
   const bedroomCountInt = parseInt(bedroomCount, 10);
   const bathroomCountInt = parseInt(bathroomCount, 10);
@@ -82,16 +88,22 @@ const createNewProperty = async (req, res) => {
   const property = await prismadb.property.create({
     data: {
       title,
-      type,
-      category,
+      category: categoryTitle,
+      type: typeTitle,
       area: areaInt,
       location,
+      floor: floorInt,
       bedroomCount: bedroomCountInt,
       parkingCount: parkingCountInt,
       bathroomCount: bathroomCountInt,
       price,
       rate: rateDecimal,
       description,
+      views: {
+        create: views.map((viewTitle) => ({
+          title: viewTitle,
+        })),
+      },
       images: {
         create: imageUrls.map((url) => ({
           url,
@@ -100,6 +112,7 @@ const createNewProperty = async (req, res) => {
     },
     include: {
       images: true,
+      views: true,
     },
   });
 
