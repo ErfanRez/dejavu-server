@@ -33,7 +33,7 @@ app.use("/properties", require("./routes/propertiesRoutes"));
 app.use("/categories", require("./routes/categoriesRoutes"));
 app.use("/types", require("./routes/typesRoutes"));
 app.use("/articles", require("./routes/articlesRoutes"));
-app.use("/agents", require("./routes/articlesRoutes"));
+app.use("/agents", require("./routes/agentsRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);
