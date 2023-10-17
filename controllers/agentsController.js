@@ -2,360 +2,168 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fs = require("fs");
 
-// @desc Get an unique property
-// @route GET /Properties/:id
+// @desc Get an unique agent
+// @route GET /agents/:id
 //! @access Public
-const getPropertyById = async (req, res) => {
+const getAgentById = async (req, res) => {
   const { id } = req.params;
 
   //* Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Agent ID Required!" });
   }
 
-  // ? Does the property still have assigned relations?
+  // ? Does the agent still have assigned relations?
 
-  //* Does the user exist to delete?
-  const property = await prismadb.property.findUnique({
+  //* Does the agent exist to delete?
+  const agent = await prismadb.agent.findUnique({
     where: {
       id,
     },
-    include: {
-      images: true,
-      views: true,
-    },
   });
 
-  if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+  if (!agent) {
+    return res.status(400).json({ message: "Agent not found!" });
   }
 
-  res.json(property);
+  res.json(agent);
 };
 
-// @desc Get all Properties
-// @route GET /Properties
+// @desc Get all agents
+// @route GET /agents
 //! @access Public
-const getAllProperties = async (req, res) => {
-  //* Get all properties from DB
+const getAllAgents = async (req, res) => {
+  //* Get all agents from DB
 
-  const properties = await prismadb.property.findMany({
-    include: {
-      images: true,
-      views: true,
-    },
+  const agents = await prismadb.agent.findMany({
     orderBy: {
       updatedAt: "desc",
     },
   });
 
-  //* If no properties
+  //* If no agents
 
-  if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found" });
+  if (!agents?.length) {
+    return res.status(400).json({ message: "No agents found" });
   }
 
-  res.json(properties);
+  res.json(agents);
 };
 
-// @desc Create new property
-// @route POST /property
+// @desc Create new agent
+// @route POST /agent
 //! @access Public
-const createNewProperty = async (req, res) => {
-  const {
-    title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
-    location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
-    description,
-  } = req.body;
+const createNewAgent = async (req, res) => {
+  const { name } = req.body;
 
   // console.log(req.files);
-  const convertedImages = req.convertedImages;
+  const convertedImage = req.convertedImages;
 
   //* Confirm data
 
-  if (
-    !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
-    !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !convertedImages
-  ) {
-    res
-      .status(400)
-      .json({ message: "All fields except description are required" });
+  if (!name || !convertedImage) {
+    res.status(400).json({ message: "Agent name and picture required!" });
   }
-
-  //* Getting related images' paths
-
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
 
   //? Check for duplicate
 
-  //* converts
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bathroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
-
-  //* Create new property
-
-  const property = await prismadb.property.create({
-    data: {
+  const duplicate = await prismadb.agent.findUnique({
+    where: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
-      location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      parkingCount: parkingCountInt,
-      bathroomCount: bathroomCountInt,
-      price,
-      rate: rateDecimal,
-      description,
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
-      images: {
-        create: imageUrls.map((url) => ({
-          url,
-        })),
-      },
-    },
-    include: {
-      images: true,
-      views: true,
     },
   });
 
-  if (property) {
+  if (duplicate) {
+    return res.status(409).json({ message: "agent title already exists!" });
+  }
+
+  //* Create new agent
+
+  const agent = await prismadb.agent.create({
+    data: {
+      name,
+      imageUrl: convertedImage,
+    },
+  });
+
+  if (agent) {
     //*created
 
-    res.status(201).json({ message: `New property ${title} created.` });
+    res.status(201).json({ message: `New agent ${name} created.` });
   } else {
-    res.status(400).json({ message: "Invalid property data received!" });
+    res.status(400).json({ message: "Invalid agent data received!" });
   }
 };
 
-// @desc Update a property
-// @route PATCH /properties/:id
+// @desc Update a agent
+// @route PATCH /agents/:id
 //! @access Public
-const updateProperty = async (req, res) => {
-  const {
-    title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
-    location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
-    description,
-    status,
-  } = req.body;
-
+const updateAgent = async (req, res) => {
+  const { name } = req.body;
   const { id } = req.params;
 
-  const convertedImages = req.convertedImages;
+  // console.log(req.files);
+  const convertedImage = req.convertedImages;
 
   //* Confirm data
 
   if (!id) {
-    return res.status(400).json({ message: "Property ID required!" });
+    return res.status(400).json({ message: "Agent ID required!" });
   }
 
-  if (
-    !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
-    !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !status ||
-    !convertedImages
-  ) {
-    return res
-      .status(400)
-      .json({ message: "All fields except description are required!" });
+  if (!name || !convertedImage) {
+    res.status(400).json({ message: "Agent name and picture required!" });
   }
 
-  //* Getting related images' paths
+  //* Update agent
 
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
-
-  //* converts
-
-  const statusBoolean = JSON.parse(status);
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bedroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
-
-  //? Does the property exist to update?
-
-  const property = await prismadb.property.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  if (!property) {
-    res.status(400).json({ message: "Property not found!" });
-  }
-
-  //* Update property
-
-  await prismadb.property.update({
-    where: {
-      id,
-    },
+  const updatedAgent = await prismadb.agent.update({
     data: {
-      title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
-      location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      bathroomCount: bathroomCountInt,
-      parkingCount: parkingCountInt,
-      price,
-      rate: rateDecimal,
-      description,
-      status: statusBoolean,
-      views: {
-        deleteMany: {},
-      },
-      images: {
-        deleteMany: {},
-      },
+      name,
+      imageUrl: convertedImage,
     },
   });
 
-  //! update snippet alternative for images
-  // images: {
-  //         updateMany: imageUrls.map((imageUrl) => ({
-  //           where: {
-  //             propertyId,
-  //           },
-  //           data: {
-  //             url: imageUrl,
-  //           },
-  //         })),
-  //       },
-
-  const updatedProperty = await prismadb.property.update({
-    where: {
-      id,
-    },
-    data: {
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
-      images: {
-        create: imageUrls.map((url) => ({
-          url,
-        })),
-      },
-    },
-  });
-
-  res.json({ message: `property ${updatedProperty.title} updated.` });
+  res.json({ message: `agent ${updatedAgent.name} updated.` });
 };
 
-// @desc Delete a property
-// @route DELETE /properties/:id
+// @desc Delete a agent
+// @route DELETE /agents/:id
 //! @access Public
-const deleteProperty = async (req, res) => {
+const deleteAgent = async (req, res) => {
   const { id } = req.params;
 
   //* Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Property ID required!" });
+    return res.status(400).json({ message: "Agent ID required!" });
   }
 
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
-  const property = await prismadb.property.findUnique({
+  //* Does the agent exist to delete?
+  const agent = await prismadb.agent.findUnique({
     where: {
       id,
     },
   });
 
-  if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+  if (!agent) {
+    return res.status(400).json({ message: "Agent not found!" });
   }
 
-  const result = await prismadb.property.delete({
+  const result = await prismadb.agent.delete({
     where: {
       id,
     },
   });
-  // Define the path to the property's images folder
-  const imagesFolder = path.join(__dirname, "..", "images", result.title);
-
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
 
   res.json({
-    message: `Property ${result.title} with ID: ${result.id} deleted.`,
+    message: `Agent ${result.name} with ID: ${result.id} deleted.`,
   });
 };
 
 module.exports = {
-  getPropertyById,
-  getAllProperties,
-  createNewProperty,
-  updateProperty,
-  deleteProperty,
+  getAgentById,
+  getAllAgents,
+  createNewAgent,
+  updateAgent,
+  deleteAgent,
 };

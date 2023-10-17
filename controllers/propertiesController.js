@@ -98,7 +98,7 @@ const createNewProperty = async (req, res) => {
   ) {
     res
       .status(400)
-      .json({ message: "All fields except description are required" });
+      .json({ message: "All fields except description required!" });
   }
 
   //* Getting related images' paths
@@ -211,7 +211,7 @@ const updateProperty = async (req, res) => {
   ) {
     return res
       .status(400)
-      .json({ message: "All fields except description are required!" });
+      .json({ message: "All fields except description required!" });
   }
 
   //* Getting related images' paths

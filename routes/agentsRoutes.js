@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const propertiesControllers = require("../controllers/propertiesController");
-const uploader = require("../middlewares/imageUploader");
+const agentsControllers = require("../controllers/agentsController");
+const uploader = require("../middlewares/agentPic");
 const fileUpload = require("express-fileupload");
 
 router
   .use(fileUpload())
-  .get("/", propertiesControllers.getAllProperties)
-  .get("/:id", propertiesControllers.getPropertyById)
-  .post("/", uploader, propertiesControllers.createNewProperty) // use upload.array("files", 5) middleware if needed.
-  .patch("/:id", uploader, propertiesControllers.updateProperty) // use upload.array("files", 5) middleware if needed.
-  .delete("/:id", propertiesControllers.deleteProperty);
+  .get("/", agentsControllers.getAllAgents)
+  .get("/:id", agentsControllers.getAgentById)
+  .post("/", uploader, agentsControllers.createNewAgent)
+  .patch("/:id", uploader, agentsControllers.updateAgent)
+  .delete("/:id", agentsControllers.deleteAgent);
 
 module.exports = router;
