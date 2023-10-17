@@ -32,7 +32,7 @@ const createNewType = async (req, res) => {
   }
 
   //? Check for duplicate
-  const duplicate = await prismadb.type.findMany({
+  const duplicate = await prismadb.type.findUnique({
     where: {
       title,
     },
