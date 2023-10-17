@@ -76,8 +76,8 @@ model Type {
 model Article {
   id          String         @id @default(uuid())
   title       String
-  description String
-  body        String
+  description String         @db.Text
+  body        String         @db.Text
   images      ArticleImage[]
 
   createdAt DateTime @default(now())
@@ -97,9 +97,9 @@ model ArticleImage {
 }
 
 model Agent {
-  id       String @id @default(uuid())
-  name     String
-  imageUrl String @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
+  id       String  @id @default(uuid())
+  name     String  @unique
+  imageUrl String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

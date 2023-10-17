@@ -3,6 +3,7 @@ logs
 images
 agents
 articles
+properties
 
 # Keep environment variables out of version control
 .env

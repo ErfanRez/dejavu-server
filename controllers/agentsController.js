@@ -1,4 +1,6 @@
 const prismadb = require("../lib/prismadb");
+const path = require("path");
+const fs = require("fs");
 
 // @desc Get an unique agent
 // @route GET /agents/:id
@@ -55,19 +57,19 @@ const createNewAgent = async (req, res) => {
   const { name } = req.body;
 
   // console.log(req.files);
-  const convertedImage = req.convertedImages;
+  const convertedImage = req.convertedImage;
 
   //* Confirm data
 
-  if (!name || !convertedImage) {
-    res.status(400).json({ message: "Agent name and picture required!" });
+  if (!name) {
+    res.status(400).json({ message: "Agent name required!" });
   }
 
   //? Check for duplicate
 
   const duplicate = await prismadb.agent.findUnique({
     where: {
-      title,
+      name,
     },
   });
 
@@ -101,7 +103,7 @@ const updateAgent = async (req, res) => {
   const { id } = req.params;
 
   // console.log(req.files);
-  const convertedImage = req.convertedImages;
+  const convertedImage = req.convertedImage;
 
   //* Confirm data
 
@@ -109,13 +111,16 @@ const updateAgent = async (req, res) => {
     return res.status(400).json({ message: "Agent ID required!" });
   }
 
-  if (!name || !convertedImage) {
+  if (!name) {
     res.status(400).json({ message: "Agent name and picture required!" });
   }
 
   //* Update agent
 
   const updatedAgent = await prismadb.agent.update({
+    where: {
+      id,
+    },
     data: {
       name,
       imageUrl: convertedImage,
@@ -158,7 +163,7 @@ const deleteAgent = async (req, res) => {
     "..",
     "images",
     "agents",
-    result.name
+    `webp-${result.name}.webp`
   );
 
   // Check if the folder exists
