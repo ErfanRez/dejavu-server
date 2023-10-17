@@ -5,8 +5,6 @@ const fspromises = require("fs").promises;
 
 const uploader = async (req, res, next) => {
   try {
-    console.log(req.files);
-
     const imageFiles = req.files.images;
 
     // Check if files were uploaded successfully
@@ -14,7 +12,7 @@ const uploader = async (req, res, next) => {
       throw new Error("No files were uploaded.");
     }
 
-    // Get the uploaded file path
+    // Get the uploaded file data
     const imagesData = imageFiles.map((image) => image.data);
 
     // Define the output folder for converted images
