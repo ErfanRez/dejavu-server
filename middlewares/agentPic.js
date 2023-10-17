@@ -16,7 +16,7 @@ const uploader = async (req, res, next) => {
     const imageData = imageFile.data;
 
     // Define the output folder for converted images
-    const outputFolder = path.join(__dirname, "..", "agents");
+    const outputFolder = path.join(__dirname, "..", "images", "agents");
 
     // Create the output folder if it doesn't exist
     if (!fs.existsSync(outputFolder)) {

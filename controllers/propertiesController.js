@@ -335,7 +335,13 @@ const deleteProperty = async (req, res) => {
     },
   });
   // Define the path to the property's images folder
-  const imagesFolder = path.join(__dirname, "..", "images", result.title);
+  const imagesFolder = path.join(
+    __dirname,
+    "..",
+    "images",
+    "properties",
+    result.title
+  );
 
   // Check if the folder exists
   if (fs.existsSync(imagesFolder)) {

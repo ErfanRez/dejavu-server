@@ -2,105 +2,71 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fs = require("fs");
 
-// @desc Get an unique property
-// @route GET /Properties/:id
+// @desc Get an unique article
+// @route GET /articles/:id
 //! @access Public
-const getPropertyById = async (req, res) => {
+const getArticleById = async (req, res) => {
   const { id } = req.params;
 
   //* Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Article ID Required!" });
   }
 
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
-  const property = await prismadb.property.findUnique({
+  //* Does the article exist to delete?
+  const article = await prismadb.article.findUnique({
     where: {
       id,
     },
     include: {
       images: true,
-      views: true,
     },
   });
 
-  if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+  if (!article) {
+    return res.status(400).json({ message: "Article not found!" });
   }
 
-  res.json(property);
+  res.json(article);
 };
 
-// @desc Get all Properties
-// @route GET /Properties
+// @desc Get all articles
+// @route GET /articles
 //! @access Public
-const getAllProperties = async (req, res) => {
-  //* Get all properties from DB
+const getAllArticles = async (req, res) => {
+  //* Get all articles from DB
 
-  const properties = await prismadb.property.findMany({
+  const articles = await prismadb.article.findMany({
     include: {
       images: true,
-      views: true,
     },
     orderBy: {
       updatedAt: "desc",
     },
   });
 
-  //* If no properties
+  //* If no articles
 
-  if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found" });
+  if (!articles?.length) {
+    return res.status(400).json({ message: "No articles found" });
   }
 
-  res.json(properties);
+  res.json(articles);
 };
 
-// @desc Create new property
-// @route POST /property
+// @desc Create new article
+// @route POST /article
 //! @access Public
-const createNewProperty = async (req, res) => {
-  const {
-    title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
-    location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
-    description,
-  } = req.body;
+const createNewArticle = async (req, res) => {
+  const { title, description, body } = req.body;
 
   // console.log(req.files);
   const convertedImages = req.convertedImages;
 
   //* Confirm data
 
-  if (
-    !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
-    !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !convertedImages
-  ) {
-    res
-      .status(400)
-      .json({ message: "All fields except description are required" });
+  if (!title || !description || !body) {
+    res.status(400).json({ message: "All fields required!" });
   }
 
   //* Getting related images' paths
@@ -111,38 +77,13 @@ const createNewProperty = async (req, res) => {
     imageUrls.push(image);
   });
 
-  //? Check for duplicate
+  //* Create new article
 
-  //* converts
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bathroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
-
-  //* Create new property
-
-  const property = await prismadb.property.create({
+  const article = await prismadb.article.create({
     data: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
-      location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      parkingCount: parkingCountInt,
-      bathroomCount: bathroomCountInt,
-      price,
-      rate: rateDecimal,
       description,
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
+      body,
       images: {
         create: imageUrls.map((url) => ({
           url,
@@ -151,39 +92,23 @@ const createNewProperty = async (req, res) => {
     },
     include: {
       images: true,
-      views: true,
     },
   });
 
-  if (property) {
+  if (article) {
     //*created
 
-    res.status(201).json({ message: `New property ${title} created.` });
+    res.status(201).json({ message: `New article ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid property data received!" });
+    res.status(400).json({ message: "Invalid article data received!" });
   }
 };
 
-// @desc Update a property
-// @route PATCH /properties/:id
+// @desc Update a article
+// @route PATCH /articles/:id
 //! @access Public
-const updateProperty = async (req, res) => {
-  const {
-    title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
-    location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
-    description,
-    status,
-  } = req.body;
+const updateArticle = async (req, res) => {
+  const { title, description, body } = req.body;
 
   const { id } = req.params;
 
@@ -192,28 +117,11 @@ const updateProperty = async (req, res) => {
   //* Confirm data
 
   if (!id) {
-    return res.status(400).json({ message: "Property ID required!" });
+    return res.status(400).json({ message: "Article ID required!" });
   }
 
-  if (
-    !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
-    !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !status ||
-    !convertedImages
-  ) {
-    return res
-      .status(400)
-      .json({ message: "All fields except description are required!" });
+  if (!title || !description || !body) {
+    return res.status(400).json({ message: "All fields required!" });
   }
 
   //* Getting related images' paths
@@ -224,80 +132,39 @@ const updateProperty = async (req, res) => {
     imageUrls.push(image);
   });
 
-  //* converts
+  //? Does the article exist to update?
 
-  const statusBoolean = JSON.parse(status);
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bedroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
-
-  //? Does the property exist to update?
-
-  const property = await prismadb.property.findUnique({
+  const article = await prismadb.article.findUnique({
     where: {
       id,
     },
   });
 
-  if (!property) {
-    res.status(400).json({ message: "Property not found!" });
+  if (!article) {
+    res.status(400).json({ message: "Article not found!" });
   }
 
-  //* Update property
+  //* Update article
 
-  await prismadb.property.update({
+  await prismadb.article.update({
     where: {
       id,
     },
     data: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
-      location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      bathroomCount: bathroomCountInt,
-      parkingCount: parkingCountInt,
-      price,
-      rate: rateDecimal,
       description,
-      status: statusBoolean,
-      views: {
-        deleteMany: {},
-      },
+      body,
       images: {
         deleteMany: {},
       },
     },
   });
 
-  //! update snippet alternative for images
-  // images: {
-  //         updateMany: imageUrls.map((imageUrl) => ({
-  //           where: {
-  //             propertyId,
-  //           },
-  //           data: {
-  //             url: imageUrl,
-  //           },
-  //         })),
-  //       },
-
-  const updatedProperty = await prismadb.property.update({
+  const updatedArticle = await prismadb.article.update({
     where: {
       id,
     },
     data: {
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
       images: {
         create: imageUrls.map((url) => ({
           url,
@@ -306,40 +173,44 @@ const updateProperty = async (req, res) => {
     },
   });
 
-  res.json({ message: `property ${updatedProperty.title} updated.` });
+  res.json({ message: `article ${updatedArticle.title} updated.` });
 };
 
-// @desc Delete a property
-// @route DELETE /properties/:id
+// @desc Delete a article
+// @route DELETE /articles/:id
 //! @access Public
-const deleteProperty = async (req, res) => {
+const deleteArticle = async (req, res) => {
   const { id } = req.params;
 
   //* Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Property ID required!" });
+    return res.status(400).json({ message: "Article ID required!" });
   }
 
-  // ? Does the property still have assigned relations?
-
-  //* Does the user exist to delete?
-  const property = await prismadb.property.findUnique({
+  //* Does the article exist to delete?
+  const article = await prismadb.article.findUnique({
     where: {
       id,
     },
   });
 
-  if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+  if (!article) {
+    return res.status(400).json({ message: "Article not found!" });
   }
 
-  const result = await prismadb.property.delete({
+  const result = await prismadb.article.delete({
     where: {
       id,
     },
   });
-  // Define the path to the property's images folder
-  const imagesFolder = path.join(__dirname, "..", "images", result.title);
+  // Define the path to the article's images folder
+  const imagesFolder = path.join(
+    __dirname,
+    "..",
+    "images",
+    "articles",
+    result.title
+  );
 
   // Check if the folder exists
   if (fs.existsSync(imagesFolder)) {
@@ -348,14 +219,14 @@ const deleteProperty = async (req, res) => {
   }
 
   res.json({
-    message: `Property ${result.title} with ID: ${result.id} deleted.`,
+    message: `Article ${result.title} with ID: ${result.id} deleted.`,
   });
 };
 
 module.exports = {
-  getPropertyById,
-  getAllProperties,
-  createNewProperty,
-  updateProperty,
-  deleteProperty,
+  getArticleById,
+  getAllArticles,
+  createNewArticle,
+  updateArticle,
+  deleteArticle,
 };

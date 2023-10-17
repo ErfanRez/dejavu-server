@@ -152,6 +152,20 @@ const deleteAgent = async (req, res) => {
       id,
     },
   });
+  // Define the path to the article's images folder
+  const imagesFolder = path.join(
+    __dirname,
+    "..",
+    "images",
+    "agents",
+    result.name
+  );
+
+  // Check if the folder exists
+  if (fs.existsSync(imagesFolder)) {
+    // Delete the folder and its contents
+    fs.rmSync(imagesFolder, { recursive: true, force: true });
+  }
 
   res.json({
     message: `Agent ${result.name} with ID: ${result.id} deleted.`,

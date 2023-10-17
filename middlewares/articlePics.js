@@ -20,7 +20,7 @@ const uploader = async (req, res, next) => {
       __dirname,
       "..",
       "images",
-      "properties",
+      "articles",
       req.body.title
     );
 

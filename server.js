@@ -20,11 +20,11 @@ app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
-app.use("/", express.static(path.join(__dirname, "public")));
-app.use("/", express.static(path.join(__dirname, "uploads")));
-app.use("/", express.static(path.join(__dirname, "images")));
+// app.use("/", express.static(path.join(__dirname, "public")));
+// app.use("/", express.static(path.join(__dirname, "uploads")));
+// app.use("/", express.static(path.join(__dirname, "images")));
 
-// ** app.use(express.static());
+app.use(express.static());
 
 app.use("/", require("./routes/root"));
 
