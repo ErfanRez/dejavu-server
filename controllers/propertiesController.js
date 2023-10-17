@@ -14,7 +14,7 @@ const searchProperties = async (req, res) => {
       .json({ error: "Search query parameter is missing." });
   }
 
-  const properties = await prisma.property.findMany({
+  const properties = await prismadb.property.findMany({
     where: {
       title: {
         contains: searchString,
