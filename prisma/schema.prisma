@@ -77,7 +77,7 @@ model Article {
   id          String @id @default(uuid())
   title       String
   description String
-  content     String
+  body        String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

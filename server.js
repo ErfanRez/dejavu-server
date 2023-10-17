@@ -3,7 +3,7 @@ require("express-async-errors");
 const express = require("express");
 const app = express();
 const path = require("path");
-const { logger, logEvents } = require("./middlewares/logger");
+const { logger } = require("./middlewares/logger");
 const errorHandler = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -18,7 +18,7 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", express.static(path.join(__dirname, "uploads")));
@@ -30,6 +30,9 @@ app.use("/", require("./routes/root"));
 
 // app.use("/auth", require("./routes/authRoutes"));
 app.use("/properties", require("./routes/propertiesRoutes"));
+app.use("/categories", require("./routes/categoriesRoutes"));
+app.use("/types", require("./routes/typesRoutes"));
+app.use("/articles", require("./routes/articlesRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);
