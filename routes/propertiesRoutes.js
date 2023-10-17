@@ -6,6 +6,7 @@ const fileUpload = require("express-fileupload");
 
 router
   .use(fileUpload())
+  .get("/search", propertiesControllers.searchProperties)
   .get("/", propertiesControllers.getAllProperties)
   .get("/:id", propertiesControllers.getPropertyById)
   .post("/", uploader, propertiesControllers.createNewProperty) // use upload.array("files", 5) middleware if needed.

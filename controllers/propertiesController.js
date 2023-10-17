@@ -2,6 +2,33 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fs = require("fs");
 
+// @desc Get searched properties
+// @route GET /properties/search
+//! @access Public
+const searchProperties = async (req, res) => {
+  const searchString = req.query.search; // Get the search string from query params
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const properties = await prisma.property.findMany({
+    where: {
+      title: {
+        contains: searchString,
+      },
+    },
+  });
+
+  if (!properties?.length) {
+    return res.status(400).json({ message: "No properties found" });
+  }
+
+  res.json(properties);
+};
+
 // @desc Get an unique property
 // @route GET /properties/:id
 //! @access Public
@@ -355,6 +382,7 @@ const deleteProperty = async (req, res) => {
 };
 
 module.exports = {
+  searchProperties,
   getPropertyById,
   getAllProperties,
   createNewProperty,
