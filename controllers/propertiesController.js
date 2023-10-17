@@ -344,7 +344,7 @@ const deleteProperty = async (req, res) => {
   // Check if the folder exists
   if (fs.existsSync(imagesFolder)) {
     // Delete the folder and its contents
-    fs.rmdirSync(imagesFolder, { recursive: true, force: true });
+    fs.rmSync(imagesFolder, { recursive: true, force: true });
   }
 
   res.json({
