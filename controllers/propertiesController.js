@@ -1,5 +1,37 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
+const fs = require("fs");
+
+// @desc Get an unique property
+// @route GET /Properties/:id
+//! @access Public
+const getPropertyById = async (req, res) => {
+  const { id } = req.params;
+
+  //* Confirm data
+  if (!id) {
+    return res.status(400).json({ message: "Property ID Required!" });
+  }
+
+  // ? Does the property still have assigned relations?
+
+  //* Does the user exist to delete?
+  const property = await prismadb.property.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      images: true,
+      views: true,
+    },
+  });
+
+  if (!property) {
+    return res.status(400).json({ message: "Property not found!" });
+  }
+
+  res.json(property);
+};
 
 // @desc Get all Properties
 // @route GET /Properties
@@ -11,6 +43,9 @@ const getAllProperties = async (req, res) => {
     include: {
       images: true,
       views: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -130,39 +165,50 @@ const createNewProperty = async (req, res) => {
 };
 
 // @desc Update a property
-// @route PATCH /property
+// @route PATCH /properties/:id
 //! @access Public
 const updateProperty = async (req, res) => {
   const {
     title,
-    type,
-    category,
+    categoryTitle,
+    typeTitle,
+    views,
     area,
     location,
+    floor,
     bedroomCount,
-    bathroomCount,
     parkingCount,
+    bathroomCount,
     price,
     rate,
     description,
+    status,
   } = req.body;
 
-  const { propertyId } = req.query;
+  const { id } = req.params;
+
   const convertedImages = req.convertedImages;
 
   //* Confirm data
 
+  if (!id) {
+    return res.status(400).json({ message: "Property ID Required!" });
+  }
+
   if (
     !title ||
-    !type ||
-    !category ||
+    !categoryTitle ||
+    !typeTitle ||
+    !views ||
     !area ||
     !location ||
+    !floor ||
     !bedroomCount ||
     !bathroomCount ||
     !parkingCount ||
     !price ||
     !rate ||
+    !status ||
     !convertedImages
   ) {
     return res
@@ -175,18 +221,14 @@ const updateProperty = async (req, res) => {
   const imageUrls = [];
 
   convertedImages.map((image) => {
-    const imagePath = path.join(
-      __dirname,
-      "..",
-      "images",
-      `${req.body.title}`,
-      image
-    );
-    imageUrls.push(imagePath);
+    imageUrls.push(image);
   });
 
   //* convert to int
 
+  const statusBoolean = JSON.parse(status);
+
+  const floorInt = parseInt(floor, 10);
   const areaInt = parseInt(area, 10);
   const bedroomCountInt = parseInt(bedroomCount, 10);
   const bathroomCountInt = parseInt(bedroomCount, 10);
@@ -197,11 +239,7 @@ const updateProperty = async (req, res) => {
 
   const property = await prismadb.property.findUnique({
     where: {
-      id: propertyId,
-    },
-    include: {
-      type: true,
-      images: true,
+      id,
     },
   });
 
@@ -211,48 +249,74 @@ const updateProperty = async (req, res) => {
 
   //* Update property
 
-  const updatedProperty = await prismadb.property.update({
+  await prismadb.property.update({
     where: {
-      id: propertyId,
+      id,
     },
     data: {
       title,
-      type,
+      category: categoryTitle,
+      type: typeTitle,
       area: areaInt,
       location,
+      floor: floorInt,
       bedroomCount: bedroomCountInt,
       bathroomCount: bathroomCountInt,
       parkingCount: parkingCountInt,
       price,
       rate: rateDecimal,
       description,
-      images: {
-        updateMany: imageUrls.map((imageUrl) => ({
-          where: {
-            propertyId,
-          },
-          data: {
-            url: imageUrl,
-          },
-        })),
+      status: statusBoolean,
+      views: {
+        deleteMany: {},
       },
-    },
-    include: {
-      images: true,
+      images: {
+        deleteMany: {},
+      },
     },
   });
 
-  res.json({ message: `${updatedProperty.title} Property updated` });
+  //! update snippet alternative for images
+  // images: {
+  //         updateMany: imageUrls.map((imageUrl) => ({
+  //           where: {
+  //             propertyId,
+  //           },
+  //           data: {
+  //             url: imageUrl,
+  //           },
+  //         })),
+  //       },
+
+  const updatedProperty = await prismadb.property.update({
+    where: {
+      id,
+    },
+    data: {
+      views: {
+        create: views.map((viewTitle) => ({
+          title: viewTitle,
+        })),
+      },
+      images: {
+        create: imageUrls.map((url) => ({
+          url,
+        })),
+      },
+    },
+  });
+
+  res.json({ message: `property ${updatedProperty.title} updated` });
 };
 
 // @desc Delete a property
-// @route DELETE /properties
+// @route DELETE /properties/:id
 //! @access Public
 const deleteProperty = async (req, res) => {
-  const { propertyId } = req.query;
+  const { id } = req.params;
 
   //* Confirm data
-  if (!propertyId) {
+  if (!id) {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
@@ -261,26 +325,35 @@ const deleteProperty = async (req, res) => {
   //* Does the user exist to delete?
   const property = await prismadb.property.findUnique({
     where: {
-      id: propertyId,
+      id,
     },
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found" });
+    return res.status(400).json({ message: "Property not found!" });
   }
 
   const result = await prismadb.property.delete({
     where: {
-      id: propertyId,
+      id,
     },
   });
+  // Define the path to the property's images folder
+  const imagesFolder = path.join(__dirname, "..", "images", result.title);
+
+  // Check if the folder exists
+  if (fs.existsSync(imagesFolder)) {
+    // Delete the folder and its contents
+    fs.rmdirSync(imagesFolder, { recursive: true, force: true });
+  }
 
   res.json({
-    message: `Property ${result.title} with ID ${result.id} deleted!`,
+    message: `Property ${result.title} with ID: ${result.id} deleted!`,
   });
 };
 
 module.exports = {
+  getPropertyById,
   getAllProperties,
   createNewProperty,
   updateProperty,

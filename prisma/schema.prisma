@@ -12,41 +12,41 @@ datasource db {
 }
 
 model Property {
-  id            String           @id @default(uuid())
+  id            String          @id @default(uuid())
   title         String
   category      String
   type          String
   views         View[]
   area          Int
-  location      String           @db.Text
+  location      String          @db.Text
   floor         Int
   bedroomCount  Int
   bathroomCount Int
   parkingCount  Int
   price         String
   rate          Decimal
-  images        PropertyImages[]
-  description   String?          @db.Text
-  status        Boolean          @default(true)
+  images        PropertyImage[]
+  description   String?         @db.Text
+  status        Boolean         @default(true)
 
-  creactedAt DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
   id    String @id @default(uuid())
   title String @unique
 
-  creadedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Type {
   id    String @id @default(uuid())
   title String @unique
 
-  creadedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model View {
@@ -55,20 +55,20 @@ model View {
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
-  creadedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([propertyId])
 }
 
-model PropertyImages {
+model PropertyImage {
   id         String   @id @default(uuid())
   url        String   @db.Text
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
-  creadedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([propertyId])
 }
@@ -78,8 +78,8 @@ model Agent {
   name     String
   imageUrl String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
 
-  creadedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // model feature {
