@@ -113,7 +113,7 @@ const createNewProperty = async (req, res) => {
 
   //? Check for duplicate
 
-  //* convert to int
+  //* converts
 
   const floorInt = parseInt(floor, 10);
   const areaInt = parseInt(area, 10);
@@ -158,9 +158,9 @@ const createNewProperty = async (req, res) => {
   if (property) {
     //*created
 
-    res.status(201).json({ message: `New property ${title} created` });
+    res.status(201).json({ message: `New property ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid property data received" });
+    res.status(400).json({ message: "Invalid property data received!" });
   }
 };
 
@@ -192,7 +192,7 @@ const updateProperty = async (req, res) => {
   //* Confirm data
 
   if (!id) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Property ID required!" });
   }
 
   if (
@@ -213,7 +213,7 @@ const updateProperty = async (req, res) => {
   ) {
     return res
       .status(400)
-      .json({ message: "All fields except description are required" });
+      .json({ message: "All fields except description are required!" });
   }
 
   //* Getting related images' paths
@@ -224,7 +224,7 @@ const updateProperty = async (req, res) => {
     imageUrls.push(image);
   });
 
-  //* convert to int
+  //* converts
 
   const statusBoolean = JSON.parse(status);
 
@@ -306,7 +306,7 @@ const updateProperty = async (req, res) => {
     },
   });
 
-  res.json({ message: `property ${updatedProperty.title} updated` });
+  res.json({ message: `property ${updatedProperty.title} updated.` });
 };
 
 // @desc Delete a property
@@ -317,7 +317,7 @@ const deleteProperty = async (req, res) => {
 
   //* Confirm data
   if (!id) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Property ID required!" });
   }
 
   // ? Does the property still have assigned relations?
@@ -348,7 +348,7 @@ const deleteProperty = async (req, res) => {
   }
 
   res.json({
-    message: `Property ${result.title} with ID: ${result.id} deleted!`,
+    message: `Property ${result.title} with ID: ${result.id} deleted.`,
   });
 };
 
