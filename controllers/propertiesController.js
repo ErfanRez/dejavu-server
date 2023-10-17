@@ -73,14 +73,7 @@ const createNewProperty = async (req, res) => {
   const imageUrls = [];
 
   convertedImages.map((image) => {
-    const imagePath = path.join(
-      __dirname,
-      "..",
-      "images",
-      `${req.body.title}`,
-      image
-    );
-    imageUrls.push(imagePath);
+    imageUrls.push(image);
   });
 
   //? Check for duplicate
