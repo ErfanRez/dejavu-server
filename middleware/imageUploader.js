@@ -47,6 +47,8 @@ const uploader = async (req, res, next) => {
     }
 
     console.log("Images converted to Webp.");
+    // Pass the generated file names to the next middleware or route
+    req.convertedImages = convertedImages;
   } catch (error) {
     console.error(error);
   }

@@ -1,4 +1,5 @@
 const prismadb = require("../lib/prismadb");
+const path = require("path");
 
 // @desc Get all Properties
 // @route GET /Properties
@@ -43,12 +44,7 @@ const createNewProperty = async (req, res) => {
   } = req.body;
 
   // console.log(req.files);
-
-  const imageUrls = [];
-
-  req.files.images.map((file) => {
-    imageUrls.push(file.name);
-  });
+  const convertedImages = req.convertedImages;
 
   //* Confirm data
 
@@ -65,12 +61,27 @@ const createNewProperty = async (req, res) => {
     !parkingCount ||
     !price ||
     !rate ||
-    !imageUrls
+    !convertedImages
   ) {
     res
       .status(400)
       .json({ message: "All fields except description are required" });
   }
+
+  //* Getting related images' paths
+
+  const imageUrls = [];
+
+  convertedImages.map((image) => {
+    const imagePath = path.join(
+      __dirname,
+      "..",
+      "images",
+      `${req.body.title}`,
+      image
+    );
+    imageUrls.push(imagePath);
+  });
 
   //? Check for duplicate
 
@@ -143,13 +154,8 @@ const updateProperty = async (req, res) => {
     description,
   } = req.body;
 
-  const imageUrls = [];
-
-  req.files.map((file) => {
-    imageUrls.push(file.filename);
-  });
-
   const { propertyId } = req.query;
+  const convertedImages = req.convertedImages;
 
   //* Confirm data
 
@@ -164,12 +170,27 @@ const updateProperty = async (req, res) => {
     !parkingCount ||
     !price ||
     !rate ||
-    !imageUrls
+    !convertedImages
   ) {
     return res
       .status(400)
       .json({ message: "All fields except description are required" });
   }
+
+  //* Getting related images' paths
+
+  const imageUrls = [];
+
+  convertedImages.map((image) => {
+    const imagePath = path.join(
+      __dirname,
+      "..",
+      "images",
+      `${req.body.title}`,
+      image
+    );
+    imageUrls.push(imagePath);
+  });
 
   //* convert to int
 
