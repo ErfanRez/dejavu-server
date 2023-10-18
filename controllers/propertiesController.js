@@ -233,7 +233,7 @@ const updateProperty = async (req, res) => {
     !parkingCount ||
     !price ||
     !rate ||
-    !status ||
+    !isAvailable ||
     !convertedImages
   ) {
     return res
@@ -251,7 +251,7 @@ const updateProperty = async (req, res) => {
 
   //* converts
 
-  const statusBoolean = JSON.parse(status);
+  const isAvailableBoolean = JSON.parse(isAvailable);
 
   const floorInt = parseInt(floor, 10);
   const areaInt = parseInt(area, 10);
@@ -291,7 +291,7 @@ const updateProperty = async (req, res) => {
       price,
       rate: rateDecimal,
       description,
-      status: statusBoolean,
+      isAvailable: isAvailableBoolean,
       views: {
         deleteMany: {},
       },
