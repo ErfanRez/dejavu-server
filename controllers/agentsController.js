@@ -54,7 +54,7 @@ const getAllAgents = async (req, res) => {
 // @route POST /agent
 //! @access Public
 const createNewAgent = async (req, res) => {
-  const { name, email, linkedin, instagram } = req.body;
+  const { name, email, linkedin, whatsapp } = req.body;
 
   // console.log(req.files);
   const convertedImage = req.convertedImage;
@@ -85,7 +85,7 @@ const createNewAgent = async (req, res) => {
       imageUrl: convertedImage,
       email,
       linkedin,
-      instagram,
+      whatsapp,
     },
   });
 
@@ -102,7 +102,7 @@ const createNewAgent = async (req, res) => {
 // @route PATCH /agents/:id
 //! @access Public
 const updateAgent = async (req, res) => {
-  const { name, email, linkedin, instagram } = req.body;
+  const { name, email, linkedin, whatsapp } = req.body;
   const { id } = req.params;
 
   // console.log(req.files);
@@ -129,7 +129,7 @@ const updateAgent = async (req, res) => {
       imageUrl: convertedImage,
       email,
       linkedin,
-      instagram,
+      whatsapp,
     },
   });
 

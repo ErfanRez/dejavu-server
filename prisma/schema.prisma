@@ -11,50 +11,90 @@ datasource db {
   relationMode = "prisma"
 }
 
+model User {
+  id       String  @id @default(uuid())
+  username String  @unique
+  email    String  @unique
+  password String
+  isAdmin  Boolean @default(false)
+  imageUrl String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Property {
+  id             String           @id @default(uuid())
+  title          String
+  description    String           @db.Text
+  propertyDetail PropertyDetail[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PropertyDetail {
   id            String          @id @default(uuid())
-  title         String
+  propertyId    String
+  property      Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   category      String
   type          String
   views         View[]
   area          Int
+  sqft          Int
   location      String          @db.Text
   floor         Int
   bedroomCount  Int
   bathroomCount Int
   parkingCount  Int
   price         String
+  installments  installment[]
   rate          Decimal
   images        PropertyImage[]
-  description   String?         @db.Text
   isAvailable   Boolean         @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+model installment {
+  id         String         @id @default(uuid())
+  title      String
+  percentage Int
+  price      Int
+  detailId   String
+  detail     PropertyDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([detailId])
 }
 
 model View {
-  id         String   @id @default(uuid())
-  title      String
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  id       String         @id @default(uuid())
+  title    String
+  detailId String
+  detail   PropertyDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([propertyId])
+  @@index([detailId])
 }
 
 model PropertyImage {
-  id         String   @id @default(uuid())
-  url        String   @db.Text
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  id       String         @id @default(uuid())
+  url      String         @db.Text
+  detailId String
+  detail   PropertyDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([propertyId])
+  @@index([detailId])
 }
 
 model Category {
@@ -97,12 +137,12 @@ model ArticleImage {
 }
 
 model Agent {
-  id        String  @id @default(uuid())
-  name      String  @unique
-  imageUrl  String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
-  email     String? @default("https://mail.google.com")
-  linkedin  String? @default("https://www.linkedin.com")
-  instagram String? @default("https://www.instagram.com")
+  id       String  @id @default(uuid())
+  name     String  @unique
+  imageUrl String? @default("https://sketchub.in/storage/project_files/23247/7520688.png")
+  email    String? @default("https://mail.google.com")
+  linkedin String? @default("https://www.linkedin.com")
+  whatsapp String? @default("https://api.whatsapp.com/send/?phone=")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
