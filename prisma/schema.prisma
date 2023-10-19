@@ -97,9 +97,12 @@ model ArticleImage {
 }
 
 model Agent {
-  id       String  @id @default(uuid())
-  name     String  @unique
-  imageUrl String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
+  id        String  @id @default(uuid())
+  name      String  @unique
+  imageUrl  String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
+  email     String? @default("https://mail.google.com")
+  linkedin  String? @default("https://www.linkedin.com")
+  instagram String? @default("https://www.instagram.com")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
