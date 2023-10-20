@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
-const uploader = require("../middlewares/propertyPic");
+const uploader = require("../middlewares/propertyPics");
 const fileUpload = require("express-fileupload");
 
 router

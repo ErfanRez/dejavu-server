@@ -6,7 +6,7 @@ const fs = require("fs");
 // @route GET /properties/search
 //! @access Public
 const searchProperties = async (req, res) => {
-  const searchString = req.query.search; // Get the search string from query params
+  const searchString = req.query.title; //* Get the search string from query params
 
   if (!searchString) {
     return res
@@ -23,7 +23,7 @@ const searchProperties = async (req, res) => {
   });
 
   if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found" });
+    return res.status(400).json({ message: "No properties found!" });
   }
 
   res.json(properties);
@@ -40,7 +40,7 @@ const getPropertyById = async (req, res) => {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
-  //* Does the property exist to delete?
+  //? Does the property exist?
   const property = await prismadb.property.findUnique({
     where: {
       id,
@@ -77,7 +77,7 @@ const getAllProperties = async (req, res) => {
   //* If no properties
 
   if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found" });
+    return res.status(400).json({ message: "No properties found!" });
   }
 
   res.json(properties);
@@ -207,7 +207,7 @@ const updateProperty = async (req, res) => {
     price,
     rate,
     description,
-    status,
+    isAvailable,
   } = req.body;
 
   const { id } = req.params;
@@ -270,6 +270,21 @@ const updateProperty = async (req, res) => {
 
   if (!property) {
     res.status(400).json({ message: "Property not found!" });
+  }
+
+  // Define the path to the property's images folder
+  const imagesFolder = path.join(
+    __dirname,
+    "..",
+    "images",
+    "properties",
+    property.title
+  );
+
+  // Check if the folder exists
+  if (fs.existsSync(imagesFolder)) {
+    // Delete the folder and its contents
+    fs.rmSync(imagesFolder, { recursive: true, force: true });
   }
 
   //* Update property
@@ -345,7 +360,7 @@ const deleteProperty = async (req, res) => {
     return res.status(400).json({ message: "Property ID required!" });
   }
 
-  //* Does the property exist to delete?
+  //? Does the property exist to delete?
   const property = await prismadb.property.findUnique({
     where: {
       id,
