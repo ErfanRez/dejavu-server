@@ -13,7 +13,7 @@ const getArticleById = async (req, res) => {
     return res.status(400).json({ message: "Article ID Required!" });
   }
 
-  //* Does the article exist to delete?
+  //? Does the article exist?
   const article = await prismadb.article.findUnique({
     where: {
       id,
@@ -187,7 +187,7 @@ const deleteArticle = async (req, res) => {
     return res.status(400).json({ message: "Article ID required!" });
   }
 
-  //* Does the article exist to delete?
+  //? Does the article exist to delete?
   const article = await prismadb.article.findUnique({
     where: {
       id,
