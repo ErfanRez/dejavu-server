@@ -7,9 +7,9 @@ const fileUpload = require("express-fileupload");
 router
   .use(fileUpload())
   .get("/", agentsControllers.getAllAgents)
-  .get("/:id", agentsControllers.getAgentById)
+  .get("/:agentId", agentsControllers.getAgentById)
   .post("/", uploader, agentsControllers.createNewAgent)
-  .patch("/:id", uploader, agentsControllers.updateAgent)
-  .delete("/:id", agentsControllers.deleteAgent);
+  .patch("/:agentId", uploader, agentsControllers.updateAgent)
+  .delete("/:agentId", agentsControllers.deleteAgent);
 
 module.exports = router;

@@ -3,13 +3,13 @@ const path = require("path");
 const fs = require("fs");
 
 // @desc Get an unique agent
-// @route GET /agents/:id
+// @route GET /agents/:agentId
 //! @access Public
 const getAgentById = async (req, res) => {
-  const { id } = req.params;
+  const { agentId } = req.params;
 
   //* Confirm data
-  if (!id) {
+  if (!agentId) {
     return res.status(400).json({ message: "Agent ID Required!" });
   }
 
@@ -18,7 +18,7 @@ const getAgentById = async (req, res) => {
   //* Does the agent exist to delete?
   const agent = await prismadb.agent.findUnique({
     where: {
-      id,
+      id: agentId,
     },
   });
 
@@ -44,7 +44,7 @@ const getAllAgents = async (req, res) => {
   //* If no agents
 
   if (!agents?.length) {
-    return res.status(400).json({ message: "No agents found" });
+    return res.status(400).json({ message: "No agents found!" });
   }
 
   res.json(agents);
@@ -54,7 +54,7 @@ const getAllAgents = async (req, res) => {
 // @route POST /agent
 //! @access Public
 const createNewAgent = async (req, res) => {
-  const { name, email, linkedin, whatsapp } = req.body;
+  const { name, phone, email, whatsapp } = req.body;
 
   // console.log(req.files);
   const convertedImage = req.convertedImage;
@@ -74,7 +74,7 @@ const createNewAgent = async (req, res) => {
   });
 
   if (duplicate) {
-    return res.status(409).json({ message: "agent title already exists!" });
+    return res.status(409).json({ message: "Agent title already exists!" });
   }
 
   //* Create new agent
@@ -83,8 +83,8 @@ const createNewAgent = async (req, res) => {
     data: {
       name,
       imageUrl: convertedImage,
+      phone,
       email,
-      linkedin,
       whatsapp,
     },
   });
@@ -99,18 +99,18 @@ const createNewAgent = async (req, res) => {
 };
 
 // @desc Update a agent
-// @route PATCH /agents/:id
+// @route PATCH /agents/:agentId
 //! @access Public
 const updateAgent = async (req, res) => {
-  const { name, email, linkedin, whatsapp } = req.body;
-  const { id } = req.params;
+  const { name, email, phone, whatsapp } = req.body;
+  const { agentId } = req.params;
 
   // console.log(req.files);
   const convertedImage = req.convertedImage;
 
   //* Confirm data
 
-  if (!id) {
+  if (!agentId) {
     return res.status(400).json({ message: "Agent ID required!" });
   }
 
@@ -122,13 +122,13 @@ const updateAgent = async (req, res) => {
 
   const updatedAgent = await prismadb.agent.update({
     where: {
-      id,
+      id: agentId,
     },
     data: {
       name,
       imageUrl: convertedImage,
+      phone,
       email,
-      linkedin,
       whatsapp,
     },
   });
@@ -140,17 +140,17 @@ const updateAgent = async (req, res) => {
 // @route DELETE /agents/:id
 //! @access Public
 const deleteAgent = async (req, res) => {
-  const { id } = req.params;
+  const { agentId } = req.params;
 
   //* Confirm data
-  if (!id) {
+  if (!agentId) {
     return res.status(400).json({ message: "Agent ID required!" });
   }
 
   //* Does the agent exist to delete?
   const agent = await prismadb.agent.findUnique({
     where: {
-      id,
+      id: agentId,
     },
   });
 
@@ -160,7 +160,7 @@ const deleteAgent = async (req, res) => {
 
   const result = await prismadb.agent.delete({
     where: {
-      id,
+      id: agentId,
     },
   });
   // Define the path to the article's images folder
