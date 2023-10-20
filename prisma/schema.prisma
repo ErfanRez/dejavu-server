@@ -24,77 +24,34 @@ model User {
 }
 
 model Property {
-  id             String           @id @default(uuid())
-  title          String
-  description    String           @db.Text
-  propertyDetail PropertyDetail[]
+  id           String          @id @default(uuid())
+  title        String
+  developer    String
+  city         String
+  country      String
+  location     String
+  category     String
+  description  String          @db.Text
+  saleDetails  SaleDetail[]
+  rentDetails  RentDetail[]
+  features     Feature[]
+  installments Installment[]
+  images       PropertyImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model PropertyDetail {
-  id            String          @id @default(uuid())
-  propertyId    String
-  property      Property        @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  category      String
-  type          String
-  views         View[]
-  area          Int
-  sqft          Int
-  location      String          @db.Text
-  floor         Int
-  bedroomCount  Int
-  bathroomCount Int
-  parkingCount  Int
-  price         String
-  installments  installment[]
-  rate          Decimal
-  images        PropertyImage[]
-  isAvailable   Boolean         @default(true)
+model PropertyImage {
+  id         String   @id @default(uuid())
+  url        String   @db.Text
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([propertyId])
-}
-
-model installment {
-  id         String         @id @default(uuid())
-  title      String
-  percentage Int
-  price      Int
-  detailId   String
-  detail     PropertyDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([detailId])
-}
-
-model View {
-  id       String         @id @default(uuid())
-  title    String
-  detailId String
-  detail   PropertyDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([detailId])
-}
-
-model PropertyImage {
-  id       String         @id @default(uuid())
-  url      String         @db.Text
-  detailId String
-  detail   PropertyDetail @relation(fields: [detailId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([detailId])
 }
 
 model Category {
@@ -103,6 +60,116 @@ model Category {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Feature {
+  id         String   @id @default(uuid())
+  title      String
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+model Installment {
+  id         String   @id @default(uuid())
+  title      String
+  percentage Int
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+model SaleDetail {
+  id            String      @id @default(uuid())
+  propertyId    String
+  property      Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  title         String
+  type          String
+  unitNo        String
+  floor         Int
+  views         View[]
+  area          Decimal
+  rPSqft        Decimal
+  totalPrice    Decimal
+  bedroomCount  Int
+  bathroomCount Int
+  parkingCount  Int
+  images        SaleImage[]
+  isAvailable   Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+model SaleImage {
+  id     String     @id @default(uuid())
+  url    String     @db.Text
+  saleId String
+  sale   SaleDetail @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([saleId])
+}
+
+model RentDetail {
+  id            String      @id @default(uuid())
+  propertyId    String
+  property      Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  title         String
+  type          String
+  unitNo        String
+  floor         Int
+  views         View[]
+  area          Decimal
+  rentPrice     Decimal
+  bedroomCount  Int
+  bathroomCount Int
+  parkingCount  Int
+  images        RentImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([propertyId])
+}
+
+model RentImage {
+  id     String     @id @default(uuid())
+  url    String     @db.Text
+  rentId String
+  rent   RentDetail @relation(fields: [rentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([rentId])
+}
+
+model View {
+  id     String     @id @default(uuid())
+  title  String
+  saleId String
+  sale   SaleDetail @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  rentId String
+  rent   RentDetail @relation(fields: [rentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([saleId])
+  @@index([rentId])
 }
 
 model Type {
@@ -147,14 +214,3 @@ model Agent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-// model feature {
-//   id    Int @id @default(autoincrement())
-//   title String
-// }
-
-// model Position {
-//   id Int @id @default(autoincrement())
-//   x String
-//   y String
-// }
