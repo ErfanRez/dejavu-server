@@ -19,8 +19,34 @@ model User {
   isAdmin  Boolean @default(false)
   imageUrl String? @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
 
+  favSales LikedSales[] // Relation to LikedSales model
+  favRents LikedRents[] // Relation to LikedRents model
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Intermediary for a many-to-many relationship
+model LikedSales {
+  id      String     @id @default(uuid())
+  userId  String // Foreign Key to User model
+  user    User       @relation(fields: [userId], references: [id])
+  saleId  String // Foreign Key to SaleDetail model
+  favSale SaleDetail @relation(fields: [saleId], references: [id])
+
+  @@index([userId])
+  @@index([saleId])
+}
+
+model LikedRents {
+  id      String     @id @default(uuid())
+  userId  String // Foreign Key to User
+  user    User       @relation(fields: [userId], references: [id])
+  rentId  String // Foreign Key to RentDetail model
+  favRent RentDetail @relation(fields: [rentId], references: [id])
+
+  @@index([userId])
+  @@index([rentId])
 }
 
 model Property {
@@ -32,11 +58,11 @@ model Property {
   location     String
   category     String
   description  String          @db.Text
-  saleDetails  SaleDetail[]
-  rentDetails  RentDetail[]
-  features     Feature[]
-  installments Installment[]
-  images       PropertyImage[]
+  saleDetails  SaleDetail[] // Relation to SaleDetail model
+  rentDetails  RentDetail[] // Relation to RentDetail model
+  features     Feature[] // Relation to Feature model
+  installments Installment[] // Relation to Installment model
+  images       PropertyImage[] // Relation to PropertyImage model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -45,7 +71,7 @@ model Property {
 model PropertyImage {
   id         String   @id @default(uuid())
   url        String   @db.Text
-  propertyId String
+  propertyId String // Foreign Key to Property model
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -65,7 +91,7 @@ model Category {
 model Feature {
   id         String   @id @default(uuid())
   title      String
-  propertyId String
+  propertyId String // Foreign Key to Property model
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -78,7 +104,7 @@ model Installment {
   id         String   @id @default(uuid())
   title      String
   percentage Int
-  propertyId String
+  propertyId String // Foreign Key to Property model
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -89,21 +115,23 @@ model Installment {
 
 model SaleDetail {
   id            String      @id @default(uuid())
-  propertyId    String
+  propertyId    String // Foreign Key to Property model
   property      Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   title         String
   type          String
   unitNo        String
   floor         Int
-  views         View[]
+  views         View[] // Relation to View model
   area          Decimal
   rPSqft        Decimal
   totalPrice    Decimal
   bedroomCount  Int
   bathroomCount Int
   parkingCount  Int
-  images        SaleImage[]
+  images        SaleImage[] // Relation to SaleImage model
   isAvailable   Boolean     @default(true)
+
+  favSales LikedSales[] // Relation to LikedSales model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -114,7 +142,7 @@ model SaleDetail {
 model SaleImage {
   id     String     @id @default(uuid())
   url    String     @db.Text
-  saleId String
+  saleId String // Foreign Key to SalesDetail model
   sale   SaleDetail @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -125,19 +153,21 @@ model SaleImage {
 
 model RentDetail {
   id            String      @id @default(uuid())
-  propertyId    String
+  propertyId    String // Foreign Key to Property model
   property      Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   title         String
   type          String
   unitNo        String
   floor         Int
-  views         View[]
+  views         View[] // Relation to View model
   area          Decimal
   rentPrice     Decimal
   bedroomCount  Int
   bathroomCount Int
   parkingCount  Int
-  images        RentImage[]
+  images        RentImage[] // Relation to RentImage model
+
+  favRents LikedRents[] // Relation to LikedRents model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -148,7 +178,7 @@ model RentDetail {
 model RentImage {
   id     String     @id @default(uuid())
   url    String     @db.Text
-  rentId String
+  rentId String // Foreign Key to RentDetail model
   rent   RentDetail @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -160,9 +190,9 @@ model RentImage {
 model View {
   id     String     @id @default(uuid())
   title  String
-  saleId String
+  saleId String // Foreign Key to SalesDetail model
   sale   SaleDetail @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  rentId String
+  rentId String // Foreign Key to RentDetail model
   rent   RentDetail @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -185,7 +215,7 @@ model Article {
   title       String
   description String         @db.Text
   body        String         @db.Text
-  images      ArticleImage[]
+  images      ArticleImage[] // Relation to ArticleImage model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -194,7 +224,7 @@ model Article {
 model ArticleImage {
   id        String  @id @default(uuid())
   url       String  @db.Text
-  articleId String
+  articleId String // Foreign Key to Article model
   property  Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
