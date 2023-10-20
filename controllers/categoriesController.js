@@ -13,7 +13,7 @@ const getAllCategories = async (req, res) => {
   //* If no categories
 
   if (!categories?.length) {
-    return res.status(400).json({ message: "No categories found" });
+    return res.status(400).json({ message: "No categories found!" });
   }
 
   res.json(categories);
@@ -60,16 +60,16 @@ const createNewCategory = async (req, res) => {
 };
 
 // @desc Update a category
-// @route PATCH /properties/:id
+// @route PATCH /properties/:catId
 //! @access Public
 const updateCategory = async (req, res) => {
   const { title } = req.body;
 
-  const { id } = req.params;
+  const { catId } = req.params;
 
   //* Confirm data
 
-  if (!id) {
+  if (!catId) {
     return res.status(400).json({ message: "Category ID required!" });
   }
 
@@ -81,7 +81,7 @@ const updateCategory = async (req, res) => {
 
   const category = await prismadb.category.findUnique({
     where: {
-      id,
+      id: catId,
     },
   });
 
@@ -93,7 +93,7 @@ const updateCategory = async (req, res) => {
 
   const updatedCategory = await prismadb.category.update({
     where: {
-      id,
+      id: catId,
     },
     data: {
       title,
@@ -104,20 +104,20 @@ const updateCategory = async (req, res) => {
 };
 
 // @desc Delete a category
-// @route DELETE /properties/:id
+// @route DELETE /properties/:catId
 //! @access Public
 const deleteCategory = async (req, res) => {
-  const { id } = req.params;
+  const { catId } = req.params;
 
   //* Confirm data
-  if (!id) {
+  if (!catId) {
     return res.status(400).json({ message: "Category ID required!" });
   }
 
   //* Does the category exist to delete?
   const category = await prismadb.category.findUnique({
     where: {
-      id,
+      id: catId,
     },
   });
 
@@ -127,7 +127,7 @@ const deleteCategory = async (req, res) => {
 
   const result = await prismadb.category.delete({
     where: {
-      id,
+      id: catId,
     },
   });
 
