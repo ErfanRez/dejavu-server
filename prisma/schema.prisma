@@ -122,7 +122,7 @@ model SaleDetail {
   title         String
   type          String
   unitNo        String
-  floor         Int
+  floor         String
   views         View[] // Relation to View model
   area          Decimal
   rPSqft        Decimal
@@ -159,7 +159,7 @@ model RentDetail {
   title         String
   type          String
   unitNo        String
-  floor         Int
+  floor         String
   views         View[] // Relation to View model
   area          Decimal
   rentPrice     Decimal
