@@ -66,6 +66,7 @@ model Property {
   images         PropertyImage[] // Relation to PropertyImage model
   offPlan        Boolean         @default(false)
   completionDate String?
+  description    String          @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -216,7 +217,7 @@ model Type {
 
 model Article {
   id          String         @id @default(uuid())
-  title       String
+  title       String         @unique
   description String         @db.Text
   body        String         @db.Text
   images      ArticleImage[] // Relation to ArticleImage model
