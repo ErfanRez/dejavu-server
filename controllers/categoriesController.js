@@ -1,5 +1,30 @@
 const prismadb = require("../lib/prismadb");
 
+// @desc Get an unique category
+// @route GET /categories/:id
+//! @access Public
+const getCategoryById = async (req, res) => {
+  const { id } = req.params;
+
+  //* Confirm data
+  if (!id) {
+    return res.status(400).json({ message: "Category ID Required!" });
+  }
+
+  //? Does the category exist?
+  const category = await prismadb.category.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!category) {
+    return res.status(400).json({ message: "Category not found!" });
+  }
+
+  res.json(category);
+};
+
 //! @access Public
 const getAllCategories = async (req, res) => {
   //* Get all categories from DB
@@ -137,6 +162,7 @@ const deleteCategory = async (req, res) => {
 };
 
 module.exports = {
+  getCategoryById,
   getAllCategories,
   createNewCategory,
   updateCategory,
