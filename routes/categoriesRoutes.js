@@ -5,7 +5,7 @@ const categoriesControllers = require("../controllers/categoriesController");
 router
   .get("/", categoriesControllers.getAllCategories)
   .post("/", categoriesControllers.createNewCategory)
-  .patch("/:catId", categoriesControllers.updateCategory)
-  .delete("/:catId", categoriesControllers.deleteCategory);
+  .patch("/:id", categoriesControllers.updateCategory)
+  .delete("/:id", categoriesControllers.deleteCategory);
 
 module.exports = router;
