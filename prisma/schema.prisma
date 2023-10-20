@@ -50,19 +50,21 @@ model LikedRents {
 }
 
 model Property {
-  id           String          @id @default(uuid())
-  title        String
-  developer    String
-  city         String
-  country      String
-  location     String
-  category     String
-  description  String          @db.Text
-  saleDetails  SaleDetail[] // Relation to SaleDetail model
-  rentDetails  RentDetail[] // Relation to RentDetail model
-  features     Feature[] // Relation to Feature model
-  installments Installment[] // Relation to Installment model
-  images       PropertyImage[] // Relation to PropertyImage model
+  id             String          @id @default(uuid())
+  title          String
+  developer      String
+  city           String
+  country        String
+  location       String
+  category       String
+  description    String          @db.Text
+  saleDetails    SaleDetail[] // Relation to SaleDetail model
+  rentDetails    RentDetail[] // Relation to RentDetail model
+  features       Feature[] // Relation to Feature model
+  installments   Installment[] // Relation to Installment model
+  images         PropertyImage[] // Relation to PropertyImage model
+  isAvailable    Boolean         @default(false)
+  completionDate DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -129,7 +131,6 @@ model SaleDetail {
   bathroomCount Int
   parkingCount  Int
   images        SaleImage[] // Relation to SaleImage model
-  isAvailable   Boolean     @default(true)
 
   favSales LikedSales[] // Relation to LikedSales model
 
