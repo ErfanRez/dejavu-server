@@ -51,7 +51,7 @@ model LikedRents {
 
 model Property {
   id             String          @id @default(uuid())
-  title          String
+  title          String          @unique
   developer      String
   city           String
   country        String
@@ -120,7 +120,7 @@ model SaleDetail {
   id           String      @id @default(uuid())
   propertyId   String // Foreign Key to Property model
   property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  title        String
+  title        String      @unique
   type         String
   unitNo       String
   floor        String
@@ -158,7 +158,7 @@ model RentDetail {
   id           String      @id @default(uuid())
   propertyId   String // Foreign Key to Property model
   property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  title        String
+  title        String      @unique
   type         String
   unitNo       String
   floor        String

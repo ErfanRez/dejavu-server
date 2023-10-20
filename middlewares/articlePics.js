@@ -5,37 +5,42 @@ const fspromises = require("fs").promises;
 
 const uploader = async (req, res, next) => {
   try {
-    const imageFiles = req.files?.images || [];
+    let imageFiles = req.files?.images;
 
     // Check if files were uploaded successfully
-    if (!imageFiles || !Array.isArray(imageFiles) || imageFiles.length === 0) {
+    if (!Array.isArray(imageFiles)) {
+      // Handle the case of a single uploaded file
+      imageFiles = [imageFiles];
+    }
+
+    // Check if any files were uploaded
+    if (imageFiles.length === 0) {
       console.log("No files were uploaded.");
       req.convertedImages = [];
       next();
     } else {
-      // Get the uploaded file data
-      const imagesData = imageFiles.map((image) => image.data);
-
-      // Define the output folder for converted images
-      const outputFolder = path.join(
-        __dirname,
-        "..",
-        "images",
-        "articles",
-        req.body.title
-      );
-
-      // Create the output folder if it doesn't exist
-      if (!fs.existsSync(outputFolder)) {
-        await fspromises.mkdir(outputFolder);
-      }
-
       const convertedImages = [];
 
       // Process each uploaded image and convert it to WebP format
-      for (const imageData of imagesData) {
+      for (const image of imageFiles) {
+        const imageData = image.data;
+
+        // Define the output folder for converted images
+        const outputFolder = path.join(
+          __dirname,
+          "..",
+          "images",
+          "articles",
+          req.body.title
+        );
+
+        // Create the output folder if it doesn't exist
+        if (!fs.existsSync(outputFolder)) {
+          await fspromises.mkdir(outputFolder);
+        }
+
         // Generate a unique file name for the WebP image
-        const webpFileName = `webp-${Date.now()}.webp`;
+        const webpFileName = `webp-${req.body.title}.webp`;
 
         // Define the full output file path
         const outputImagePath = path.join(outputFolder, webpFileName);
@@ -48,7 +53,7 @@ const uploader = async (req, res, next) => {
         convertedImages.push(outputImagePath);
       }
 
-      console.log("Images converted to Webp.");
+      console.log("Images converted to WebP.");
       // Pass the generated file names to the next middleware or route
       req.convertedImages = convertedImages;
       next();

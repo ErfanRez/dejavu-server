@@ -144,6 +144,21 @@ const updateArticle = async (req, res) => {
     res.status(400).json({ message: "Article not found!" });
   }
 
+  // Define the path to the article's images folder
+  const imagesFolder = path.join(
+    __dirname,
+    "..",
+    "images",
+    "articles",
+    article.title
+  );
+
+  // Check if the folder exists
+  if (fs.existsSync(imagesFolder)) {
+    // Delete the folder and its contents
+    fs.rmSync(imagesFolder, { recursive: true, force: true });
+  }
+
   //* Update article
 
   await prismadb.article.update({
@@ -203,6 +218,7 @@ const deleteArticle = async (req, res) => {
       id,
     },
   });
+
   // Define the path to the article's images folder
   const imagesFolder = path.join(
     __dirname,

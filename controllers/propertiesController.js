@@ -138,6 +138,16 @@ const createNewProperty = async (req, res) => {
 
   //? Check for duplicate
 
+  const duplicate = await prismadb.property.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Property title already exists!" });
+  }
+
   //* converts
 
   const floorInt = parseInt(floor, 10);

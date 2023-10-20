@@ -104,6 +104,7 @@ const updateAgent = async (req, res) => {
   const { id } = req.params;
 
   // console.log(req.files);
+
   const convertedImage = req.convertedImage;
 
   //* Confirm data
@@ -125,6 +126,21 @@ const updateAgent = async (req, res) => {
 
   if (!agent) {
     return res.status(400).json({ message: "Agent not found!" });
+  }
+
+  // Define the path to the agent's images folder
+  const imagesFolder = path.join(
+    __dirname,
+    "..",
+    "images",
+    "agents",
+    `webp-${agent.name}.webp`
+  );
+
+  // Check if the folder exists
+  if (fs.existsSync(imagesFolder)) {
+    // Delete the folder and its contents
+    fs.rmSync(imagesFolder, { recursive: true, force: true });
   }
 
   //* Update agent
