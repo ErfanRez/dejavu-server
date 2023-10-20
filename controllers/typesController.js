@@ -1,5 +1,30 @@
 const prismadb = require("../lib/prismadb");
 
+// @desc Get an unique type
+// @route GET /types/:id
+//! @access Public
+const getTypeById = async (req, res) => {
+  const { id } = req.params;
+
+  //* Confirm data
+  if (!id) {
+    return res.status(400).json({ message: "Type ID Required!" });
+  }
+
+  //? Does the type exist?
+  const type = await prismadb.type.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!type) {
+    return res.status(400).json({ message: "Type not found!" });
+  }
+
+  res.json(type);
+};
+
 //! @access Public
 const getAllTypes = async (req, res) => {
   //* Get all types from DB
@@ -114,7 +139,7 @@ const deleteType = async (req, res) => {
     return res.status(400).json({ message: "Type ID required!" });
   }
 
-  //* Does the type exist to delete?
+  //? Does the type exist to delete?
   const type = await prismadb.type.findUnique({
     where: {
       id,
@@ -137,6 +162,7 @@ const deleteType = async (req, res) => {
 };
 
 module.exports = {
+  getTypeById,
   getAllTypes,
   createNewType,
   updateType,
