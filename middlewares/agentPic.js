@@ -6,7 +6,6 @@ const fspromises = require("fs").promises;
 const uploader = async (req, res, next) => {
   try {
     const imageFile = req.files?.image;
-    console.log(req.files);
 
     // Check if a file was uploaded
     if (!imageFile) {
@@ -26,7 +25,7 @@ const uploader = async (req, res, next) => {
 
       // Process the uploaded image and convert it to WebP format
       // Generate a unique file name for the WebP image
-      const webpFileName = `webp-${req.body.name}.webp`;
+      const webpFileName = `webp-${req.body.name}-${Date.now()}.webp`;
 
       // Define the full output file path
       const outputImagePath = path.join(outputFolder, webpFileName);
