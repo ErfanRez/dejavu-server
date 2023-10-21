@@ -134,7 +134,7 @@ const updateAgent = async (req, res) => {
     "..",
     "images",
     "agents",
-    `webp-${agent.name}.webp`
+    agent.name
   );
 
   // Check if the folder exists
