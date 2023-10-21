@@ -59,15 +59,15 @@ model Property {
   category       String
   latitude       String
   longitude      String
+  offPlan        Boolean         @default(false)
+  completionDate String?
+  description    String          @db.Text
+  pdfUrl         String?
   saleUnits      SaleUnit[] // Relation to SaleUnit model
   rentUnits      RentUnit[] // Relation to RentUnit model
   amenities      Amenity[] // Relation to Feature model
   installments   Installment[] // Relation to Installment model
   images         PropertyImage[] // Relation to PropertyImage model
-  offPlan        Boolean         @default(false)
-  completionDate String?
-  description    String          @db.Text
-  pdfUrl         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -120,13 +120,10 @@ model Installment {
 
 model SaleUnit {
   id           String      @id @default(uuid())
-  propertyId   String // Foreign Key to Property model
-  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   title        String      @unique
   type         String
   unitNo       String
   floor        String
-  views        View[] // Relation to View model
   area         Decimal
   rPSqft       Decimal
   totalPrice   Decimal
@@ -134,6 +131,9 @@ model SaleUnit {
   bathrooms    Int
   parkingCount Int
   description  String      @db.Text
+  propertyId   String // Foreign Key to Property model
+  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  views        View[] // Relation to View model
   images       SaleImage[] // Relation to SaleImage model
 
   favSales LikedSales[] // Relation to LikedSales model
@@ -158,19 +158,19 @@ model SaleImage {
 
 model RentUnit {
   id           String      @id @default(uuid())
-  propertyId   String // Foreign Key to Property model
-  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   title        String      @unique
   type         String
   unitNo       String
   floor        String
-  views        View[] // Relation to View model
   area         Decimal
   rentPrice    Decimal
   bedrooms     Int
   bathrooms    Int
   parkingCount Int
   description  String      @db.Text
+  propertyId   String // Foreign Key to Property model
+  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  views        View[] // Relation to View model
   images       RentImage[] // Relation to RentImage model
 
   favRents LikedRents[] // Relation to LikedRents model
