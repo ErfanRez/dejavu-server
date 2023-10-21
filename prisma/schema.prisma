@@ -61,8 +61,8 @@ model Property {
   longitude      String
   offPlan        Boolean         @default(false)
   completionDate String?
-  description    String          @db.Text
   pdfUrl         String?
+  description    String          @db.Text
   saleUnits      SaleUnit[] // Relation to SaleUnit model
   rentUnits      RentUnit[] // Relation to RentUnit model
   amenities      Amenity[] // Relation to Feature model
