@@ -61,7 +61,7 @@ model Property {
   longitude      String
   saleDetails    SaleDetail[] // Relation to SaleDetail model
   rentDetails    RentDetail[] // Relation to RentDetail model
-  features       Feature[] // Relation to Feature model
+  amenities      Amenity[] // Relation to Feature model
   installments   Installment[] // Relation to Installment model
   images         PropertyImage[] // Relation to PropertyImage model
   offPlan        Boolean         @default(false)
@@ -93,7 +93,7 @@ model Category {
   updatedAt DateTime @updatedAt
 }
 
-model Feature {
+model Amenity {
   id         String   @id @default(uuid())
   title      String
   propertyId String // Foreign Key to Property model
