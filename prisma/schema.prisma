@@ -67,6 +67,7 @@ model Property {
   offPlan        Boolean         @default(false)
   completionDate String?
   description    String          @db.Text
+  pdfUrl         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
