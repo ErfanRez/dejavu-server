@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const fspromises = require("fs").promises;
 
-const uploader = async (req, res, next) => {
+const uploader = (subFolderName) => async (req, res, next) => {
   try {
     let imageFiles = req.files?.images || [];
 
@@ -28,7 +28,7 @@ const uploader = async (req, res, next) => {
           __dirname,
           "..",
           "images",
-          "properties",
+          subFolderName,
           req.body.title
         );
 
