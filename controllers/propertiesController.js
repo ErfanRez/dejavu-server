@@ -120,8 +120,7 @@ const createNewProperty = async (req, res) => {
     !bathroomCount ||
     !parkingCount ||
     !price ||
-    !rate ||
-    !convertedImages
+    !rate
   ) {
     res
       .status(400)
@@ -243,8 +242,7 @@ const updateProperty = async (req, res) => {
     !parkingCount ||
     !price ||
     !rate ||
-    !isAvailable ||
-    !convertedImages
+    !isAvailable
   ) {
     return res
       .status(400)

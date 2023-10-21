@@ -5,7 +5,7 @@ const fspromises = require("fs").promises;
 
 const uploader = async (req, res, next) => {
   try {
-    let imageFiles = req.files?.images;
+    let imageFiles = req.files?.images || [];
 
     // Check if files were uploaded successfully
     if (!Array.isArray(imageFiles)) {
@@ -15,9 +15,7 @@ const uploader = async (req, res, next) => {
 
     // Check if any files were uploaded
     if (imageFiles.length === 0) {
-      console.log("No files were uploaded.");
-      req.convertedImages = [];
-      next();
+      res.status(400).json({ message: "At least one image required!" });
     } else {
       const convertedImages = [];
 

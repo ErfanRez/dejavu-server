@@ -5,7 +5,7 @@ const fspromises = require("fs").promises;
 
 const uploader = async (req, res, next) => {
   try {
-    let imageFiles = req.files?.images;
+    let imageFiles = req.files?.images || [];
 
     // Check if files were uploaded successfully
     if (!Array.isArray(imageFiles)) {
