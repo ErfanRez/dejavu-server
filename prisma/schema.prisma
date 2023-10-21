@@ -28,22 +28,22 @@ model User {
 
 // Intermediary for a many-to-many relationship
 model LikedSales {
-  id      String     @id @default(uuid())
+  id      String   @id @default(uuid())
   userId  String // Foreign Key to User model
-  user    User       @relation(fields: [userId], references: [id])
-  saleId  String // Foreign Key to SaleDetail model
-  favSale SaleDetail @relation(fields: [saleId], references: [id])
+  user    User     @relation(fields: [userId], references: [id])
+  saleId  String // Foreign Key to SaleUnit model
+  favSale SaleUnit @relation(fields: [saleId], references: [id])
 
   @@index([userId])
   @@index([saleId])
 }
 
 model LikedRents {
-  id      String     @id @default(uuid())
+  id      String   @id @default(uuid())
   userId  String // Foreign Key to User
-  user    User       @relation(fields: [userId], references: [id])
-  rentId  String // Foreign Key to RentDetail model
-  favRent RentDetail @relation(fields: [rentId], references: [id])
+  user    User     @relation(fields: [userId], references: [id])
+  rentId  String // Foreign Key to RentUnit model
+  favRent RentUnit @relation(fields: [rentId], references: [id])
 
   @@index([userId])
   @@index([rentId])
@@ -59,8 +59,8 @@ model Property {
   category       String
   latitude       String
   longitude      String
-  saleDetails    SaleDetail[] // Relation to SaleDetail model
-  rentDetails    RentDetail[] // Relation to RentDetail model
+  saleUnits      SaleUnit[] // Relation to SaleUnit model
+  rentUnits      RentUnit[] // Relation to RentUnit model
   amenities      Amenity[] // Relation to Feature model
   installments   Installment[] // Relation to Installment model
   images         PropertyImage[] // Relation to PropertyImage model
@@ -118,7 +118,7 @@ model Installment {
   @@index([propertyId])
 }
 
-model SaleDetail {
+model SaleUnit {
   id           String      @id @default(uuid())
   propertyId   String // Foreign Key to Property model
   property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
@@ -145,10 +145,10 @@ model SaleDetail {
 }
 
 model SaleImage {
-  id     String     @id @default(uuid())
-  url    String     @db.Text
+  id     String   @id @default(uuid())
+  url    String   @db.Text
   saleId String // Foreign Key to SalesDetail model
-  sale   SaleDetail @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -156,7 +156,7 @@ model SaleImage {
   @@index([saleId])
 }
 
-model RentDetail {
+model RentUnit {
   id           String      @id @default(uuid())
   propertyId   String // Foreign Key to Property model
   property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
@@ -182,10 +182,10 @@ model RentDetail {
 }
 
 model RentImage {
-  id     String     @id @default(uuid())
-  url    String     @db.Text
-  rentId String // Foreign Key to RentDetail model
-  rent   RentDetail @relation(fields: [rentId], references: [id], onDelete: Cascade)
+  id     String   @id @default(uuid())
+  url    String   @db.Text
+  rentId String // Foreign Key to RentUnit model
+  rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -194,12 +194,12 @@ model RentImage {
 }
 
 model View {
-  id     String     @id @default(uuid())
+  id     String   @id @default(uuid())
   title  String
   saleId String // Foreign Key to SalesDetail model
-  sale   SaleDetail @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  rentId String // Foreign Key to RentDetail model
-  rent   RentDetail @relation(fields: [rentId], references: [id], onDelete: Cascade)
+  sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  rentId String // Foreign Key to RentUnit model
+  rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
