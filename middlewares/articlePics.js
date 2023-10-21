@@ -1,7 +1,6 @@
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
-const fspromises = require("fs").promises;
 
 const uploader = async (req, res, next) => {
   try {
