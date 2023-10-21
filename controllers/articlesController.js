@@ -48,7 +48,7 @@ const getAllArticles = async (req, res) => {
   //* If no articles
 
   if (!articles?.length) {
-    return res.status(400).json({ message: "No articles found" });
+    return res.status(400).json({ message: "No articles found!" });
   }
 
   res.json(articles);
