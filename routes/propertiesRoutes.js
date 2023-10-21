@@ -1,16 +1,64 @@
 const express = require("express");
 const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
+const saleUnitsController = require("../controllers/saleUnitsController");
+const rentUnitsController = require("../controllers/rentUnitsController");
 const uploader = require("../middlewares/propertyPics");
 const fileUpload = require("express-fileupload");
+const uploadPdf = require("../middlewares/fileUploader");
 
 router
   .use(fileUpload())
+  //! Properties Routes /properties/sale-units
   .get("/search", propertiesControllers.searchProperties)
   .get("/", propertiesControllers.getAllProperties)
-  .get("/:id", propertiesControllers.getPropertyById)
-  .post("/", uploader, propertiesControllers.createNewProperty) // use upload.array("files", 5) middleware if needed.
-  .patch("/:id", uploader, propertiesControllers.updateProperty) // use upload.array("files", 5) middleware if needed.
-  .delete("/:id", propertiesControllers.deleteProperty);
+  .get("/:pId", propertiesControllers.getPropertyById)
+  .post(
+    "/",
+    uploadPdf,
+    uploader("properties"),
+    propertiesControllers.createNewProperty
+  )
+  .patch(
+    "/:pId",
+    uploadPdf,
+    uploader("properties"),
+    propertiesControllers.updateProperty
+  )
+  .delete("/:pId", propertiesControllers.deleteProperty)
+  //! Sale units Routes /properties/sale-units
+  .get("/sale-units/search", saleUnitsController.searchSaleUnits)
+  .get("/:pId/sale-units/search", saleUnitsController.searchUnitsByPID)
+  .get("/sale-units", saleUnitsController.getAllSaleUnits)
+  .get("/:pId/sale-units", saleUnitsController.getAllUnitsByPID)
+  .get("/sale-units/:sId", saleUnitsController.getSaleUnitById)
+  .post(
+    "/:pId/sale-units",
+    uploader("sales"),
+    saleUnitsController.createNewSaleUnit
+  )
+  .patch(
+    "/sale-units/:sId",
+    uploader("sales"),
+    saleUnitsController.updateSaleUnit
+  )
+  .delete("/sale-units/:sId", saleUnitsController.deleteSaleUnit)
+  //! Rent units Routes /properties/rent-units
+  .get("/rent-units/search", rentUnitsController.searchRentUnits)
+  .get("/:pId/rent-units/search", rentUnitsController.searchUnitsByPID)
+  .get("/rent-units", rentUnitsController.getAllRentUnits)
+  .get("/:pId/rent-units", rentUnitsController.getAllUnitsByPID)
+  .get("/rent-units/:rId", rentUnitsController.getRentUnitById)
+  .post(
+    "/:pId/rent-units",
+    uploader("rents"),
+    rentUnitsController.createNewRentUnit
+  )
+  .patch(
+    "/rent-units/:rId",
+    uploader("rents"),
+    rentUnitsController.updateRentUnit
+  )
+  .delete("/rent-units/:rId", rentUnitsController.deleteRentUnit);
 
 module.exports = router;

@@ -7,7 +7,7 @@ const uploader = async (req, res, next) => {
   try {
     let imageFiles = req.files?.images || [];
 
-    // Check if files were uploaded successfully
+    // Check if multiple/one files uploaded
     if (!Array.isArray(imageFiles)) {
       // Handle the case of a single uploaded file
       imageFiles = [imageFiles];
@@ -19,6 +19,15 @@ const uploader = async (req, res, next) => {
       req.convertedImages = [];
       next();
     } else {
+      // Check the MIME type of each uploaded image file
+      for (const file of imageFiles) {
+        if (!file.mimetype.startsWith("image")) {
+          return res
+            .status(400)
+            .json({ message: "Only image files are allowed." });
+        }
+      }
+
       const convertedImages = [];
 
       // Process each uploaded image and convert it to WebP format
@@ -29,6 +38,7 @@ const uploader = async (req, res, next) => {
         const outputFolder = path.join(
           __dirname,
           "..",
+          "uploads",
           "images",
           "articles",
           req.body.title
@@ -36,7 +46,7 @@ const uploader = async (req, res, next) => {
 
         // Create the output folder if it doesn't exist
         if (!fs.existsSync(outputFolder)) {
-          await fspromises.mkdir(outputFolder);
+          fs.mkdirSync(outputFolder, { recursive: true });
         }
 
         // Generate a unique file name for the WebP image

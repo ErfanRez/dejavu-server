@@ -1,6 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
-const fs = require("fs");
+const fileDelete = require("../utils/fileDelete");
 
 // @desc Get an unique article
 // @route GET /articles/:id
@@ -69,14 +69,6 @@ const createNewArticle = async (req, res) => {
     res.status(400).json({ message: "All fields required!" });
   }
 
-  //* Getting related images' paths
-
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
-
   //* Create new article
 
   const article = await prismadb.article.create({
@@ -85,7 +77,7 @@ const createNewArticle = async (req, res) => {
       description,
       body,
       images: {
-        create: imageUrls.map((url) => ({
+        create: convertedImages.map((url) => ({
           url,
         })),
       },
@@ -124,14 +116,6 @@ const updateArticle = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
-  //* Getting related images' paths
-
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
-
   //? Does the article exist to update?
 
   const article = await prismadb.article.findUnique({
@@ -148,16 +132,13 @@ const updateArticle = async (req, res) => {
   const imagesFolder = path.join(
     __dirname,
     "..",
+    "uploads",
     "images",
     "articles",
-    article.title
+    result.title
   );
 
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
+  fileDelete(imagesFolder);
 
   //* Update article
 
@@ -181,7 +162,7 @@ const updateArticle = async (req, res) => {
     },
     data: {
       images: {
-        create: imageUrls.map((url) => ({
+        create: convertedImages.map((url) => ({
           url,
         })),
       },
@@ -223,16 +204,13 @@ const deleteArticle = async (req, res) => {
   const imagesFolder = path.join(
     __dirname,
     "..",
+    "uploads",
     "images",
     "articles",
     result.title
   );
 
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
+  fileDelete(imagesFolder);
 
   res.json({
     message: `Article ${result.title} with ID: ${result.id} deleted.`,

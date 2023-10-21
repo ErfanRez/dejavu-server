@@ -12,15 +12,27 @@ const uploader = async (req, res, next) => {
       console.log("No files were uploaded.");
       next();
     } else {
+      if (imageFile.mimetype.startsWith("image")) {
+        return res
+          .status(400)
+          .json({ message: "Only image files are allowed." });
+      }
+
       // Get the uploaded file data
       const imageData = imageFile.data;
 
       // Define the output folder for converted images
-      const outputFolder = path.join(__dirname, "..", "images", "agents");
+      const outputFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "agents"
+      );
 
       // Create the output folder if it doesn't exist
       if (!fs.existsSync(outputFolder)) {
-        await fspromises.mkdir(outputFolder);
+        fs.mkdirSync(outputFolder, { recursive: true });
       }
 
       // Process the uploaded image and convert it to WebP format

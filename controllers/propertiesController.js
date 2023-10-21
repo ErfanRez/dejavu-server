@@ -1,6 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
-const fs = require("fs");
+const fileDelete = require("../utils/fileDelete");
 
 // @desc Get searched properties
 // @route GET /properties/search
@@ -20,7 +20,16 @@ const searchProperties = async (req, res) => {
         contains: searchString,
       },
     },
+    include: {
+      images: true,
+      amenities: true,
+      saleUnits: true,
+      rentUnits: true,
+      installments: true,
+    },
   });
+
+  //* If no properties
 
   if (!properties?.length) {
     return res.status(400).json({ message: "No properties found!" });
@@ -30,24 +39,27 @@ const searchProperties = async (req, res) => {
 };
 
 // @desc Get an unique property
-// @route GET /properties/:id
+// @route GET /properties/:pId
 //! @access Public
 const getPropertyById = async (req, res) => {
-  const { id } = req.params;
+  const { pId } = req.params;
 
   //* Confirm data
-  if (!id) {
+  if (!pId) {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
   //? Does the property exist?
   const property = await prismadb.property.findUnique({
     where: {
-      id,
+      id: pId,
     },
     include: {
       images: true,
-      views: true,
+      amenities: true,
+      saleUnits: true,
+      rentUnits: true,
+      installments: true,
     },
   });
 
@@ -67,7 +79,10 @@ const getAllProperties = async (req, res) => {
   const properties = await prismadb.property.findMany({
     include: {
       images: true,
-      views: true,
+      amenities: true,
+      saleUnits: true,
+      rentUnits: true,
+      installments: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -89,51 +104,37 @@ const getAllProperties = async (req, res) => {
 const createNewProperty = async (req, res) => {
   const {
     title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
+    developer,
+    city,
+    country,
     location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
+    category,
+    latitude,
+    longitude,
+    offPlan,
+    completionDate,
     description,
   } = req.body;
 
   // console.log(req.files);
   const convertedImages = req.convertedImages;
+  const pdfUrl = req.pdfUrl;
 
   //* Confirm data
 
   if (
     !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
+    !developer ||
+    !city ||
+    !country ||
     !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate
+    !category ||
+    !latitude ||
+    !longitude ||
+    !description
   ) {
-    res
-      .status(400)
-      .json({ message: "All fields except description required!" });
+    res.status(400).json({ message: "All fields required!" });
   }
-
-  //* Getting related images' paths
-
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
 
   //? Check for duplicate
 
@@ -149,43 +150,38 @@ const createNewProperty = async (req, res) => {
 
   //* converts
 
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bathroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
+  offPlan
+    ? (offPlanBoolean = JSON.parse(offPlan))
+    : (offPlanBoolean = undefined);
 
   //* Create new property
 
   const property = await prismadb.property.create({
     data: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
+      developer,
+      city,
+      country,
       location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      parkingCount: parkingCountInt,
-      bathroomCount: bathroomCountInt,
-      price,
-      rate: rateDecimal,
+      category,
+      latitude,
+      longitude,
+      offPlan: offPlanBoolean,
+      completionDate,
       description,
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
+      pdfUrl,
       images: {
-        create: imageUrls.map((url) => ({
+        create: convertedImages.map((url) => ({
           url,
         })),
       },
     },
     include: {
       images: true,
-      views: true,
+      amenities: true,
+      saleUnits: true,
+      rentUnits: true,
+      installments: true,
     },
   });
 
@@ -199,80 +195,59 @@ const createNewProperty = async (req, res) => {
 };
 
 // @desc Update a property
-// @route PATCH /properties/:id
+// @route PATCH /properties/:pId
 //! @access Public
 const updateProperty = async (req, res) => {
   const {
     title,
-    categoryTitle,
-    typeTitle,
-    views,
-    area,
+    developer,
+    city,
+    country,
     location,
-    floor,
-    bedroomCount,
-    parkingCount,
-    bathroomCount,
-    price,
-    rate,
+    category,
+    latitude,
+    longitude,
+    offPlan,
+    completionDate,
     description,
-    isAvailable,
   } = req.body;
 
-  const { id } = req.params;
+  const { pId } = req.params;
 
   const convertedImages = req.convertedImages;
+  const pdfUrl = req.pdfUrl;
 
   //* Confirm data
 
-  if (!id) {
+  if (!pId) {
     return res.status(400).json({ message: "Property ID required!" });
   }
 
   if (
     !title ||
-    !categoryTitle ||
-    !typeTitle ||
-    !views ||
-    !area ||
+    !developer ||
+    !city ||
+    !country ||
     !location ||
-    !floor ||
-    !bedroomCount ||
-    !bathroomCount ||
-    !parkingCount ||
-    !price ||
-    !rate ||
-    !isAvailable
+    !category ||
+    !latitude ||
+    !longitude ||
+    !description
   ) {
-    return res
-      .status(400)
-      .json({ message: "All fields except description required!" });
+    return res.status(400).json({ message: "All fields required!" });
   }
-
-  //* Getting related images' paths
-
-  const imageUrls = [];
-
-  convertedImages.map((image) => {
-    imageUrls.push(image);
-  });
 
   //* converts
 
-  const isAvailableBoolean = JSON.parse(isAvailable);
-
-  const floorInt = parseInt(floor, 10);
-  const areaInt = parseInt(area, 10);
-  const bedroomCountInt = parseInt(bedroomCount, 10);
-  const bathroomCountInt = parseInt(bedroomCount, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-  const rateDecimal = parseFloat(rate);
+  offPlan
+    ? (offPlanBoolean = JSON.parse(offPlan))
+    : (offPlanBoolean = undefined);
 
   //? Does the property exist to update?
 
   const property = await prismadb.property.findUnique({
     where: {
-      id,
+      id: pId,
     },
   });
 
@@ -284,70 +259,57 @@ const updateProperty = async (req, res) => {
   const imagesFolder = path.join(
     __dirname,
     "..",
+    "uploads",
     "images",
     "properties",
     property.title
   );
 
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
+  fileDelete(imagesFolder);
+
+  // Define the path to the property's images folder
+  const pdfFolder = path.join(
+    __dirname,
+    "..",
+    "uploads",
+    "factSheets",
+    `${property.title}.pdf`
+  );
+
+  fileDelete(pdfFolder);
 
   //* Update property
 
   await prismadb.property.update({
     where: {
-      id,
+      id: pId,
     },
     data: {
       title,
-      category: categoryTitle,
-      type: typeTitle,
-      area: areaInt,
+      developer,
+      city,
+      country,
       location,
-      floor: floorInt,
-      bedroomCount: bedroomCountInt,
-      bathroomCount: bathroomCountInt,
-      parkingCount: parkingCountInt,
-      price,
-      rate: rateDecimal,
+      category,
+      latitude,
+      longitude,
+      offPlan: offPlanBoolean,
+      completionDate,
       description,
-      isAvailable: isAvailableBoolean,
-      views: {
-        deleteMany: {},
-      },
+      pdfUrl,
       images: {
         deleteMany: {},
       },
     },
   });
 
-  //! update snippet alternative for images
-  // images: {
-  //         updateMany: imageUrls.map((imageUrl) => ({
-  //           where: {
-  //             propertyId,
-  //           },
-  //           data: {
-  //             url: imageUrl,
-  //           },
-  //         })),
-  //       },
-
   const updatedProperty = await prismadb.property.update({
     where: {
-      id,
+      id: pId,
     },
     data: {
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
       images: {
-        create: imageUrls.map((url) => ({
+        create: convertedImages.map((url) => ({
           url,
         })),
       },
@@ -358,20 +320,20 @@ const updateProperty = async (req, res) => {
 };
 
 // @desc Delete a property
-// @route DELETE /properties/:id
+// @route DELETE /properties/:pId
 //! @access Public
 const deleteProperty = async (req, res) => {
-  const { id } = req.params;
+  const { pId } = req.params;
 
   //* Confirm data
-  if (!id) {
+  if (!pId) {
     return res.status(400).json({ message: "Property ID required!" });
   }
 
   //? Does the property exist to delete?
   const property = await prismadb.property.findUnique({
     where: {
-      id,
+      id: pId,
     },
   });
 
@@ -381,23 +343,32 @@ const deleteProperty = async (req, res) => {
 
   const result = await prismadb.property.delete({
     where: {
-      id,
+      id: pId,
     },
   });
+
   // Define the path to the property's images folder
   const imagesFolder = path.join(
     __dirname,
     "..",
+    "uploads",
     "images",
     "properties",
     result.title
   );
 
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
+  fileDelete(imagesFolder);
+
+  // Define the path to the property's images folder
+  const pdfFolder = path.join(
+    __dirname,
+    "..",
+    "uploads",
+    "factSheets",
+    `${result.title}.pdf`
+  );
+
+  fileDelete(pdfFolder);
 
   res.json({
     message: `Property ${result.title} with ID: ${result.id} deleted.`,

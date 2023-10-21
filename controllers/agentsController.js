@@ -1,6 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
-const fs = require("fs");
+const fileDelete = require("../utils/fileDelete");
 
 // @desc Get an unique agent
 // @route GET /agents/:id
@@ -132,16 +132,13 @@ const updateAgent = async (req, res) => {
   const imagesFolder = path.join(
     __dirname,
     "..",
+    "uploads",
     "images",
     "agents",
     `${agent.name}.webp`
   );
 
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
+  fileDelete(imagesFolder);
 
   //* Update agent
 
@@ -189,20 +186,17 @@ const deleteAgent = async (req, res) => {
     },
   });
 
-  // Define the path to the article's images folder
+  // Define the path to the agent's images folder
   const imagesFolder = path.join(
     __dirname,
     "..",
+    "uploads",
     "images",
     "agents",
     `${agent.name}.webp`
   );
 
-  // Check if the folder exists
-  if (fs.existsSync(imagesFolder)) {
-    // Delete the folder and its contents
-    fs.rmSync(imagesFolder, { recursive: true, force: true });
-  }
+  fileDelete(imagesFolder);
 
   res.json({
     message: `Agent ${result.name} with ID: ${result.id} deleted.`,
