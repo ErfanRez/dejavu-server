@@ -138,7 +138,9 @@ const updateAgent = async (req, res) => {
     `${agent.name}.webp`
   );
 
-  fileDelete(imagesFolder);
+  if (convertedImage) {
+    fileDelete(imagesFolder);
+  }
 
   //* Update agent
 

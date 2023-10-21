@@ -363,7 +363,9 @@ const updateRentUnit = async (req, res) => {
     unit.title
   );
 
-  fileDelete(imagesFolder);
+  if (convertedImages) {
+    fileDelete(imagesFolder);
+  }
 
   //* Update rentUnit
 

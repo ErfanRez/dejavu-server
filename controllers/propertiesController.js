@@ -265,7 +265,9 @@ const updateProperty = async (req, res) => {
     property.title
   );
 
-  fileDelete(imagesFolder);
+  if (convertedImages) {
+    fileDelete(imagesFolder);
+  }
 
   // Define the path to the property's images folder
   const pdfFolder = path.join(

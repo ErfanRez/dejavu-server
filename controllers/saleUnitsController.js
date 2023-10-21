@@ -473,7 +473,9 @@ const deleteSaleUnit = async (req, res) => {
     result.title
   );
 
-  fileDelete(imagesFolder);
+  if (convertedImages) {
+    fileDelete(imagesFolder);
+  }
 
   res.json({
     message: `Unit ${result.title} with ID: ${result.id} deleted.`,

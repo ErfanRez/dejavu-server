@@ -138,7 +138,9 @@ const updateArticle = async (req, res) => {
     result.title
   );
 
-  fileDelete(imagesFolder);
+  if (convertedImages) {
+    fileDelete(imagesFolder);
+  }
 
   //* Update article
 
