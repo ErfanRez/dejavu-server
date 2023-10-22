@@ -167,10 +167,10 @@ const updateArticle = async (req, res) => {
     "uploads",
     "images",
     "articles",
-    result.title
+    article.title
   );
 
-  if (convertedImages) {
+  if (title !== article.title && convertedImages) {
     fileDelete(imagesFolder);
   }
 

@@ -255,7 +255,7 @@ const updateProperty = async (req, res) => {
     property.title
   );
 
-  if (convertedImages) {
+  if (title !== property.title && convertedImages) {
     fileDelete(imagesFolder);
   }
 

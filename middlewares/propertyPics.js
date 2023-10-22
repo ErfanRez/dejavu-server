@@ -12,8 +12,9 @@ const uploader = (subFolderName) => async (req, res, next) => {
   }
 
   // Check if any files were uploaded
-  if (imageFiles.length === 0) {
-    res.status(400).json({ message: "At least one image required!" });
+  if (imageFiles.length === 0 && req.method !== "PATCH") {
+    return res.status(400).json({ message: "At least one image required!" });
+    // If it's a PATCH request, don't send an error response, but proceed to the next middleware or route
   } else {
     // Check the MIME type of each uploaded image file
     for (const file of imageFiles) {

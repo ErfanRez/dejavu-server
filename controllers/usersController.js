@@ -186,10 +186,10 @@ const updateUser = async (req, res) => {
     "uploads",
     "images",
     "users",
-    `${user.name}.webp`
+    `${user.username}.webp`
   );
 
-  if (convertedImage) {
+  if (username !== user.username && convertedImage) {
     fileDelete(imagesFolder);
   }
 
