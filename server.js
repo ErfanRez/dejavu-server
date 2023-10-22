@@ -28,6 +28,7 @@ app.use("/", express.static(path.join(__dirname, "images")));
 app.use("/", require("./routes/root"));
 
 // app.use("/auth", require("./routes/authRoutes"));
+app.use("/users", require("./routes/userRoutes"));
 app.use("/properties", require("./routes/propertiesRoutes"));
 app.use("/categories", require("./routes/categoriesRoutes"));
 app.use("/types", require("./routes/typesRoutes"));
