@@ -117,9 +117,6 @@ const createNewArticle = async (req, res) => {
         })),
       },
     },
-    include: {
-      images: true,
-    },
   });
 
   if (article) {

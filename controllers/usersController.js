@@ -79,6 +79,10 @@ const getUserById = async (req, res) => {
     where: {
       id: uId,
     },
+    include: {
+      favSales: true,
+      favRents: true,
+    },
   });
 
   if (!user) {
@@ -132,10 +136,6 @@ const createNewUser = async (req, res) => {
       email,
       isAdmin: isAdminBoolean,
       imageUrl: convertedImage,
-    },
-    include: {
-      favSales: true,
-      favRents: true,
     },
   });
 

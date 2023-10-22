@@ -303,10 +303,6 @@ const createNewSaleUnit = async (req, res) => {
         })),
       },
     },
-    include: {
-      images: true,
-      views: true,
-    },
   });
 
   if (unit) {

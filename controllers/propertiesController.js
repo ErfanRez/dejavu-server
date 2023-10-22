@@ -179,13 +179,6 @@ const createNewProperty = async (req, res) => {
         })),
       },
     },
-    include: {
-      images: true,
-      amenities: true,
-      saleUnits: true,
-      rentUnits: true,
-      installments: true,
-    },
   });
 
   if (property) {
