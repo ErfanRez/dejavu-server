@@ -377,7 +377,7 @@ const updateRentUnit = async (req, res) => {
 
   if (title !== unit.title) {
     //* Check if new images provided
-    if (!convertedImages) {
+    if (convertedImages.length === 0) {
       renameOldFile("rents", unit.title, title);
 
       const imagesFolder = path.join(
