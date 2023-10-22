@@ -19,15 +19,15 @@ model User {
   isAdmin  Boolean @default(false)
   imageUrl String  @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
 
-  favSales LikedSales[] // Relation to LikedSales model
-  favRents LikedRents[] // Relation to LikedRents model
+  favSales FavSales[] // Relation to FavSales model
+  favRents FavRents[] // Relation to FavRents model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 // Intermediary for a many-to-many relationship
-model LikedSales {
+model FavSales {
   id      String   @id @default(uuid())
   userId  String // Foreign Key to User model
   user    User     @relation(fields: [userId], references: [id])
@@ -38,7 +38,7 @@ model LikedSales {
   @@index([saleId])
 }
 
-model LikedRents {
+model FavRents {
   id      String   @id @default(uuid())
   userId  String // Foreign Key to User
   user    User     @relation(fields: [userId], references: [id])
@@ -136,7 +136,7 @@ model SaleUnit {
   views        View[] // Relation to View model
   images       SaleImage[] // Relation to SaleImage model
 
-  favSales LikedSales[] // Relation to LikedSales model
+  favSales FavSales[] // Relation to FavSales model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -173,7 +173,7 @@ model RentUnit {
   views        View[] // Relation to View model
   images       RentImage[] // Relation to RentImage model
 
-  favRents LikedRents[] // Relation to LikedRents model
+  favRents FavRents[] // Relation to FavRents model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
