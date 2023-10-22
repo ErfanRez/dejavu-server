@@ -28,22 +28,22 @@ model User {
 
 // Intermediary for a many-to-many relationship
 model FavSale {
-  id      String   @id @default(uuid())
-  userId  String // Foreign Key to User model
-  user    User     @relation(fields: [userId], references: [id])
-  saleId  String // Foreign Key to SaleUnit model
-  favSale SaleUnit @relation(fields: [saleId], references: [id])
+  id       String   @id @default(uuid())
+  userId   String // Foreign Key to User model
+  user     User     @relation(fields: [userId], references: [id])
+  saleId   String // Foreign Key to SaleUnit model
+  SaleUnit SaleUnit @relation(fields: [saleId], references: [id])
 
   @@index([userId])
   @@index([saleId])
 }
 
 model FavRent {
-  id      String   @id @default(uuid())
-  userId  String // Foreign Key to User
-  user    User     @relation(fields: [userId], references: [id])
-  rentId  String // Foreign Key to RentUnit model
-  favRent RentUnit @relation(fields: [rentId], references: [id])
+  id       String   @id @default(uuid())
+  userId   String // Foreign Key to User
+  user     User     @relation(fields: [userId], references: [id])
+  rentId   String // Foreign Key to RentUnit model
+  rentUnit RentUnit @relation(fields: [rentId], references: [id])
 
   @@index([userId])
   @@index([rentId])
