@@ -35,7 +35,7 @@ const searchProperties = async (req, res) => {
   //* If no properties
 
   if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found!" });
+    return res.status(404).json({ message: "No properties found!" });
   }
 
   res.json(properties);
@@ -67,7 +67,7 @@ const getPropertyById = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   res.json(property);
@@ -95,7 +95,7 @@ const getAllProperties = async (req, res) => {
   //* If no properties
 
   if (!properties?.length) {
-    return res.status(400).json({ message: "No properties found!" });
+    return res.status(404).json({ message: "No properties found!" });
   }
 
   res.json(properties);
@@ -249,7 +249,7 @@ const updateProperty = async (req, res) => {
   });
 
   if (!property) {
-    res.status(400).json({ message: "Property not found!" });
+    res.status(404).json({ message: "Property not found!" });
   }
 
   // Define the path to the property's images folder
@@ -345,7 +345,7 @@ const deleteProperty = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   const result = await prismadb.property.delete({

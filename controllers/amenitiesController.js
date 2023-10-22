@@ -26,7 +26,7 @@ const searchAmenities = async (req, res) => {
   //* If no amenities
 
   if (!amenities?.length) {
-    return res.status(400).json({ message: "No amenities found!" });
+    return res.status(404).json({ message: "No amenities found!" });
   }
 
   res.json(amenities);
@@ -52,7 +52,7 @@ const searchAmenitiesByPID = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   if (!searchString) {
@@ -77,7 +77,7 @@ const searchAmenitiesByPID = async (req, res) => {
 
   if (!amenities?.length) {
     return res
-      .status(400)
+      .status(404)
       .json({ message: `No amenities related to ${property.title} found!` });
   }
 
@@ -99,7 +99,7 @@ const getAllAmenities = async (req, res) => {
   //* If no amenities
 
   if (!amenities?.length) {
-    return res.status(400).json({ message: "No amenities found!" });
+    return res.status(404).json({ message: "No amenities found!" });
   }
 
   res.json(amenities);
@@ -124,7 +124,7 @@ const getAllAmenitiesByPID = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   //* Get all amenities from DB
@@ -142,7 +142,7 @@ const getAllAmenitiesByPID = async (req, res) => {
 
   if (!amenities?.length) {
     return res
-      .status(400)
+      .status(404)
       .json({ message: `No amenities related to ${property.title} found!` });
   }
 
@@ -168,7 +168,7 @@ const getAmenityById = async (req, res) => {
   });
 
   if (!amenity) {
-    return res.status(400).json({ message: "Amenity not found!" });
+    return res.status(404).json({ message: "Amenity not found!" });
   }
 
   res.json(amenity);
@@ -194,7 +194,7 @@ const createNewAmenity = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   //* Confirm data
@@ -250,7 +250,7 @@ const updateAmenity = async (req, res) => {
   });
 
   if (!amenity) {
-    res.status(400).json({ message: "Amenity not found!" });
+    res.status(404).json({ message: "Amenity not found!" });
   }
 
   //* Update amenity
@@ -286,7 +286,7 @@ const deleteAmenity = async (req, res) => {
   });
 
   if (!amenity) {
-    return res.status(400).json({ message: "Amenity not found!" });
+    return res.status(404).json({ message: "Amenity not found!" });
   }
 
   const result = await prismadb.amenity.delete({

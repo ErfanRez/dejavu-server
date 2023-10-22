@@ -28,7 +28,7 @@ const searchAgentsByName = async (req, res) => {
   //* If no agents
 
   if (!agents?.length) {
-    return res.status(400).json({ message: "No agents found!" });
+    return res.status(404).json({ message: "No agents found!" });
   }
 
   res.json(agents);
@@ -49,7 +49,7 @@ const getAllAgents = async (req, res) => {
   //* If no agents
 
   if (!agents?.length) {
-    return res.status(400).json({ message: "No agents found!" });
+    return res.status(404).json({ message: "No agents found!" });
   }
 
   res.json(agents);
@@ -74,7 +74,7 @@ const getAgentById = async (req, res) => {
   });
 
   if (!agent) {
-    return res.status(400).json({ message: "Agent not found!" });
+    return res.status(404).json({ message: "Agent not found!" });
   }
 
   res.json(agent);
@@ -157,7 +157,7 @@ const updateAgent = async (req, res) => {
   });
 
   if (!agent) {
-    return res.status(400).json({ message: "Agent not found!" });
+    return res.status(404).json({ message: "Agent not found!" });
   }
 
   // Define the path to the agent's images folder
@@ -211,7 +211,7 @@ const deleteAgent = async (req, res) => {
   });
 
   if (!agent) {
-    return res.status(400).json({ message: "Agent not found!" });
+    return res.status(404).json({ message: "Agent not found!" });
   }
 
   const result = await prismadb.agent.delete({

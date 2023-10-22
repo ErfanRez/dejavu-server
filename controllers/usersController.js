@@ -32,7 +32,7 @@ const searchUsersByUsername = async (req, res) => {
   //* If no users
 
   if (!users?.length) {
-    return res.status(400).json({ message: "No users found!" });
+    return res.status(404).json({ message: "No users found!" });
   }
 
   res.json(users);
@@ -57,7 +57,7 @@ const getAllUsers = async (req, res) => {
   //* If no users
 
   if (!users?.length) {
-    return res.status(400).json({ message: "No users found!" });
+    return res.status(404).json({ message: "No users found!" });
   }
 
   res.json(users);
@@ -82,7 +82,7 @@ const getUserById = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: "User not found!" });
+    return res.status(404).json({ message: "User not found!" });
   }
 
   res.json(user);
@@ -176,7 +176,7 @@ const updateUser = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: "User not found!" });
+    return res.status(404).json({ message: "User not found!" });
   }
 
   // Define the path to the user's images folder
@@ -235,7 +235,7 @@ const deleteUser = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: "User not found!" });
+    return res.status(404).json({ message: "User not found!" });
   }
 
   const result = await prismadb.user.delete({

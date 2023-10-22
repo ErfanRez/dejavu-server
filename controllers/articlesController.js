@@ -31,7 +31,7 @@ const searchArticles = async (req, res) => {
   //* If no articles
 
   if (!articles?.length) {
-    return res.status(400).json({ message: "No articles found!" });
+    return res.status(404).json({ message: "No articles found!" });
   }
 
   res.json(articles);
@@ -55,7 +55,7 @@ const getAllArticles = async (req, res) => {
   //* If no articles
 
   if (!articles?.length) {
-    return res.status(400).json({ message: "No articles found!" });
+    return res.status(404).json({ message: "No articles found!" });
   }
 
   res.json(articles);
@@ -83,7 +83,7 @@ const getArticleById = async (req, res) => {
   });
 
   if (!article) {
-    return res.status(400).json({ message: "Article not found!" });
+    return res.status(404).json({ message: "Article not found!" });
   }
 
   res.json(article);
@@ -160,7 +160,7 @@ const updateArticle = async (req, res) => {
   });
 
   if (!article) {
-    res.status(400).json({ message: "Article not found!" });
+    res.status(404).json({ message: "Article not found!" });
   }
 
   // Define the path to the article's images folder
@@ -228,7 +228,7 @@ const deleteArticle = async (req, res) => {
   });
 
   if (!article) {
-    return res.status(400).json({ message: "Article not found!" });
+    return res.status(404).json({ message: "Article not found!" });
   }
 
   const result = await prismadb.article.delete({

@@ -26,7 +26,7 @@ const searchInstallments = async (req, res) => {
   //* If no installments
 
   if (!installments?.length) {
-    return res.status(400).json({ message: "No installments found!" });
+    return res.status(404).json({ message: "No installments found!" });
   }
 
   res.json(installments);
@@ -52,7 +52,7 @@ const searchInstallmentsByPID = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   if (!searchString) {
@@ -99,7 +99,7 @@ const getAllInstallments = async (req, res) => {
   //* If no installments
 
   if (!installments?.length) {
-    return res.status(400).json({ message: "No installments found!" });
+    return res.status(404).json({ message: "No installments found!" });
   }
 
   res.json(installments);
@@ -124,7 +124,7 @@ const getAllInstallmentsByPID = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   //* Get all installments from DB
@@ -142,7 +142,7 @@ const getAllInstallmentsByPID = async (req, res) => {
 
   if (!installments?.length) {
     return res
-      .status(400)
+      .status(404)
       .json({ message: `No installments related to ${property.title} found!` });
   }
 
@@ -168,7 +168,7 @@ const getInstallmentById = async (req, res) => {
   });
 
   if (!installment) {
-    return res.status(400).json({ message: "Installment not found!" });
+    return res.status(404).json({ message: "Installment not found!" });
   }
 
   res.json(installment);
@@ -194,7 +194,7 @@ const createNewInstallment = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   //* Confirm data
@@ -255,7 +255,7 @@ const updateInstallment = async (req, res) => {
   });
 
   if (!installment) {
-    res.status(400).json({ message: "Installment not found!" });
+    res.status(404).json({ message: "Installment not found!" });
   }
 
   //* Update installment
@@ -292,7 +292,7 @@ const deleteInstallment = async (req, res) => {
   });
 
   if (!installment) {
-    return res.status(400).json({ message: "Installment not found!" });
+    return res.status(404).json({ message: "Installment not found!" });
   }
 
   const result = await prismadb.installment.delete({

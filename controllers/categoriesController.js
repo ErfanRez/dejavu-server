@@ -26,7 +26,7 @@ const searchCategories = async (req, res) => {
   //* If no categories
 
   if (!categories?.length) {
-    return res.status(400).json({ message: "No categories found!" });
+    return res.status(404).json({ message: "No categories found!" });
   }
 
   res.json(categories);
@@ -45,7 +45,7 @@ const getAllCategories = async (req, res) => {
   //* If no categories
 
   if (!categories?.length) {
-    return res.status(400).json({ message: "No categories found!" });
+    return res.status(404).json({ message: "No categories found!" });
   }
 
   res.json(categories);
@@ -70,7 +70,7 @@ const getCategoryById = async (req, res) => {
   });
 
   if (!category) {
-    return res.status(400).json({ message: "Category not found!" });
+    return res.status(404).json({ message: "Category not found!" });
   }
 
   res.json(category);
@@ -143,7 +143,7 @@ const updateCategory = async (req, res) => {
   });
 
   if (!category) {
-    res.status(400).json({ message: "Category not found!" });
+    res.status(404).json({ message: "Category not found!" });
   }
 
   //* Update category
@@ -179,7 +179,7 @@ const deleteCategory = async (req, res) => {
   });
 
   if (!category) {
-    return res.status(400).json({ message: "Category not found!" });
+    return res.status(404).json({ message: "Category not found!" });
   }
 
   const result = await prismadb.category.delete({

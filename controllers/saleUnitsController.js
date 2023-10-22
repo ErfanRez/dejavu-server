@@ -32,7 +32,7 @@ const searchSaleUnits = async (req, res) => {
   //* If no units
 
   if (!units?.length) {
-    return res.status(400).json({ message: "No units found!" });
+    return res.status(404).json({ message: "No units found!" });
   }
 
   res.json(units);
@@ -58,7 +58,7 @@ const searchUnitsByPID = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   if (!searchString) {
@@ -87,7 +87,7 @@ const searchUnitsByPID = async (req, res) => {
 
   if (!units?.length) {
     return res
-      .status(400)
+      .status(404)
       .json({ message: `No units related to ${property.title} found!` });
   }
 
@@ -138,7 +138,7 @@ const getAllUnitsByPID = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   //* Get all saleUnits from DB
@@ -160,7 +160,7 @@ const getAllUnitsByPID = async (req, res) => {
 
   if (!units?.length) {
     return res
-      .status(400)
+      .status(404)
       .json({ message: `No units related to ${property.title} found!` });
   }
 
@@ -190,7 +190,7 @@ const getSaleUnitById = async (req, res) => {
   });
 
   if (!unit) {
-    return res.status(400).json({ message: "Unit not found!" });
+    return res.status(404).json({ message: "Unit not found!" });
   }
 
   res.json(unit);
@@ -229,7 +229,7 @@ const createNewSaleUnit = async (req, res) => {
   });
 
   if (!property) {
-    return res.status(400).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
   // console.log(req.files);
@@ -375,7 +375,7 @@ const updateSaleUnit = async (req, res) => {
   });
 
   if (!unit) {
-    res.status(400).json({ message: "Unit not found!" });
+    res.status(404).json({ message: "Unit not found!" });
   }
 
   // Define the path to the saleUnit's images folder
@@ -469,7 +469,7 @@ const deleteSaleUnit = async (req, res) => {
   });
 
   if (!unit) {
-    return res.status(400).json({ message: "Unit not found!" });
+    return res.status(404).json({ message: "Unit not found!" });
   }
 
   const result = await prismadb.saleunit.delete({

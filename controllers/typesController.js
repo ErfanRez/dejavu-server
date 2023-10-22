@@ -26,7 +26,7 @@ const searchTypes = async (req, res) => {
   //* If no types
 
   if (!types?.length) {
-    return res.status(400).json({ message: "No types found!" });
+    return res.status(404).json({ message: "No types found!" });
   }
 
   res.json(types);
@@ -51,7 +51,7 @@ const getTypeById = async (req, res) => {
   });
 
   if (!type) {
-    return res.status(400).json({ message: "Type not found!" });
+    return res.status(404).json({ message: "Type not found!" });
   }
 
   res.json(type);
@@ -70,7 +70,7 @@ const getAllTypes = async (req, res) => {
   //* If no types
 
   if (!types?.length) {
-    return res.status(400).json({ message: "No types found" });
+    return res.status(404).json({ message: "No types found" });
   }
 
   res.json(types);
@@ -143,7 +143,7 @@ const updateType = async (req, res) => {
   });
 
   if (!type) {
-    res.status(400).json({ message: "Type not found!" });
+    res.status(404).json({ message: "Type not found!" });
   }
 
   //* Update type
@@ -179,7 +179,7 @@ const deleteType = async (req, res) => {
   });
 
   if (!type) {
-    return res.status(400).json({ message: "Type not found!" });
+    return res.status(404).json({ message: "Type not found!" });
   }
 
   const result = await prismadb.type.delete({
