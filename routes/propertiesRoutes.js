@@ -5,7 +5,7 @@ const saleUnitsController = require("../controllers/saleUnitsController");
 const rentUnitsController = require("../controllers/rentUnitsController");
 const amenitiesController = require("../controllers/amenitiesController");
 const installmentsController = require("../controllers/installmentsController");
-const uploader = require("../middlewares/propertyPics");
+const uploadPic = require("../middlewares/propertyPics");
 const fileUpload = require("express-fileupload");
 const uploadPdf = require("../middlewares/fileUploader");
 
@@ -18,13 +18,13 @@ router
   .post(
     "/",
     uploadPdf,
-    uploader("properties"),
+    uploadPic("properties"),
     propertiesControllers.createNewProperty
   )
   .patch(
     "/:pId",
     uploadPdf,
-    uploader("properties"),
+    uploadPic("properties"),
     propertiesControllers.updateProperty
   )
   .delete("/:pId", propertiesControllers.deleteProperty)
@@ -36,12 +36,12 @@ router
   .get("/sale-units/:sId", saleUnitsController.getSaleUnitById)
   .post(
     "/:pId/sale-units",
-    uploader("sales"),
+    uploadPic("sales"),
     saleUnitsController.createNewSaleUnit
   )
   .patch(
     "/sale-units/:sId",
-    uploader("sales"),
+    uploadPic("sales"),
     saleUnitsController.updateSaleUnit
   )
   .delete("/sale-units/:sId", saleUnitsController.deleteSaleUnit)
@@ -53,12 +53,12 @@ router
   .get("/rent-units/:rId", rentUnitsController.getRentUnitById)
   .post(
     "/:pId/rent-units",
-    uploader("rents"),
+    uploadPic("rents"),
     rentUnitsController.createNewRentUnit
   )
   .patch(
     "/rent-units/:rId",
-    uploader("rents"),
+    uploadPic("rents"),
     rentUnitsController.updateRentUnit
   )
   .delete("/rent-units/:rId", rentUnitsController.deleteRentUnit)
