@@ -2,9 +2,9 @@ const prismadb = require("../lib/prismadb");
 
 // @desc Get searched installments
 // @route GET /installments/search
-//! @access Public
+//! @access Private
 const searchInstallments = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
 
   if (!searchString) {
     return res
@@ -17,6 +17,9 @@ const searchInstallments = async (req, res) => {
       title: {
         contains: searchString,
       },
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -65,6 +68,9 @@ const searchInstallmentsByPID = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no installments
@@ -80,7 +86,7 @@ const searchInstallmentsByPID = async (req, res) => {
 
 // @desc Get all installments
 // @route GET /installments
-//! @access Public
+//! @access Private
 const getAllInstallments = async (req, res) => {
   //* Get all installments from DB
 
@@ -127,7 +133,6 @@ const getAllInstallmentsByPID = async (req, res) => {
     where: {
       propertyId: pId,
     },
-
     orderBy: {
       updatedAt: "desc",
     },
@@ -146,7 +151,7 @@ const getAllInstallmentsByPID = async (req, res) => {
 
 // @desc Get an unique installment
 // @route GET /installments/:inId
-//! @access Public
+//! @access Private
 const getInstallmentById = async (req, res) => {
   const { inId } = req.params;
 
@@ -171,7 +176,7 @@ const getInstallmentById = async (req, res) => {
 
 // @desc Create new installment
 // @route POST /:pId/installments
-//! @access Public
+//! @access Private
 const createNewInstallment = async (req, res) => {
   const { title, percentage } = req.body;
 
@@ -223,7 +228,7 @@ const createNewInstallment = async (req, res) => {
 
 // @desc Update a installment
 // @route PATCH /installments/:inId
-//! @access Public
+//! @access Private
 const updateInstallment = async (req, res) => {
   const { title, percentage } = req.body;
 
@@ -270,7 +275,7 @@ const updateInstallment = async (req, res) => {
 
 // @desc Delete a installment
 // @route DELETE /installments/:inId
-//! @access Public
+//! @access Private
 const deleteInstallment = async (req, res) => {
   const { inId } = req.params;
 

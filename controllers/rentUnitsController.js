@@ -6,7 +6,7 @@ const fileDelete = require("../utils/fileDelete");
 // @route GET /rent-units/search
 //! @access Public
 const searchRentUnits = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
 
   if (!searchString) {
     return res
@@ -23,6 +23,9 @@ const searchRentUnits = async (req, res) => {
     include: {
       images: true,
       views: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -192,7 +195,7 @@ const getRentUnitById = async (req, res) => {
 
 // @desc Create new rentUnit
 // @route POST /:pId/rent-units
-//! @access Public
+//! @access Private
 const createNewRentUnit = async (req, res) => {
   const {
     title,
@@ -313,7 +316,7 @@ const createNewRentUnit = async (req, res) => {
 
 // @desc Update a rentUnit
 // @route PATCH /rent-units/:rId
-//! @access Public
+//! @access Private
 const updateRentUnit = async (req, res) => {
   const {
     title,
@@ -356,15 +359,6 @@ const updateRentUnit = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
-  //* converts
-
-  const areaDecimal = parseFloat(area);
-  const priceDecimal = parseFloat(rentPrice);
-
-  const bedroomsInt = parseInt(bedrooms, 10);
-  const bathroomsInt = parseInt(bathrooms, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-
   //? Does the unit exist to update?
 
   const unit = await prismadb.rentUnit.findUnique({
@@ -390,6 +384,15 @@ const updateRentUnit = async (req, res) => {
   if (convertedImages) {
     fileDelete(imagesFolder);
   }
+
+  //* converts
+
+  const areaDecimal = parseFloat(area);
+  const priceDecimal = parseFloat(rentPrice);
+
+  const bedroomsInt = parseInt(bedrooms, 10);
+  const bathroomsInt = parseInt(bathrooms, 10);
+  const parkingCountInt = parseInt(parkingCount, 10);
 
   //* Update rentUnit
 
@@ -440,7 +443,7 @@ const updateRentUnit = async (req, res) => {
 
 // @desc Delete a rentUnit
 // @route DELETE /rent-units/:rId
-//! @access Public
+//! @access Private
 const deleteRentUnit = async (req, res) => {
   const { rId } = req.params;
 

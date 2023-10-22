@@ -1,5 +1,37 @@
 const prismadb = require("../lib/prismadb");
 
+// @desc Get searched types
+// @route GET /types/search
+//! @access Public
+const searchTypes = async (req, res) => {
+  const searchString = req.query.q; //* Get the search string from query params
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const types = await prismadb.type.findMany({
+    where: {
+      title: {
+        contains: searchString,
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no types
+
+  if (!types?.length) {
+    return res.status(400).json({ message: "No types found!" });
+  }
+
+  res.json(types);
+};
+
 // @desc Get an unique type
 // @route GET /types/:id
 //! @access Public
@@ -46,7 +78,7 @@ const getAllTypes = async (req, res) => {
 
 // @desc Create new type
 // @route POST /types
-//! @access Public
+//! @access Private
 const createNewType = async (req, res) => {
   const { title } = req.body;
 
@@ -85,8 +117,8 @@ const createNewType = async (req, res) => {
 };
 
 // @desc Update a type
-// @route PATCH /properties/:id
-//! @access Public
+// @route PATCH /types/:id
+//! @access Private
 const updateType = async (req, res) => {
   const { title } = req.body;
 
@@ -129,8 +161,8 @@ const updateType = async (req, res) => {
 };
 
 // @desc Delete a type
-// @route DELETE /properties/:id
-//! @access Public
+// @route DELETE /types/:id
+//! @access Private
 const deleteType = async (req, res) => {
   const { id } = req.params;
 
@@ -162,6 +194,7 @@ const deleteType = async (req, res) => {
 };
 
 module.exports = {
+  searchTypes,
   getTypeById,
   getAllTypes,
   createNewType,

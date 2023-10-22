@@ -6,7 +6,7 @@ const fileDelete = require("../utils/fileDelete");
 // @route GET /sale-units/search
 //! @access Public
 const searchSaleUnits = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
 
   if (!searchString) {
     return res
@@ -23,6 +23,9 @@ const searchSaleUnits = async (req, res) => {
     include: {
       images: true,
       views: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -74,6 +77,9 @@ const searchUnitsByPID = async (req, res) => {
     include: {
       images: true,
       views: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -192,7 +198,7 @@ const getSaleUnitById = async (req, res) => {
 
 // @desc Create new saleUnit
 // @route POST /:pId/sale-unit
-//! @access Public
+//! @access Private
 const createNewSaleUnit = async (req, res) => {
   const {
     title,
@@ -316,7 +322,7 @@ const createNewSaleUnit = async (req, res) => {
 
 // @desc Update a saleUnit
 // @route PATCH /sale-units/:sId
-//! @access Public
+//! @access Private
 const updateSaleUnit = async (req, res) => {
   const {
     title,
@@ -360,16 +366,6 @@ const updateSaleUnit = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
-  //* converts
-
-  const areaDecimal = parseFloat(area);
-  const rpsDecimal = parseFloat(rPSqft);
-  const priceDecimal = parseFloat(totalPrice);
-
-  const bedroomsInt = parseInt(bedrooms, 10);
-  const bathroomsInt = parseInt(bathrooms, 10);
-  const parkingCountInt = parseInt(parkingCount, 10);
-
   //? Does the unit exist to update?
 
   const unit = await prismadb.saleUnit.findUnique({
@@ -395,6 +391,16 @@ const updateSaleUnit = async (req, res) => {
   if (convertedImages) {
     fileDelete(imagesFolder);
   }
+
+  //* converts
+
+  const areaDecimal = parseFloat(area);
+  const rpsDecimal = parseFloat(rPSqft);
+  const priceDecimal = parseFloat(totalPrice);
+
+  const bedroomsInt = parseInt(bedrooms, 10);
+  const bathroomsInt = parseInt(bathrooms, 10);
+  const parkingCountInt = parseInt(parkingCount, 10);
 
   //* Update saleUnit
 
@@ -446,7 +452,7 @@ const updateSaleUnit = async (req, res) => {
 
 // @desc Delete a saleUnit
 // @route DELETE /:pId/sale-units/:sId
-//! @access Public
+//! @access Private
 const deleteSaleUnit = async (req, res) => {
   const { sId } = req.params;
 

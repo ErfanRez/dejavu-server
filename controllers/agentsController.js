@@ -2,6 +2,59 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 
+// @desc Get searched agents
+// @route GET /agents/search
+//! @access Private
+const searchAgentsByName = async (req, res) => {
+  const searchString = req.query.q; //* Get the search string from query params
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const agents = await prismadb.agent.findMany({
+    where: {
+      name: {
+        contains: searchString,
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no agents
+
+  if (!agents?.length) {
+    return res.status(400).json({ message: "No agents found!" });
+  }
+
+  res.json(agents);
+};
+
+// @desc Get all agents
+// @route GET /agents
+//! @access Public
+const getAllAgents = async (req, res) => {
+  //* Get all agents from DB
+
+  const agents = await prismadb.agent.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no agents
+
+  if (!agents?.length) {
+    return res.status(400).json({ message: "No agents found!" });
+  }
+
+  res.json(agents);
+};
+
 // @desc Get an unique agent
 // @route GET /agents/:id
 //! @access Public
@@ -27,30 +80,9 @@ const getAgentById = async (req, res) => {
   res.json(agent);
 };
 
-// @desc Get all agents
-// @route GET /agents
-//! @access Public
-const getAllAgents = async (req, res) => {
-  //* Get all agents from DB
-
-  const agents = await prismadb.agent.findMany({
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no agents
-
-  if (!agents?.length) {
-    return res.status(400).json({ message: "No agents found!" });
-  }
-
-  res.json(agents);
-};
-
 // @desc Create new agent
 // @route POST /agent
-//! @access Public
+//! @access Private
 const createNewAgent = async (req, res) => {
   const { name, phone, email, whatsapp } = req.body;
 
@@ -98,7 +130,7 @@ const createNewAgent = async (req, res) => {
 
 // @desc Update a agent
 // @route PATCH /agents/:id
-//! @access Public
+//! @access Private
 const updateAgent = async (req, res) => {
   const { name, email, phone, whatsapp } = req.body;
   const { id } = req.params;
@@ -162,7 +194,7 @@ const updateAgent = async (req, res) => {
 
 // @desc Delete a agent
 // @route DELETE /agents/:id
-//! @access Public
+//! @access Private
 const deleteAgent = async (req, res) => {
   const { id } = req.params;
 
@@ -206,6 +238,7 @@ const deleteAgent = async (req, res) => {
 };
 
 module.exports = {
+  searchAgentsByName,
   getAgentById,
   getAllAgents,
   createNewAgent,

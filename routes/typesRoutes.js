@@ -3,6 +3,7 @@ const router = express.Router();
 const typesControllers = require("../controllers/typesController");
 
 router
+  .get("/search", typesControllers.searchTypes)
   .get("/", typesControllers.getAllTypes)
   .get("/:id", typesControllers.getTypeById)
   .post("/", typesControllers.createNewType)

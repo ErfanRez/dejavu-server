@@ -2,9 +2,9 @@ const prismadb = require("../lib/prismadb");
 
 // @desc Get searched amenities
 // @route GET /amenities/search
-//! @access Public
+//! @access Private
 const searchAmenities = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
 
   if (!searchString) {
     return res
@@ -17,6 +17,9 @@ const searchAmenities = async (req, res) => {
       title: {
         contains: searchString,
       },
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -65,6 +68,9 @@ const searchAmenitiesByPID = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no amenities
@@ -80,7 +86,7 @@ const searchAmenitiesByPID = async (req, res) => {
 
 // @desc Get all amenities
 // @route GET /amenities
-//! @access Public
+//! @access Private
 const getAllAmenities = async (req, res) => {
   //* Get all amenities from DB
 
@@ -127,7 +133,6 @@ const getAllAmenitiesByPID = async (req, res) => {
     where: {
       propertyId: pId,
     },
-
     orderBy: {
       updatedAt: "desc",
     },
@@ -171,7 +176,7 @@ const getAmenityById = async (req, res) => {
 
 // @desc Create new amenity
 // @route POST /:pId/amenities
-//! @access Public
+//! @access Private
 const createNewAmenity = async (req, res) => {
   const { title } = req.body;
 
@@ -220,7 +225,7 @@ const createNewAmenity = async (req, res) => {
 
 // @desc Update a amenity
 // @route PATCH /amenities/:aId
-//! @access Public
+//! @access Private
 const updateAmenity = async (req, res) => {
   const { title } = req.body;
 
@@ -264,7 +269,7 @@ const updateAmenity = async (req, res) => {
 
 // @desc Delete a amenity
 // @route DELETE /amenities/:aId
-//! @access Public
+//! @access Private
 const deleteAmenity = async (req, res) => {
   const { aId } = req.params;
 

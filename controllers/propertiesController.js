@@ -6,7 +6,7 @@ const fileDelete = require("../utils/fileDelete");
 // @route GET /properties/search
 //! @access Public
 const searchProperties = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
 
   if (!searchString) {
     return res
@@ -26,6 +26,9 @@ const searchProperties = async (req, res) => {
       saleUnits: true,
       rentUnits: true,
       installments: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
     },
   });
 
@@ -100,7 +103,7 @@ const getAllProperties = async (req, res) => {
 
 // @desc Create new property
 // @route POST /property
-//! @access Public
+//! @access Private
 const createNewProperty = async (req, res) => {
   const {
     title,
@@ -196,7 +199,7 @@ const createNewProperty = async (req, res) => {
 
 // @desc Update a property
 // @route PATCH /properties/:pId
-//! @access Public
+//! @access Private
 const updateProperty = async (req, res) => {
   const {
     title,
@@ -237,12 +240,6 @@ const updateProperty = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
-  //* converts
-
-  offPlan
-    ? (offPlanBoolean = JSON.parse(offPlan))
-    : (offPlanBoolean = undefined);
-
   //? Does the property exist to update?
 
   const property = await prismadb.property.findUnique({
@@ -281,6 +278,12 @@ const updateProperty = async (req, res) => {
   if (pdfUrl) {
     fileDelete(pdfFolder);
   }
+
+  //* converts
+
+  offPlan
+    ? (offPlanBoolean = JSON.parse(offPlan))
+    : (offPlanBoolean = undefined);
 
   //* Update property
 
@@ -325,7 +328,7 @@ const updateProperty = async (req, res) => {
 
 // @desc Delete a property
 // @route DELETE /properties/:pId
-//! @access Public
+//! @access Private
 const deleteProperty = async (req, res) => {
   const { pId } = req.params;
 

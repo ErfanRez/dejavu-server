@@ -2,6 +2,65 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 
+// @desc Get searched articles
+// @route GET /articles/search
+//! @access Private
+const searchArticles = async (req, res) => {
+  const searchString = req.query.q; //* Get the search string from query params
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const articles = await prismadb.article.findMany({
+    where: {
+      title: {
+        contains: searchString,
+      },
+    },
+    include: {
+      images: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no articles
+
+  if (!articles?.length) {
+    return res.status(400).json({ message: "No articles found!" });
+  }
+
+  res.json(articles);
+};
+
+// @desc Get all articles
+// @route GET /articles
+//! @access Private
+const getAllArticles = async (req, res) => {
+  //* Get all articles from DB
+
+  const articles = await prismadb.article.findMany({
+    include: {
+      images: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no articles
+
+  if (!articles?.length) {
+    return res.status(400).json({ message: "No articles found!" });
+  }
+
+  res.json(articles);
+};
+
 // @desc Get an unique article
 // @route GET /articles/:id
 //! @access Public
@@ -30,33 +89,9 @@ const getArticleById = async (req, res) => {
   res.json(article);
 };
 
-// @desc Get all articles
-// @route GET /articles
-//! @access Public
-const getAllArticles = async (req, res) => {
-  //* Get all articles from DB
-
-  const articles = await prismadb.article.findMany({
-    include: {
-      images: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no articles
-
-  if (!articles?.length) {
-    return res.status(400).json({ message: "No articles found!" });
-  }
-
-  res.json(articles);
-};
-
 // @desc Create new article
 // @route POST /article
-//! @access Public
+//! @access Private
 const createNewArticle = async (req, res) => {
   const { title, description, body } = req.body;
 
@@ -98,7 +133,7 @@ const createNewArticle = async (req, res) => {
 
 // @desc Update a article
 // @route PATCH /articles/:id
-//! @access Public
+//! @access Private
 const updateArticle = async (req, res) => {
   const { title, description, body } = req.body;
 
@@ -176,7 +211,7 @@ const updateArticle = async (req, res) => {
 
 // @desc Delete a article
 // @route DELETE /articles/:id
-//! @access Public
+//! @access Private
 const deleteArticle = async (req, res) => {
   const { id } = req.params;
 
@@ -220,6 +255,7 @@ const deleteArticle = async (req, res) => {
 };
 
 module.exports = {
+  searchArticles,
   getArticleById,
   getAllArticles,
   createNewArticle,

@@ -1,5 +1,56 @@
 const prismadb = require("../lib/prismadb");
 
+// @desc Get searched categories
+// @route GET /categories/search
+//! @access Public
+const searchCategories = async (req, res) => {
+  const searchString = req.query.q; //* Get the search string from query params
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const categories = await prismadb.category.findMany({
+    where: {
+      title: {
+        contains: searchString,
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no categories
+
+  if (!categories?.length) {
+    return res.status(400).json({ message: "No categories found!" });
+  }
+
+  res.json(categories);
+};
+
+//! @access Public
+const getAllCategories = async (req, res) => {
+  //* Get all categories from DB
+
+  const categories = await prismadb.category.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no categories
+
+  if (!categories?.length) {
+    return res.status(400).json({ message: "No categories found!" });
+  }
+
+  res.json(categories);
+};
+
 // @desc Get an unique category
 // @route GET /categories/:id
 //! @access Public
@@ -25,28 +76,9 @@ const getCategoryById = async (req, res) => {
   res.json(category);
 };
 
-//! @access Public
-const getAllCategories = async (req, res) => {
-  //* Get all categories from DB
-
-  const categories = await prismadb.category.findMany({
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no categories
-
-  if (!categories?.length) {
-    return res.status(400).json({ message: "No categories found!" });
-  }
-
-  res.json(categories);
-};
-
 // @desc Create new category
 // @route POST /categories
-//! @access Public
+//! @access Private
 const createNewCategory = async (req, res) => {
   const { title } = req.body;
 
@@ -86,7 +118,7 @@ const createNewCategory = async (req, res) => {
 
 // @desc Update a category
 // @route PATCH /properties/:id
-//! @access Public
+//! @access Private
 const updateCategory = async (req, res) => {
   const { title } = req.body;
 
@@ -130,7 +162,7 @@ const updateCategory = async (req, res) => {
 
 // @desc Delete a category
 // @route DELETE /properties/:id
-//! @access Public
+//! @access Private
 const deleteCategory = async (req, res) => {
   const { id } = req.params;
 
@@ -162,6 +194,7 @@ const deleteCategory = async (req, res) => {
 };
 
 module.exports = {
+  searchCategories,
   getCategoryById,
   getAllCategories,
   createNewCategory,
