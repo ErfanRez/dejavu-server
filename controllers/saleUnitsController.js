@@ -14,7 +14,7 @@ const searchSaleUnits = async (req, res) => {
       .json({ error: "Search query parameter is missing." });
   }
 
-  const units = await prismadb.saleUnit.findMany({
+  const units = await prismadb.saleunit.findMany({
     where: {
       title: {
         contains: searchString,
@@ -67,7 +67,7 @@ const searchUnitsByPID = async (req, res) => {
       .json({ error: "Search query parameter is missing." });
   }
 
-  const units = await prismadb.saleUnit.findMany({
+  const units = await prismadb.saleunit.findMany({
     where: {
       propertyId: pId,
       title: {
@@ -100,7 +100,7 @@ const searchUnitsByPID = async (req, res) => {
 const getAllSaleUnits = async (req, res) => {
   //* Get all saleUnits from DB
 
-  const units = await prismadb.saleUnit.findMany({
+  const units = await prismadb.saleunit.findMany({
     include: {
       images: true,
       views: true,
@@ -143,7 +143,7 @@ const getAllUnitsByPID = async (req, res) => {
 
   //* Get all saleUnits from DB
 
-  const units = await prismadb.saleUnit.findMany({
+  const units = await prismadb.saleunit.findMany({
     where: {
       propertyId: pId,
     },
@@ -179,7 +179,7 @@ const getSaleUnitById = async (req, res) => {
   }
 
   //? Does the unit exist?
-  const unit = await prismadb.saleUnit.findUnique({
+  const unit = await prismadb.saleunit.findUnique({
     where: {
       id: sId,
     },
@@ -256,7 +256,7 @@ const createNewSaleUnit = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.saleUnit.findUnique({
+  const duplicate = await prismadb.saleunit.findUnique({
     where: {
       title,
     },
@@ -278,7 +278,7 @@ const createNewSaleUnit = async (req, res) => {
 
   //* Create new saleUnit
 
-  const unit = await prismadb.saleUnit.create({
+  const unit = await prismadb.saleunit.create({
     data: {
       title,
       type,
@@ -368,7 +368,7 @@ const updateSaleUnit = async (req, res) => {
 
   //? Does the unit exist to update?
 
-  const unit = await prismadb.saleUnit.findUnique({
+  const unit = await prismadb.saleunit.findUnique({
     where: {
       id: sId,
     },
@@ -404,7 +404,7 @@ const updateSaleUnit = async (req, res) => {
 
   //* Update saleUnit
 
-  await prismadb.saleUnit.update({
+  await prismadb.saleunit.update({
     where: {
       id: sId,
     },
@@ -429,7 +429,7 @@ const updateSaleUnit = async (req, res) => {
     },
   });
 
-  const updatedUnit = await prismadb.saleUnit.update({
+  const updatedUnit = await prismadb.saleunit.update({
     where: {
       id: sId,
     },
@@ -462,7 +462,7 @@ const deleteSaleUnit = async (req, res) => {
   }
 
   //? Does the unit exist to delete?
-  const unit = await prismadb.saleUnit.findUnique({
+  const unit = await prismadb.saleunit.findUnique({
     where: {
       id: sId,
     },
@@ -472,7 +472,7 @@ const deleteSaleUnit = async (req, res) => {
     return res.status(400).json({ message: "Unit not found!" });
   }
 
-  const result = await prismadb.saleUnit.delete({
+  const result = await prismadb.saleunit.delete({
     where: {
       id: sId,
     },
