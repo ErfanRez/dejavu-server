@@ -191,7 +191,7 @@ const getRentUnitById = async (req, res) => {
 };
 
 // @desc Create new rentUnit
-// @route POST /rent-units
+// @route POST /:pId/rent-units
 //! @access Public
 const createNewRentUnit = async (req, res) => {
   const {

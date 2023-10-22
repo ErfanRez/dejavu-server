@@ -191,7 +191,7 @@ const getSaleUnitById = async (req, res) => {
 };
 
 // @desc Create new saleUnit
-// @route POST /sale-unit
+// @route POST /:pId/sale-unit
 //! @access Public
 const createNewSaleUnit = async (req, res) => {
   const {
