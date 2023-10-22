@@ -170,7 +170,7 @@ const updateArticle = async (req, res) => {
     article.title
   );
 
-  if (title !== article.title && convertedImages) {
+  if (title !== article.title || convertedImages) {
     fileDelete(imagesFolder);
   }
 

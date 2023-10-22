@@ -189,7 +189,7 @@ const updateUser = async (req, res) => {
     `${user.username}.webp`
   );
 
-  if (username !== user.username && convertedImage) {
+  if (username !== user.username || convertedImage) {
     fileDelete(imagesFolder);
   }
 

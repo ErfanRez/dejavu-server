@@ -380,7 +380,7 @@ const updateRentUnit = async (req, res) => {
     unit.title
   );
 
-  if (title !== unit.title && convertedImages) {
+  if (title !== unit.title || convertedImages) {
     fileDelete(imagesFolder);
   }
 
