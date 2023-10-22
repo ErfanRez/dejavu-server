@@ -1,0 +1,320 @@
+const prismadb = require("../lib/prismadb");
+const path = require("path");
+const fileDelete = require("../utils/fileDelete");
+
+// @desc Get searched amenities
+// @route GET /amenities/search
+//! @access Public
+const searchAmenities = async (req, res) => {
+  const searchString = req.query.title; //* Get the search string from query params
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const amenities = await prismadb.amenity.findMany({
+    where: {
+      title: {
+        contains: searchString,
+      },
+    },
+  });
+
+  //* If no amenities
+
+  if (!amenities?.length) {
+    return res.status(400).json({ message: "No amenities found!" });
+  }
+
+  res.json(amenities);
+};
+
+// @desc Get searched amenities related to a specific property
+// @route GET /:pId/amenities/search
+//! @access Public
+const searchAmenitiesByPID = async (req, res) => {
+  const searchString = req.query.title; //* Get the search string from query params
+  const { pId } = req.params;
+
+  //* Confirm data
+  if (!pId) {
+    return res.status(400).json({ message: "Property ID Required!" });
+  }
+
+  //? Does the property exist?
+  const property = await prismadb.property.findUnique({
+    where: {
+      id: pId,
+    },
+  });
+
+  if (!property) {
+    return res.status(400).json({ message: "Property not found!" });
+  }
+
+  if (!searchString) {
+    return res
+      .status(400)
+      .json({ error: "Search query parameter is missing." });
+  }
+
+  const amenities = await prismadb.amenity.findMany({
+    where: {
+      propertyId: pId,
+      title: {
+        contains: searchString,
+      },
+    },
+  });
+
+  //* If no amenities
+
+  if (!amenities?.length) {
+    return res
+      .status(400)
+      .json({ message: `No amenities related to ${property.title} found!` });
+  }
+
+  res.json(amenities);
+};
+
+// @desc Get all amenities
+// @route GET /amenities
+//! @access Public
+const getAllAmenities = async (req, res) => {
+  //* Get all amenities from DB
+
+  const amenities = await prismadb.amenity.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no amenities
+
+  if (!amenities?.length) {
+    return res.status(400).json({ message: "No amenities found!" });
+  }
+
+  res.json(amenities);
+};
+
+// @desc Get all amenities related to a specific property
+// @route GET /:pId/amenities
+//! @access Public
+const getAllAmenitiesByPID = async (req, res) => {
+  const { pId } = req.params;
+
+  //* Confirm data
+  if (!pId) {
+    return res.status(400).json({ message: "Property ID Required!" });
+  }
+
+  //? Does the property exist?
+  const property = await prismadb.property.findUnique({
+    where: {
+      id: pId,
+    },
+  });
+
+  if (!property) {
+    return res.status(400).json({ message: "Property not found!" });
+  }
+
+  //* Get all amenities from DB
+
+  const amenities = await prismadb.amenity.findMany({
+    where: {
+      propertyId: pId,
+    },
+
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  //* If no amenities
+
+  if (!amenities?.length) {
+    return res
+      .status(400)
+      .json({ message: `No amenities related to ${property.title} found!` });
+  }
+
+  res.json(amenities);
+};
+
+// @desc Get an unique amenity
+// @route GET /amenities/:aId
+//! @access Public
+const getAmenityById = async (req, res) => {
+  const { aId } = req.params;
+
+  //* Confirm data
+  if (!aId) {
+    return res.status(400).json({ message: "Amenity ID Required!" });
+  }
+
+  //? Does the amenity exist?
+  const amenity = await prismadb.amenity.findUnique({
+    where: {
+      id: aId,
+    },
+  });
+
+  if (!amenity) {
+    return res.status(400).json({ message: "Amenity not found!" });
+  }
+
+  res.json(amenity);
+};
+
+// @desc Create new amenity
+// @route POST /:pId/amenities
+//! @access Public
+const createNewAmenity = async (req, res) => {
+  const { title } = req.body;
+
+  const { pId } = req.params;
+
+  if (!pId) {
+    return res.status(400).json({ message: "Property ID Required!" });
+  }
+
+  //? Does the property exist?
+  const property = await prismadb.property.findUnique({
+    where: {
+      id: pId,
+    },
+  });
+
+  if (!property) {
+    return res.status(400).json({ message: "Property not found!" });
+  }
+
+  //* Confirm data
+
+  if (!title) {
+    res.status(400).json({ message: "Amenity title required!" });
+  }
+
+  //? Check for duplicate
+
+  const duplicate = await prismadb.amenity.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Amenity title already exists!" });
+  }
+
+  //* Create new amenity
+
+  const amenity = await prismadb.amenity.create({
+    data: {
+      title,
+    },
+  });
+
+  if (amenity) {
+    //*created
+
+    res.status(201).json({
+      message: `New amenity ${title} for property ${property.title} created.`,
+    });
+  } else {
+    res.status(400).json({ message: "Invalid amenity data received!" });
+  }
+};
+
+// @desc Update a amenity
+// @route PATCH /amenities/:aId
+//! @access Public
+const updateAmenity = async (req, res) => {
+  const { title } = req.body;
+
+  const { aId } = req.params;
+
+  //* Confirm data
+
+  if (!aId) {
+    return res.status(400).json({ message: "Amenity ID required!" });
+  }
+
+  if (!title) {
+    return res.status(400).json({ message: "Amenity title required!" });
+  }
+
+  //? Does the amenity exist to update?
+
+  const amenity = await prismadb.amenity.findUnique({
+    where: {
+      id: aId,
+    },
+  });
+
+  if (!amenity) {
+    res.status(400).json({ message: "Amenity not found!" });
+  }
+
+  //* Update amenity
+
+  const updatedAmenity = await prismadb.amenity.update({
+    where: {
+      id: aId,
+    },
+    data: {
+      title,
+    },
+  });
+
+  res.json({ message: `Amenity ${updatedAmenity.title} updated.` });
+};
+
+// @desc Delete a amenity
+// @route DELETE /amenities/:aId
+//! @access Public
+const deleteAmenity = async (req, res) => {
+  const { aId } = req.params;
+
+  //* Confirm data
+  if (!aId) {
+    return res.status(400).json({ message: "Amenity ID required!" });
+  }
+
+  //? Does the amenity exist to delete?
+  const amenity = await prismadb.amenity.findUnique({
+    where: {
+      id: aId,
+    },
+  });
+
+  if (!amenity) {
+    return res.status(400).json({ message: "Amenity not found!" });
+  }
+
+  const result = await prismadb.amenity.delete({
+    where: {
+      id,
+    },
+  });
+
+  res.json({
+    message: `Amenity ${result.title} with ID: ${result.id} deleted.`,
+  });
+};
+
+module.exports = {
+  searchAmenities,
+  searchAmenitiesByPID,
+  getAllAmenities,
+  getAllAmenitiesByPID,
+  getAmenityById,
+  createNewAmenity,
+  updateAmenity,
+  deleteAmenity,
+};
