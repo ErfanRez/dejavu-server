@@ -198,18 +198,6 @@ const createNewAmenity = async (req, res) => {
     res.status(400).json({ message: "Amenity title required!" });
   }
 
-  //? Check for duplicate
-
-  const duplicate = await prismadb.amenity.findUnique({
-    where: {
-      title,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Amenity title already exists!" });
-  }
-
   //* Create new amenity
 
   const amenity = await prismadb.amenity.create({
