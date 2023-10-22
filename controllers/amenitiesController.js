@@ -208,7 +208,11 @@ const createNewAmenity = async (req, res) => {
   const amenity = await prismadb.amenity.create({
     data: {
       title,
-      propertyId: pId,
+      property: {
+        connect: {
+          id: pId,
+        },
+      },
     },
   });
 

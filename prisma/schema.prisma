@@ -30,9 +30,9 @@ model User {
 model FavSale {
   id       String   @id @default(uuid())
   userId   String // Foreign Key to User model
-  user     User     @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   saleId   String // Foreign Key to SaleUnit model
-  saleUnit SaleUnit @relation(fields: [saleId], references: [id])
+  saleUnit SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([saleId])
@@ -41,9 +41,9 @@ model FavSale {
 model FavRent {
   id       String   @id @default(uuid())
   userId   String // Foreign Key to User
-  user     User     @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   rentId   String // Foreign Key to RentUnit model
-  rentUnit RentUnit @relation(fields: [rentId], references: [id])
+  rentUnit RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([rentId])
@@ -133,7 +133,7 @@ model SaleUnit {
   description  String      @db.Text
   propertyId   String // Foreign Key to Property model
   property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  views        View[] // Relation to View model
+  views        SaleView[] // Relation to SaleView model
   images       SaleImage[] // Relation to SaleImage model
 
   favSales FavSale[] // Relation to FavSale model
@@ -142,6 +142,18 @@ model SaleUnit {
   updatedAt DateTime @updatedAt
 
   @@index([propertyId])
+}
+
+model SaleView {
+  id     String   @id @default(uuid())
+  title  String
+  saleId String // Foreign Key to SalesDetail model
+  sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([saleId])
 }
 
 model SaleImage {
@@ -170,7 +182,7 @@ model RentUnit {
   description  String      @db.Text
   propertyId   String // Foreign Key to Property model
   property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  views        View[] // Relation to View model
+  views        RentView[] // Relation to RentView model
   images       RentImage[] // Relation to RentImage model
 
   favRents FavRent[] // Relation to FavRent model
@@ -193,18 +205,15 @@ model RentImage {
   @@index([rentId])
 }
 
-model View {
+model RentView {
   id     String   @id @default(uuid())
   title  String
-  saleId String // Foreign Key to SalesDetail model
-  sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
   rentId String // Foreign Key to RentUnit model
   rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([saleId])
   @@index([rentId])
 }
 

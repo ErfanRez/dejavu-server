@@ -1,6 +1,7 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
+const renameOldFile = require("../utils/renameOldFile");
 
 // @desc Get searched rentUnits
 // @route GET /rent-units/search
@@ -288,7 +289,11 @@ const createNewRentUnit = async (req, res) => {
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
       description,
-      propertyId: pId,
+      property: {
+        connect: {
+          id: pId,
+        },
+      },
       views: {
         create: views.map((viewTitle) => ({
           title: viewTitle,
@@ -370,18 +375,41 @@ const updateRentUnit = async (req, res) => {
     res.status(404).json({ message: "Unit not found!" });
   }
 
-  // Define the path to the rentUnit's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "rents",
-    unit.title
-  );
+  if (title !== unit.title) {
+    //* Check if new images provided
+    if (!convertedImages) {
+      renameOldFile("rents", unit.title, title);
 
-  if (title !== unit.title || convertedImages) {
-    fileDelete(imagesFolder);
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "rents",
+        title
+      );
+
+      // Check if the folder exists
+      if (fs.existsSync(imagesFolder)) {
+        // List all files in the folder
+        const files = fs.readdirSync(imagesFolder);
+
+        // Create an array of file paths
+        convertedImages = files.map((file) => path.join(imagesFolder, file));
+      }
+    } else {
+      // Define the path to the images folder
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "rents",
+        unit.title
+      );
+
+      fileDelete(imagesFolder);
+    }
   }
 
   //* converts

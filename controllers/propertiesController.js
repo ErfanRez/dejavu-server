@@ -1,6 +1,8 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
+const renameOldFile = require("../utils/renameOldFile");
+const renameOldPdf = require("../utils/renameOldPdf");
 
 // @desc Get searched properties
 // @route GET /properties/search
@@ -210,8 +212,8 @@ const updateProperty = async (req, res) => {
 
   const { pId } = req.params;
 
-  const convertedImages = req.convertedImages;
-  const pdfUrl = req.pdfUrl;
+  let convertedImages = req.convertedImages;
+  let pdfUrl = req.pdfUrl;
 
   //* Confirm data
 
@@ -245,31 +247,67 @@ const updateProperty = async (req, res) => {
     res.status(404).json({ message: "Property not found!" });
   }
 
-  // Define the path to the property's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "properties",
-    property.title
-  );
+  if (title !== property.title) {
+    //* Check if new images provided
+    if (!convertedImages) {
+      renameOldFile("properties", property.title, title);
 
-  if (title !== property.title || convertedImages) {
-    fileDelete(imagesFolder);
-  }
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "properties",
+        title
+      );
 
-  // Define the path to the property's images folder
-  const pdfFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "factSheets",
-    `${property.title}.pdf`
-  );
+      // Check if the folder exists
+      if (fs.existsSync(imagesFolder)) {
+        // List all files in the folder
+        const files = fs.readdirSync(imagesFolder);
 
-  if (title !== property.title || pdfUrl) {
-    fileDelete(pdfFolder);
+        // Create an array of file paths
+        convertedImages = files.map((file) => path.join(imagesFolder, file));
+      }
+    } else {
+      // Define the path to the property's images folder
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "properties",
+        property.title
+      );
+
+      fileDelete(imagesFolder);
+    }
+
+    //* Check if new pdf provided
+    if (!pdfUrl) {
+      renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
+
+      const newPdfPath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "factSheets",
+        `${title}.pdf`
+      );
+
+      pdfUrl = newPdfPath;
+    } else {
+      // Define the path to the property's images folder
+      const pdfFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "factSheets",
+        `${property.title}.pdf`
+      );
+
+      fileDelete(pdfFolder);
+    }
   }
 
   //* converts

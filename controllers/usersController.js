@@ -1,6 +1,7 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
+const renameOldFile = require("../utils/renameOldFile");
 
 // @desc Get searched users
 // @route GET /users/search
@@ -156,7 +157,7 @@ const updateUser = async (req, res) => {
   const { uId } = req.params;
 
   // console.log(req.files);
-  const convertedImage = req.convertedImage;
+  let convertedImage = req.convertedImage;
 
   //* Confirm data
 
@@ -179,18 +180,34 @@ const updateUser = async (req, res) => {
     return res.status(404).json({ message: "User not found!" });
   }
 
-  // Define the path to the user's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "users",
-    `${user.username}.webp`
-  );
+  if (username !== user.username) {
+    //* Check if new image provided
+    if (!convertedImage) {
+      renameOldFile("users", `${user.username}.webp`, `${username}.webp`);
 
-  if (username !== user.username || convertedImage) {
-    fileDelete(imagesFolder);
+      const newImagePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "users",
+        `${username}.webp`
+      );
+
+      convertedImage = newImagePath;
+    } else {
+      // Define the path to the user's images folder
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "users",
+        `${user.username}.webp`
+      );
+
+      fileDelete(imagesFolder);
+    }
   }
 
   //* converts

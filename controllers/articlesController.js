@@ -1,6 +1,7 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
+const renameOldFile = require("../utils/renameOldFile");
 
 // @desc Get searched articles
 // @route GET /articles/search
@@ -160,18 +161,41 @@ const updateArticle = async (req, res) => {
     res.status(404).json({ message: "Article not found!" });
   }
 
-  // Define the path to the article's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "articles",
-    article.title
-  );
+  if (title !== article.title) {
+    //* Check if new images provided
+    if (!convertedImages) {
+      renameOldFile("articles", article.title, title);
 
-  if (title !== article.title || convertedImages) {
-    fileDelete(imagesFolder);
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "articles",
+        title
+      );
+
+      // Check if the folder exists
+      if (fs.existsSync(imagesFolder)) {
+        // List all files in the folder
+        const files = fs.readdirSync(imagesFolder);
+
+        // Create an array of file paths
+        convertedImages = files.map((file) => path.join(imagesFolder, file));
+      }
+    } else {
+      // Define the path to the images folder
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "articles",
+        article.title
+      );
+
+      fileDelete(imagesFolder);
+    }
   }
 
   //* Update article

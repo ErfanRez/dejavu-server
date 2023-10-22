@@ -1,6 +1,7 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
+const renameOldFile = require("../utils/renameOldFile");
 
 // @desc Get searched agents
 // @route GET /agents/search
@@ -137,7 +138,7 @@ const updateAgent = async (req, res) => {
 
   // console.log(req.files);
 
-  const convertedImage = req.convertedImage;
+  let convertedImage = req.convertedImage;
 
   //* Confirm data
 
@@ -160,18 +161,34 @@ const updateAgent = async (req, res) => {
     return res.status(404).json({ message: "Agent not found!" });
   }
 
-  // Define the path to the agent's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "agents",
-    `${agent.name}.webp`
-  );
+  if (name !== agent.name) {
+    //* Check if new image provided
+    if (!convertedImage) {
+      renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);
 
-  if (name !== agent.name || convertedImage) {
-    fileDelete(imagesFolder);
+      const newImagePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "agents",
+        `${name}.webp`
+      );
+
+      convertedImage = newImagePath;
+    } else {
+      // Define the path to the agent's images folder
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "agents",
+        `${agent.name}.webp`
+      );
+
+      fileDelete(imagesFolder);
+    }
   }
 
   //* Update agent

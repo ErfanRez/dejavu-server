@@ -211,7 +211,11 @@ const createNewInstallment = async (req, res) => {
     data: {
       title,
       percentage,
-      propertyId: pId,
+      property: {
+        connect: {
+          id: pId,
+        },
+      },
     },
   });
 

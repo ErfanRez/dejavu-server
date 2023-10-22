@@ -47,7 +47,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       }
 
       // Generate a unique file name for the WebP image
-      const webpFileName = `${req.body.title}-${Date.now()}.webp`;
+      const webpFileName = `${Date.now()}.webp`;
 
       // Define the full output file path
       const outputImagePath = path.join(outputFolder, webpFileName);

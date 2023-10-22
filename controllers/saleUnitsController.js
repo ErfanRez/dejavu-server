@@ -1,6 +1,7 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
+const renameOldFile = require("../utils/renameOldFile");
 
 // @desc Get searched saleUnits
 // @route GET /sale-units/search
@@ -291,7 +292,11 @@ const createNewSaleUnit = async (req, res) => {
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
       description,
-      propertyId: pId,
+      property: {
+        connect: {
+          id: pId,
+        },
+      },
       views: {
         create: views.map((viewTitle) => ({
           title: viewTitle,
@@ -341,7 +346,7 @@ const updateSaleUnit = async (req, res) => {
     return res.status(400).json({ message: "Unit ID required!" });
   }
 
-  const convertedImages = req.convertedImages;
+  let convertedImages = req.convertedImages;
 
   //* Confirm data
 
@@ -374,18 +379,41 @@ const updateSaleUnit = async (req, res) => {
     res.status(404).json({ message: "Unit not found!" });
   }
 
-  // Define the path to the saleUnit's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "sales",
-    unit.title
-  );
+  if (title !== unit.title) {
+    //* Check if new images provided
+    if (!convertedImages) {
+      renameOldFile("sales", unit.title, title);
 
-  if (title !== unit.title || convertedImages) {
-    fileDelete(imagesFolder);
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "sales",
+        title
+      );
+
+      // Check if the folder exists
+      if (fs.existsSync(imagesFolder)) {
+        // List all files in the folder
+        const files = fs.readdirSync(imagesFolder);
+
+        // Create an array of file paths
+        convertedImages = files.map((file) => path.join(imagesFolder, file));
+      }
+    } else {
+      // Define the path to the images folder
+      const imagesFolder = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "images",
+        "sales",
+        unit.title
+      );
+
+      fileDelete(imagesFolder);
+    }
   }
 
   //* converts
@@ -483,9 +511,7 @@ const deleteSaleUnit = async (req, res) => {
     result.title
   );
 
-  if (convertedImages) {
-    fileDelete(imagesFolder);
-  }
+  fileDelete(imagesFolder);
 
   res.json({
     message: `Unit ${result.title} with ID: ${result.id} deleted.`,
