@@ -278,7 +278,9 @@ const updateProperty = async (req, res) => {
     `${property.title}.pdf`
   );
 
-  fileDelete(pdfFolder);
+  if (convertedImages) {
+    fileDelete(pdfFolder);
+  }
 
   //* Update property
 

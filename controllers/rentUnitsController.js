@@ -80,7 +80,9 @@ const searchUnitsByPID = async (req, res) => {
   //* If no units
 
   if (!units?.length) {
-    return res.status(400).json({ message: "No units found!" });
+    return res
+      .status(400)
+      .json({ message: `No units related to ${property.title} found!` });
   }
 
   res.json(units);
@@ -151,7 +153,9 @@ const getAllUnitsByPID = async (req, res) => {
   //* If no units
 
   if (!units?.length) {
-    return res.status(400).json({ message: "No units found!" });
+    return res
+      .status(400)
+      .json({ message: `No units related to ${property.title} found!` });
   }
 
   res.json(rentUnits);
@@ -203,6 +207,23 @@ const createNewRentUnit = async (req, res) => {
     description,
     views,
   } = req.body;
+
+  const { pId } = req.params;
+
+  if (!pId) {
+    return res.status(400).json({ message: "Property ID Required!" });
+  }
+
+  //? Does the property exist?
+  const property = await prismadb.property.findUnique({
+    where: {
+      id: pId,
+    },
+  });
+
+  if (!property) {
+    return res.status(400).json({ message: "Property not found!" });
+  }
 
   // console.log(req.files);
   const convertedImages = req.convertedImages;
@@ -261,6 +282,7 @@ const createNewRentUnit = async (req, res) => {
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
       description,
+      propertyId: pId,
       views: {
         create: views.map((viewTitle) => ({
           title: viewTitle,
@@ -281,7 +303,11 @@ const createNewRentUnit = async (req, res) => {
   if (unit) {
     //*created
 
-    res.status(201).json({ message: `New unit ${title} created.` });
+    res
+      .status(201)
+      .json({
+        message: `New unit ${title} for property ${property.title} created.`,
+      });
   } else {
     res.status(400).json({ message: "Invalid unit data received!" });
   }

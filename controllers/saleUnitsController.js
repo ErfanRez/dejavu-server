@@ -80,7 +80,9 @@ const searchUnitsByPID = async (req, res) => {
   //* If no units
 
   if (!units?.length) {
-    return res.status(400).json({ message: "No units found!" });
+    return res
+      .status(400)
+      .json({ message: `No units related to ${property.title} found!` });
   }
 
   res.json(units);
@@ -151,7 +153,9 @@ const getAllUnitsByPID = async (req, res) => {
   //* If no units
 
   if (!units?.length) {
-    return res.status(400).json({ message: "No units found!" });
+    return res
+      .status(400)
+      .json({ message: `No units related to ${property.title} found!` });
   }
 
   res.json(saleUnits);
@@ -302,7 +306,9 @@ const createNewSaleUnit = async (req, res) => {
   if (unit) {
     //*created
 
-    res.status(201).json({ message: `New unit ${title} created.` });
+    res.status(201).json({
+      message: `New unit ${title} for property ${property.title} created.`,
+    });
   } else {
     res.status(400).json({ message: "Invalid unit data received!" });
   }
@@ -386,7 +392,9 @@ const updateSaleUnit = async (req, res) => {
     unit.title
   );
 
-  fileDelete(imagesFolder);
+  if (convertedImages) {
+    fileDelete(imagesFolder);
+  }
 
   //* Update saleUnit
 
