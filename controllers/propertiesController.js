@@ -268,7 +268,7 @@ const updateProperty = async (req, res) => {
     `${property.title}.pdf`
   );
 
-  if (pdfUrl) {
+  if (title !== property.title && pdfUrl) {
     fileDelete(pdfFolder);
   }
 
