@@ -29,7 +29,7 @@ const searchUnitsByUID = async (req, res) => {
       .json({ error: "Search query parameter is missing." });
   }
 
-  const units = await prismadb.favsale.findMany({
+  const units = await prismadb.favSale.findMany({
     where: {
       userId: uId,
     },
@@ -79,7 +79,7 @@ const getAllUnitsByUID = async (req, res) => {
 
   //* Get all favSales from DB
 
-  const units = await prismadb.favsale.findMany({
+  const units = await prismadb.favSale.findMany({
     where: {
       userId: uId,
     },
@@ -143,7 +143,7 @@ const createNewFavSale = async (req, res) => {
 
   //* Create new favSale
 
-  const unit = await prismadb.favsale.create({
+  const unit = await prismadb.favSale.create({
     data: {
       userId: uId,
       saleUnit: {
@@ -192,7 +192,7 @@ const deleteFavSale = async (req, res) => {
 
   //* Create new favSale
 
-  const deletedFavSale = await prismadb.favsale.delete({
+  const deletedFavSale = await prismadb.favSale.delete({
     where: {
       userId_saleId: {
         userId: uId,
