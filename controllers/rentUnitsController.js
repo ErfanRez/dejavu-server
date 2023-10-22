@@ -191,7 +191,7 @@ const getRentUnitById = async (req, res) => {
 };
 
 // @desc Create new rentUnit
-// @route POST /rent-unit
+// @route POST /rent-units
 //! @access Public
 const createNewRentUnit = async (req, res) => {
   const {
@@ -303,11 +303,9 @@ const createNewRentUnit = async (req, res) => {
   if (unit) {
     //*created
 
-    res
-      .status(201)
-      .json({
-        message: `New unit ${title} for property ${property.title} created.`,
-      });
+    res.status(201).json({
+      message: `New unit ${title} for property ${property.title} created.`,
+    });
   } else {
     res.status(400).json({ message: "Invalid unit data received!" });
   }
