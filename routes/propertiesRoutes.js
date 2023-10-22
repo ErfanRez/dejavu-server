@@ -3,6 +3,8 @@ const router = express.Router();
 const propertiesControllers = require("../controllers/propertiesController");
 const saleUnitsController = require("../controllers/saleUnitsController");
 const rentUnitsController = require("../controllers/rentUnitsController");
+const amenitiesController = require("../controllers/amenitiesController");
+const installmentsController = require("../controllers/installmentsController");
 const uploader = require("../middlewares/propertyPics");
 const fileUpload = require("express-fileupload");
 const uploadPdf = require("../middlewares/fileUploader");
@@ -59,6 +61,27 @@ router
     uploader("rents"),
     rentUnitsController.updateRentUnit
   )
-  .delete("/rent-units/:rId", rentUnitsController.deleteRentUnit);
+  .delete("/rent-units/:rId", rentUnitsController.deleteRentUnit)
+  //! Amenities Routes /properties/amenities
+  .get("/amenities/search", amenitiesController.searchAmenities)
+  .get("/:pId/amenities/search", amenitiesController.searchAmenitiesByPID)
+  .get("/amenities", amenitiesController.getAllAmenities)
+  .get("/:pId/amenities", amenitiesController.getAllAmenitiesByPID)
+  .get("/amenities/:aId", amenitiesController.getAmenityById)
+  .post("/:pId/amenities", amenitiesController.createNewAmenity)
+  .patch("/amenities/:aId", amenitiesController.updateAmenity)
+  .delete("/amenities/:aId", amenitiesController.deleteAmenity)
+  //! installments Routes /properties/installments
+  .get("/installments/search", installmentsController.searchInstallments)
+  .get(
+    "/:pId/installments/search",
+    installmentsController.searchInstallmentsByPID
+  )
+  .get("/installments", installmentsController.getAllInstallments)
+  .get("/:pId/installments", installmentsController.getAllInstallmentsByPID)
+  .get("/installments/:inId", installmentsController.getInstallmentById)
+  .post("/:pId/installments", installmentsController.createNewInstallment)
+  .patch("/installments/:inId", installmentsController.updateInstallment)
+  .delete("/installments/:inId", installmentsController.deleteInstallment);
 
 module.exports = router;
