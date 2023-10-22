@@ -3,6 +3,7 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
+const fs = require("fs");
 
 // @desc Get searched properties
 // @route GET /properties/search
@@ -249,7 +250,7 @@ const updateProperty = async (req, res) => {
 
   if (title !== property.title) {
     //* Check if new images provided
-    if (!convertedImages) {
+    if (convertedImages.length === 0) {
       renameOldFile("properties", property.title, title);
 
       const imagesFolder = path.join(
