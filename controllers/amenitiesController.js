@@ -1,6 +1,4 @@
 const prismadb = require("../lib/prismadb");
-const path = require("path");
-const fileDelete = require("../utils/fileDelete");
 
 // @desc Get searched amenities
 // @route GET /amenities/search
