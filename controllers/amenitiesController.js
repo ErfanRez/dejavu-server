@@ -285,7 +285,7 @@ const deleteAmenity = async (req, res) => {
 
   const result = await prismadb.amenity.delete({
     where: {
-      id,
+      id: aId,
     },
   });
 

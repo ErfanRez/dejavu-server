@@ -462,7 +462,7 @@ const deleteRentUnit = async (req, res) => {
 
   const result = await prismadb.rentUnit.delete({
     where: {
-      id,
+      id: rId,
     },
   });
   // Define the path to the rentUnit's images folder
