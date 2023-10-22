@@ -78,6 +78,9 @@ const searchUnitsByPID = async (req, res) => {
       images: true,
       views: true,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no units
