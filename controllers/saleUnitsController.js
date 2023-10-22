@@ -116,7 +116,7 @@ const getAllSaleUnits = async (req, res) => {
     return res.status(400).json({ message: "No units found!" });
   }
 
-  res.json(saleUnits);
+  res.json(units);
 };
 
 // @desc Get all saleUnits related to a specific property
@@ -164,7 +164,7 @@ const getAllUnitsByPID = async (req, res) => {
       .json({ message: `No units related to ${property.title} found!` });
   }
 
-  res.json(saleUnits);
+  res.json(units);
 };
 
 // @desc Get an unique saleUnit

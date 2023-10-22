@@ -32,7 +32,7 @@ model FavSale {
   userId   String // Foreign Key to User model
   user     User     @relation(fields: [userId], references: [id])
   saleId   String // Foreign Key to SaleUnit model
-  SaleUnit SaleUnit @relation(fields: [saleId], references: [id])
+  saleUnit SaleUnit @relation(fields: [saleId], references: [id])
 
   @@index([userId])
   @@index([saleId])
