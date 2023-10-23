@@ -339,7 +339,7 @@ const updateRentUnit = async (req, res) => {
 
   const { rId } = req.params;
 
-  const convertedImages = req.convertedImages;
+  let convertedImages = req.convertedImages;
 
   //* Confirm data
 
