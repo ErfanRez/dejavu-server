@@ -139,6 +139,18 @@ const createNewProperty = async (req, res) => {
     !longitude ||
     !description
   ) {
+    // Define the path to the images folder
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "properties",
+      title
+    );
+
+    fileDelete(imagesFolder);
+
     return res.status(400).json({ message: "All fields required!" });
   }
 

@@ -29,9 +29,11 @@ app.use("/", require("./routes/root"));
 
 // app.use("/auth", require("./routes/authRoutes"));
 app.use("/users", require("./routes/userRoutes"));
-app.use("/fav", require("./routes/favRoutes"));
+app.use("/fav-sales", require("./routes/favSalesRoutes"));
+app.use("/fav-rents", require("./routes/favRentsRoutes"));
 app.use("/properties", require("./routes/propertiesRoutes"));
-app.use("/units", require("./routes/unitsRoutes"));
+app.use("/sale-units", require("./routes/saleUnitsRoutes"));
+app.use("/rent-units", require("./routes/rentUnitsRoutes"));
 app.use("/amenities", require("./routes/amenitiesRoutes"));
 app.use("/installments", require("./routes/installmentsRoutes"));
 app.use("/categories", require("./routes/categoriesRoutes"));
