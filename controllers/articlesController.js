@@ -138,7 +138,7 @@ const updateArticle = async (req, res) => {
 
   const { id } = req.params;
 
-  const convertedImages = req.convertedImages;
+  let convertedImages = req.convertedImages;
 
   //* Confirm data
 
