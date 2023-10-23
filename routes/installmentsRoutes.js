@@ -7,7 +7,7 @@ router
   .get("/:pId/search", installmentsController.searchInstallmentsByPID)
   .get("/", installmentsController.getAllInstallments)
   .get("/:pId", installmentsController.getAllInstallmentsByPID)
-  .get("/:inId", installmentsController.getInstallmentById)
+  .get("/get-one/:inId", installmentsController.getInstallmentById)
   .post("/:pId", installmentsController.createNewInstallment)
   .patch("/:inId", installmentsController.updateInstallment)
   .delete("/:inId", installmentsController.deleteInstallment);
