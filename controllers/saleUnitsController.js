@@ -44,7 +44,7 @@ const searchSaleUnits = async (req, res) => {
 // @route GET /:pId/sale-units/search
 //! @access Public
 const searchUnitsByPID = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
   const { pId } = req.params;
 
   //* Confirm data

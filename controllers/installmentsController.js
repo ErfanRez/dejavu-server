@@ -36,7 +36,7 @@ const searchInstallments = async (req, res) => {
 // @route GET /:pId/installments/search
 //! @access Public
 const searchInstallmentsByPID = async (req, res) => {
-  const searchString = req.query.title; //* Get the search string from query params
+  const searchString = req.query.q; //* Get the search string from query params
   const { pId } = req.params;
 
   //* Confirm data
