@@ -103,18 +103,6 @@ const createNewArticle = async (req, res) => {
   //* Confirm data
 
   if (!title || !description || !body) {
-    // Define the path to the images folder
-    const imagesFolder = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "images",
-      "articles",
-      title
-    );
-
-    fileDelete(imagesFolder);
-
     return res.status(400).json({ message: "All fields required!" });
   }
 

@@ -105,18 +105,6 @@ const createNewUser = async (req, res) => {
   //* Confirm data
 
   if (!username || !email) {
-    // Define the path to the images folder
-    const imagesFolder = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "images",
-      "users",
-      `${username}.webp`
-    );
-
-    fileDelete(imagesFolder);
-
     return res.status(400).json({ message: "Username and email required!" });
   }
 
