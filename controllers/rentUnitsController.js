@@ -244,7 +244,6 @@ const createNewRentUnit = async (req, res) => {
     !unitNo ||
     !floor ||
     !area ||
-    !rPSqft ||
     !rentPrice ||
     !bedrooms ||
     !bathrooms ||
@@ -353,7 +352,6 @@ const updateRentUnit = async (req, res) => {
     !unitNo ||
     !floor ||
     !area ||
-    !rPSqft ||
     !rentPrice ||
     !bedrooms ||
     !bathrooms ||
