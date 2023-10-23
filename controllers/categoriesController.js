@@ -85,7 +85,7 @@ const createNewCategory = async (req, res) => {
   //* Confirm data
 
   if (!title) {
-    res.status(400).json({ message: "Category title required!" });
+    return res.status(400).json({ message: "Category title required!" });
   }
 
   //? Check for duplicate
@@ -143,7 +143,7 @@ const updateCategory = async (req, res) => {
   });
 
   if (!category) {
-    res.status(404).json({ message: "Category not found!" });
+    return res.status(404).json({ message: "Category not found!" });
   }
 
   //* Update category

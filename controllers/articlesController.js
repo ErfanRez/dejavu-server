@@ -103,7 +103,7 @@ const createNewArticle = async (req, res) => {
   //* Confirm data
 
   if (!title || !description || !body) {
-    res.status(400).json({ message: "All fields required!" });
+    return res.status(400).json({ message: "All fields required!" });
   }
 
   //* Create new article
@@ -159,10 +159,10 @@ const updateArticle = async (req, res) => {
   });
 
   if (!article) {
-    res.status(404).json({ message: "Article not found!" });
+    return res.status(404).json({ message: "Article not found!" });
   }
 
-  if (title !== article.title) {
+  if (title !== article.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
       renameOldFile("articles", article.title, title);

@@ -93,7 +93,7 @@ const createNewAgent = async (req, res) => {
   //* Confirm data
 
   if (!name) {
-    res.status(400).json({ message: "Agent name required!" });
+    return res.status(400).json({ message: "Agent name required!" });
   }
 
   //? Check for duplicate
@@ -147,7 +147,7 @@ const updateAgent = async (req, res) => {
   }
 
   if (!name) {
-    res.status(400).json({ message: "Agent name required!" });
+    return res.status(400).json({ message: "Agent name required!" });
   }
 
   //? Does the agent exist to update?
@@ -161,7 +161,7 @@ const updateAgent = async (req, res) => {
     return res.status(404).json({ message: "Agent not found!" });
   }
 
-  if (name !== agent.name) {
+  if (name !== agent.name && name !== undefined) {
     //* Check if new image provided
     if (!convertedImage) {
       renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);

@@ -8,7 +8,7 @@ const uploadPdf = (req, res, next) => {
   if (!pdfFile) {
     console.log("No PDF file was uploaded.");
     next(); // Continue to the next middleware
-  } else {
+  } else if (req.body.title !== undefined) {
     if (pdfFile.mimetype !== "application/pdf") {
       return res.status(400).json({ message: "Only PDF files are allowed." });
     }
@@ -35,6 +35,9 @@ const uploadPdf = (req, res, next) => {
 
     req.pdfUrl = pdfFilePath; // Set req.pdfUrl
 
+    next();
+  } else {
+    console.log("Title not provided.");
     next();
   }
 };

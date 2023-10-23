@@ -15,7 +15,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
   if (imageFiles.length === 0 && req.method !== "PATCH") {
     return res.status(400).json({ message: "At least one image required!" });
     // If it's a PATCH request, don't send an error response, but proceed to the next middleware or route
-  } else {
+  } else if (req.body.title !== undefined) {
     // Check the MIME type of each uploaded image file
     for (const file of imageFiles) {
       if (!file.mimetype.startsWith("image")) {
@@ -63,6 +63,9 @@ const uploader = (subFolderName) => async (req, res, next) => {
     console.log("Images converted to WebP.");
     // Pass the generated file names to the next middleware or route
     req.convertedImages = convertedImages;
+    next();
+  } else {
+    console.log("Title not provided.");
     next();
   }
 };

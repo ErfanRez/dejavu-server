@@ -16,7 +16,7 @@ const uploader = async (req, res, next) => {
     console.log("No files were uploaded.");
     req.convertedImages = [];
     next();
-  } else {
+  } else if (req.body.title !== undefined) {
     // Check the MIME type of each uploaded image file
     for (const file of imageFiles) {
       if (!file.mimetype.startsWith("image")) {
@@ -64,6 +64,9 @@ const uploader = async (req, res, next) => {
     console.log("Images converted to WebP.");
     // Pass the generated file names to the next middleware or route
     req.convertedImages = convertedImages;
+    next();
+  } else {
+    console.log("Title not provided.");
     next();
   }
 };

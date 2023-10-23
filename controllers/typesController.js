@@ -85,7 +85,7 @@ const createNewType = async (req, res) => {
   //* Confirm data
 
   if (!title) {
-    res.status(400).json({ message: "Type title required!" });
+    return res.status(400).json({ message: "Type title required!" });
   }
 
   //? Check for duplicate
@@ -143,7 +143,7 @@ const updateType = async (req, res) => {
   });
 
   if (!type) {
-    res.status(404).json({ message: "Type not found!" });
+    return res.status(404).json({ message: "Type not found!" });
   }
 
   //* Update type

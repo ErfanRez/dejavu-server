@@ -252,7 +252,7 @@ const createNewRentUnit = async (req, res) => {
     !description ||
     !views
   ) {
-    res.status(400).json({ message: "All fields required!" });
+    return res.status(400).json({ message: "All fields required!" });
   }
 
   //? Check for duplicate
@@ -373,10 +373,10 @@ const updateRentUnit = async (req, res) => {
   });
 
   if (!unit) {
-    res.status(404).json({ message: "Unit not found!" });
+    return res.status(404).json({ message: "Unit not found!" });
   }
 
-  if (title !== unit.title) {
+  if (title !== unit.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
       renameOldFile("rents", unit.title, title);

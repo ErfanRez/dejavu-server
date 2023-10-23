@@ -200,7 +200,7 @@ const createNewAmenity = async (req, res) => {
   //* Confirm data
 
   if (!title) {
-    res.status(400).json({ message: "Amenity title required!" });
+    return res.status(400).json({ message: "Amenity title required!" });
   }
 
   //* Create new amenity
@@ -254,7 +254,7 @@ const updateAmenity = async (req, res) => {
   });
 
   if (!amenity) {
-    res.status(404).json({ message: "Amenity not found!" });
+    return res.status(404).json({ message: "Amenity not found!" });
   }
 
   //* Update amenity

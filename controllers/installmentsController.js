@@ -259,7 +259,7 @@ const updateInstallment = async (req, res) => {
   });
 
   if (!installment) {
-    res.status(404).json({ message: "Installment not found!" });
+    return res.status(404).json({ message: "Installment not found!" });
   }
 
   //* Update installment

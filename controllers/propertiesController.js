@@ -139,7 +139,7 @@ const createNewProperty = async (req, res) => {
     !longitude ||
     !description
   ) {
-    res.status(400).json({ message: "All fields required!" });
+    return res.status(400).json({ message: "All fields required!" });
   }
 
   //? Check for duplicate
@@ -245,10 +245,10 @@ const updateProperty = async (req, res) => {
   });
 
   if (!property) {
-    res.status(404).json({ message: "Property not found!" });
+    return res.status(404).json({ message: "Property not found!" });
   }
 
-  if (title !== property.title) {
+  if (title !== property.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
       renameOldFile("properties", property.title, title);

@@ -105,7 +105,7 @@ const createNewUser = async (req, res) => {
   //* Confirm data
 
   if (!username || !email) {
-    res.status(400).json({ message: "Username and email required!" });
+    return res.status(400).json({ message: "Username and email required!" });
   }
 
   //? Check for duplicate
@@ -166,7 +166,7 @@ const updateUser = async (req, res) => {
   }
 
   if (!username || !email) {
-    res.status(400).json({ message: "Username and email required!" });
+    return res.status(400).json({ message: "Username and email required!" });
   }
 
   //? Does the user exist to update?
@@ -180,7 +180,7 @@ const updateUser = async (req, res) => {
     return res.status(404).json({ message: "User not found!" });
   }
 
-  if (username !== user.username) {
+  if (username !== user.username && username !== undefined) {
     //* Check if new image provided
     if (!convertedImage) {
       renameOldFile("users", `${user.username}.webp`, `${username}.webp`);

@@ -9,8 +9,8 @@ const uploader = async (req, res, next) => {
   if (!imageFile) {
     console.log("No files were uploaded.");
     next();
-  } else {
-    if (imageFile.mimetype.startsWith("image")) {
+  } else if (req.body.name !== undefined) {
+    if (!imageFile.mimetype.startsWith("image")) {
       return res.status(400).json({ message: "Only image files are allowed." });
     }
 
@@ -47,6 +47,9 @@ const uploader = async (req, res, next) => {
     // Pass the generated file name to the next middleware or route
     req.convertedImage = outputImagePath;
 
+    next();
+  } else {
+    console.log("Agent name not provided.");
     next();
   }
 };
