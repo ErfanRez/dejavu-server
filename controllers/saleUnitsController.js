@@ -90,7 +90,7 @@ const searchUnitsByPID = async (req, res) => {
   if (!units?.length) {
     return res
       .status(404)
-      .json({ message: `No units related to ${property.title} found!` });
+      .json({ message: `No units found related to ${property.title}!` });
   }
 
   res.json(units);
@@ -163,7 +163,7 @@ const getAllUnitsByPID = async (req, res) => {
   if (!units?.length) {
     return res
       .status(404)
-      .json({ message: `No units related to ${property.title} found!` });
+      .json({ message: `No units found related to ${property.title}!` });
   }
 
   res.json(units);

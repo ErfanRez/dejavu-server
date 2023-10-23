@@ -49,7 +49,7 @@ const searchUnitsByUID = async (req, res) => {
   if (!units?.length) {
     return res
       .status(400)
-      .json({ message: `No units related to ${user.username} found!` });
+      .json({ message: `No favorite units found for ${user.username}!` });
   }
 
   res.json(units);
@@ -93,7 +93,7 @@ const getAllUnitsByUID = async (req, res) => {
   if (!units?.length) {
     return res
       .status(400)
-      .json({ message: `No units related to ${user.username} found!` });
+      .json({ message: `No favorite units found for ${user.username}!` });
   }
 
   res.json(units);
