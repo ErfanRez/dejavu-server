@@ -29,12 +29,12 @@ const searchUnitsByUID = async (req, res) => {
       .json({ error: "Search query parameter is missing." });
   }
 
-  const units = await prismadb.favrent.findMany({
+  const units = await prismadb.favRent.findMany({
     where: {
       userId: uId,
     },
     include: {
-      saleUnit: {
+      rentUnit: {
         where: {
           title: {
             contains: searchString,
@@ -79,12 +79,12 @@ const getAllUnitsByUID = async (req, res) => {
 
   //* Get all favRents from DB
 
-  const units = await prismadb.favrent.findMany({
+  const units = await prismadb.favRent.findMany({
     where: {
       userId: uId,
     },
     include: {
-      saleUnit: true,
+      rentUnit: true,
     },
   });
 
@@ -110,7 +110,7 @@ const createNewFavRent = async (req, res) => {
   //* Confirm data
 
   if (!uId || !rentId) {
-    return res.status(400).json({ message: "User and sale unit ID Required!" });
+    return res.status(400).json({ message: "User and rent unit ID Required!" });
   }
 
   //? Does the user exist?
@@ -126,12 +126,10 @@ const createNewFavRent = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.favsale.findUnique({
+  const duplicate = await prismadb.favRent.findFirst({
     where: {
-      userId_rentId: {
-        userId: uId,
-        rentId: rentId,
-      },
+      userId: uId,
+      rentId: rentId,
     },
   });
 
@@ -143,10 +141,14 @@ const createNewFavRent = async (req, res) => {
 
   //* Create new favRent
 
-  const unit = await prismadb.favrent.create({
+  const unit = await prismadb.favRent.create({
     data: {
-      userId: uId,
-      saleUnit: {
+      user: {
+        connect: {
+          id: uId,
+        },
+      },
+      rentUnit: {
         connect: {
           id: rentId,
         },
@@ -170,13 +172,12 @@ const createNewFavRent = async (req, res) => {
 //! @access Private
 const deleteFavRent = async (req, res) => {
   const { rentId } = req.body;
-
   const { uId } = req.params;
 
   //* Confirm data
 
   if (!uId || !rentId) {
-    return res.status(400).json({ message: "User and sale unit ID Required!" });
+    return res.status(400).json({ message: "User and rent unit ID Required!" });
   }
 
   //? Does the user exist?
@@ -190,25 +191,29 @@ const deleteFavRent = async (req, res) => {
     return res.status(404).json({ message: "User not found!" });
   }
 
-  //* Create new favRent
+  //* delete favRent
 
-  const deletedFavRent = await prismadb.favrent.delete({
+  const favField = await prismadb.favRent.findFirst({
     where: {
-      userId_rentId: {
-        userId: uId,
-        rentId: rentId,
-      },
+      userId: uId,
+      rentId: rentId,
     },
   });
 
-  if (!deletedFavRent) {
+  if (!favField) {
     return res
       .status(404)
-      .json({ message: "Favorite sale unit not found for the user!" });
+      .json({ message: "Favorite rent unit not found for the user!" });
   }
 
+  const deletedFav = await prismadb.favRent.delete({
+    where: {
+      id: favField.id,
+    },
+  });
+
   res.json({
-    message: `Unit removed from user's favorites.`,
+    message: `Unit ${deletedFav.id} removed from user's favorites.`,
   });
 };
 

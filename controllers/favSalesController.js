@@ -126,12 +126,10 @@ const createNewFavSale = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.favSale.findUnique({
+  const duplicate = await prismadb.favSale.findFirst({
     where: {
-      userId_saleId: {
-        userId: uId,
-        saleId: saleId,
-      },
+      userId: uId,
+      saleId: saleId,
     },
   });
 
@@ -145,7 +143,11 @@ const createNewFavSale = async (req, res) => {
 
   const unit = await prismadb.favSale.create({
     data: {
-      userId: uId,
+      user: {
+        connect: {
+          id: uId,
+        },
+      },
       saleUnit: {
         connect: {
           id: saleId,
@@ -170,7 +172,6 @@ const createNewFavSale = async (req, res) => {
 //! @access Private
 const deleteFavSale = async (req, res) => {
   const { saleId } = req.body;
-
   const { uId } = req.params;
 
   //* Confirm data
@@ -190,25 +191,29 @@ const deleteFavSale = async (req, res) => {
     return res.status(404).json({ message: "User not found!" });
   }
 
-  //* Create new favSale
+  //* delete favSale
 
-  const deletedFavSale = await prismadb.favSale.delete({
+  const favField = await prismadb.favSale.findFirst({
     where: {
-      userId_saleId: {
-        userId: uId,
-        saleId: saleId,
-      },
+      userId: uId,
+      saleId: saleId,
     },
   });
 
-  if (!deletedFavSale) {
+  if (!favField) {
     return res
       .status(404)
       .json({ message: "Favorite sale unit not found for the user!" });
   }
 
+  const deletedFav = await prismadb.favSale.delete({
+    where: {
+      id: favField.id,
+    },
+  });
+
   res.json({
-    message: `Unit removed from user's favorites.`,
+    message: `Unit ${deletedFav.id} removed from user's favorites.`,
   });
 };
 
