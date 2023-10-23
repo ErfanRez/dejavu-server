@@ -8,7 +8,6 @@ const uploader = async (req, res, next) => {
   // Check if a file was uploaded
   if (!imageFile) {
     console.log("No files were uploaded.");
-    next();
   } else if (req.body.username !== undefined) {
     if (!imageFile.mimetype.startsWith("image")) {
       return res.status(400).json({ message: "Only image files are allowed." });
@@ -46,12 +45,11 @@ const uploader = async (req, res, next) => {
     console.log("Image converted to WebP.");
     // Pass the generated file name to the next middleware or route
     req.convertedImage = outputImagePath;
-
-    next();
   } else {
     console.log("Username not provided.");
-    next();
   }
+
+  next();
 };
 
 module.exports = uploader;

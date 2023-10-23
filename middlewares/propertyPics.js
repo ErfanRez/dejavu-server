@@ -14,8 +14,31 @@ const uploader = (subFolderName) => async (req, res, next) => {
   // Check if any files were uploaded
   if (imageFiles.length === 0 && req.method !== "PATCH") {
     return res.status(400).json({ message: "At least one image required!" });
-    // If it's a PATCH request, don't send an error response, but proceed to the next middleware or route
+    // If it's a PATCH request, don't send an error response.
   } else if (req.body.title !== undefined) {
+    // Title is provided
+
+    // Define the output folder for converted images
+    const outputFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      subFolderName,
+      req.body.title
+    );
+
+    if (fs.existsSync(outputFolder)) {
+      // Folder already exists, delete its contents
+      fs.readdirSync(outputFolder).forEach((file) => {
+        const filePath = path.join(outputFolder, file);
+        fs.unlinkSync(filePath);
+      });
+    } else {
+      // Folder doesn't exist, create it
+      fs.mkdirSync(outputFolder, { recursive: true });
+    }
+
     // Check the MIME type of each uploaded image file
     for (const file of imageFiles) {
       if (!file.mimetype.startsWith("image")) {
@@ -30,21 +53,6 @@ const uploader = (subFolderName) => async (req, res, next) => {
     // Process each uploaded image and convert it to WebP format
     for (const image of imageFiles) {
       const imageData = image.data;
-
-      // Define the output folder for converted images
-      const outputFolder = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "images",
-        subFolderName,
-        req.body.title
-      );
-
-      // Create the output folder if it doesn't exist
-      if (!fs.existsSync(outputFolder)) {
-        fs.mkdirSync(outputFolder, { recursive: true });
-      }
 
       // Generate a unique file name for the WebP image
       const webpFileName = `${Date.now()}.webp`;
@@ -63,11 +71,11 @@ const uploader = (subFolderName) => async (req, res, next) => {
     console.log("Images converted to WebP.");
     // Pass the generated file names to the next middleware or route
     req.convertedImages = convertedImages;
-    next();
   } else {
     console.log("Title not provided.");
-    next();
   }
+
+  next();
 };
 
 module.exports = uploader;
