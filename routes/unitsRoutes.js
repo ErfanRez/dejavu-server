@@ -29,17 +29,17 @@ router
   .get("/:pId/rent-units/search", rentUnitsController.searchUnitsByPID)
   .get("/rent-units", rentUnitsController.getAllRentUnits)
   .get("/:pId/rent-units", rentUnitsController.getAllUnitsByPID)
-  .get("/rent-units/:sId", rentUnitsController.getRentUnitById)
+  .get("/rent-units/:rId", rentUnitsController.getRentUnitById)
   .post(
     "/:pId/rent-units",
     uploadPic("rents"),
     rentUnitsController.createNewRentUnit
   )
   .patch(
-    "/rent-units/:sId",
+    "/rent-units/:rId",
     uploadPic("rents"),
     rentUnitsController.updateRentUnit
   )
-  .delete("/rent-units/:sId", rentUnitsController.deleteRentUnit);
+  .delete("/rent-units/:rId", rentUnitsController.deleteRentUnit);
 
 module.exports = router;
