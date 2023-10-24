@@ -57,8 +57,7 @@ model Property {
   country        String
   location       String
   category       String
-  latitude       String
-  longitude      String
+  mapUrl         String
   offPlan        Boolean         @default(false)
   completionDate String?
   pdfUrl         String?

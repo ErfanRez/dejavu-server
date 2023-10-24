@@ -117,8 +117,7 @@ const createNewProperty = async (req, res) => {
     country,
     location,
     category,
-    latitude,
-    longitude,
+    mapUrl,
     offPlan,
     completionDate,
     description,
@@ -137,8 +136,7 @@ const createNewProperty = async (req, res) => {
     !country ||
     !location ||
     !category ||
-    !latitude ||
-    !longitude ||
+    !mapUrl ||
     !description
   ) {
     return res.status(400).json({ message: "All fields required!" });
@@ -172,8 +170,7 @@ const createNewProperty = async (req, res) => {
       country,
       location,
       category,
-      latitude,
-      longitude,
+      mapUrl,
       offPlan: offPlanBoolean,
       completionDate,
       description,
@@ -206,8 +203,7 @@ const updateProperty = async (req, res) => {
     country,
     location,
     category,
-    latitude,
-    longitude,
+    mapUrl,
     offPlan,
     completionDate,
     description,
@@ -231,8 +227,7 @@ const updateProperty = async (req, res) => {
     !country ||
     !location ||
     !category ||
-    !latitude ||
-    !longitude ||
+    !mapUrl ||
     !description
   ) {
     return res.status(400).json({ message: "All fields required!" });
@@ -340,8 +335,7 @@ const updateProperty = async (req, res) => {
       country,
       location,
       category,
-      latitude,
-      longitude,
+      mapUrl,
       offPlan: offPlanBoolean,
       completionDate,
       description,
