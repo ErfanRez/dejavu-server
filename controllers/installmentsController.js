@@ -177,16 +177,15 @@ const getInstallmentById = async (req, res) => {
 // @desc Create new installment
 // @route POST /:pId/installments
 //! @access Private
-const createNewInstallment = async (req, res) => {
-  const { title, percentage } = req.body;
-
+const createNewInstallments = async (req, res) => {
+  const { installments } = req.body;
   const { pId } = req.params;
 
   if (!pId) {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
-  //? Does the property exist?
+  // Does the property exist?
   const property = await prismadb.property.findUnique({
     where: {
       id: pId,
@@ -197,36 +196,43 @@ const createNewInstallment = async (req, res) => {
     return res.status(404).json({ message: "Property not found!" });
   }
 
-  //* Confirm data
-
-  if (!title || !percentage) {
-    res
-      .status(400)
-      .json({ message: "Installment title and percentage required!" });
+  // Confirm data
+  if (!installments) {
+    return res.status(400).json({ message: "Installments required!" });
   }
 
-  //* Create new installment
+  // Create new installments
+  const createdInstallments = [];
 
-  const installment = await prismadb.installment.create({
-    data: {
-      title,
-      percentage,
-      property: {
-        connect: {
-          id: pId,
+  for (const installment of installments) {
+    const { title, percentage } = installment;
+
+    const newInstallment = await prismadb.installment.create({
+      data: {
+        title,
+        percentage,
+        property: {
+          connect: {
+            id: pId,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (installment) {
-    //*created
+    if (newInstallment) {
+      createdInstallments.push(newInstallment);
+    }
+  }
 
-    res.status(201).json({
-      message: `New installment ${title} for property ${property.title} created.`,
+  if (createdInstallments.length > 0) {
+    return res.status(201).json({
+      message: `New installments created for property ${property.title}.`,
+      installments: createdInstallments,
     });
   } else {
-    res.status(400).json({ message: "Invalid installment data received!" });
+    return res
+      .status(400)
+      .json({ message: "Invalid installment data received!" });
   }
 };
 
@@ -316,7 +322,7 @@ module.exports = {
   getAllInstallments,
   getAllInstallmentsByPID,
   getInstallmentById,
-  createNewInstallment,
+  createNewInstallments,
   updateInstallment,
   deleteInstallment,
 };

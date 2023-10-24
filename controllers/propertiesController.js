@@ -9,20 +9,24 @@ const fs = require("fs");
 // @route GET /properties/search
 //! @access Public
 const searchProperties = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
+  const searchParams = req.query; // Get the search parameters from query params
 
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
+  if (Object.keys(searchParams).length === 0) {
+    return res.status(400).json({ error: "No search parameters provided." });
+  }
+
+  const where = {};
+
+  for (const param in searchParams) {
+    if (searchParams[param]) {
+      where[param] = {
+        contains: searchParams[param],
+      };
+    }
   }
 
   const properties = await prismadb.property.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
+    where: where,
     include: {
       images: true,
       amenities: true,
@@ -34,8 +38,6 @@ const searchProperties = async (req, res) => {
       updatedAt: "desc",
     },
   });
-
-  //* If no properties
 
   if (!properties?.length) {
     return res.status(404).json({ message: "No properties found!" });
@@ -110,7 +112,7 @@ const getAllProperties = async (req, res) => {
 const createNewProperty = async (req, res) => {
   const {
     title,
-    developer,
+    owner,
     city,
     country,
     location,
@@ -130,7 +132,7 @@ const createNewProperty = async (req, res) => {
 
   if (
     !title ||
-    !developer ||
+    !owner ||
     !city ||
     !country ||
     !location ||
@@ -165,7 +167,7 @@ const createNewProperty = async (req, res) => {
   const property = await prismadb.property.create({
     data: {
       title,
-      developer,
+      owner,
       city,
       country,
       location,
@@ -199,7 +201,7 @@ const createNewProperty = async (req, res) => {
 const updateProperty = async (req, res) => {
   const {
     title,
-    developer,
+    owner,
     city,
     country,
     location,
@@ -224,7 +226,7 @@ const updateProperty = async (req, res) => {
 
   if (
     !title ||
-    !developer ||
+    !owner ||
     !city ||
     !country ||
     !location ||
@@ -268,7 +270,15 @@ const updateProperty = async (req, res) => {
         const files = fs.readdirSync(imagesFolder);
 
         // Create an array of file paths
-        convertedImages = files.map((file) => path.join(imagesFolder, file));
+        const outputImageURL = path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "images",
+          "properties",
+          title
+        );
+
+        convertedImages = files.map((file) => path.join(outputImageURL, file));
       }
     } else {
       // Define the path to the property's images folder
@@ -325,7 +335,7 @@ const updateProperty = async (req, res) => {
     },
     data: {
       title,
-      developer,
+      owner,
       city,
       country,
       location,

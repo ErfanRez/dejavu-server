@@ -8,20 +8,24 @@ const fs = require("fs");
 // @route GET /articles/search
 //! @access Private
 const searchArticles = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
+  const searchParams = req.query; // Get the search parameters from query params
 
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
+  if (Object.keys(searchParams).length === 0) {
+    return res.status(400).json({ error: "No search parameters provided." });
+  }
+
+  const where = {};
+
+  for (const param in searchParams) {
+    if (searchParams[param]) {
+      where[param] = {
+        contains: searchParams[param],
+      };
+    }
   }
 
   const articles = await prismadb.article.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
+    where: where,
     include: {
       images: true,
     },
@@ -29,8 +33,6 @@ const searchArticles = async (req, res) => {
       updatedAt: "desc",
     },
   });
-
-  //* If no articles
 
   if (!articles?.length) {
     return res.status(404).json({ message: "No articles found!" });

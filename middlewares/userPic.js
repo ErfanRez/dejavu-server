@@ -42,9 +42,17 @@ const uploader = async (req, res, next) => {
     // Convert the image to WebP format using Sharp
     await sharp(imageData).toFormat("webp").toFile(outputImagePath);
 
-    console.log("Image converted to WebP.");
     // Pass the generated file name to the next middleware or route
-    req.convertedImage = outputImagePath;
+    const outputImageURL = path.join(
+      process.env.ROOT_PATH,
+      "uploads",
+      "images",
+      "users",
+      `${req.body.username}.webp`
+    );
+    req.convertedImage = outputImageURL;
+
+    console.log("Image converted to WebP.");
   } else {
     console.log("Username not provided.");
   }

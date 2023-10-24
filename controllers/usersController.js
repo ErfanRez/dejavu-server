@@ -6,21 +6,25 @@ const renameOldFile = require("../utils/renameOldFile");
 // @desc Get searched users
 // @route GET /users/search
 //! @access Private
-const searchUsersByUsername = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
+const searchUsers = async (req, res) => {
+  const searchParams = req.query; // Get the search parameters from query params
 
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
+  if (Object.keys(searchParams).length === 0) {
+    return res.status(400).json({ error: "No search parameters provided." });
+  }
+
+  const where = {};
+
+  for (const param in searchParams) {
+    if (searchParams[param]) {
+      where[param] = {
+        contains: searchParams[param],
+      };
+    }
   }
 
   const users = await prismadb.user.findMany({
-    where: {
-      username: {
-        contains: searchString,
-      },
-    },
+    where: where,
     include: {
       favSales: true,
       favRents: true,
@@ -29,8 +33,6 @@ const searchUsersByUsername = async (req, res) => {
       updatedAt: "desc",
     },
   });
-
-  //* If no users
 
   if (!users?.length) {
     return res.status(404).json({ message: "No users found!" });
@@ -186,8 +188,7 @@ const updateUser = async (req, res) => {
       renameOldFile("users", `${user.username}.webp`, `${username}.webp`);
 
       const newImagePath = path.join(
-        __dirname,
-        "..",
+        process.env.ROOT_PATH,
         "uploads",
         "images",
         "users",
@@ -279,7 +280,7 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  searchUsersByUsername,
+  searchUsers,
   getUserById,
   getAllUsers,
   createNewUser,

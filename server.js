@@ -30,16 +30,16 @@ app.use("/", express.static(path.join(__dirname, "uploads")));
 app.use("/", require("./routes/root"));
 
 // app.use("/auth", require("./routes/authRoutes"));
-app.use("/users", require("./routes/userRoutes"));
-app.use("/fav", require("./routes/favUnitsRoutes"));
-app.use("/properties", require("./routes/propertiesRoutes"));
-app.use("/units", require("./routes/unitsRoutes"));
-app.use("/amenities", require("./routes/amenitiesRoutes"));
-app.use("/installments", require("./routes/installmentsRoutes"));
-app.use("/categories", require("./routes/categoriesRoutes"));
-app.use("/types", require("./routes/typesRoutes"));
-app.use("/articles", require("./routes/articlesRoutes"));
-app.use("/agents", require("./routes/agentsRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/fav", require("./routes/favUnitsRoutes"));
+app.use("/api/properties", require("./routes/propertiesRoutes"));
+app.use("/api/units", require("./routes/unitsRoutes"));
+app.use("/api/amenities", require("./routes/amenitiesRoutes"));
+app.use("/api/installments", require("./routes/installmentsRoutes"));
+app.use("/api/categories", require("./routes/categoriesRoutes"));
+app.use("/api/types", require("./routes/typesRoutes"));
+app.use("/api/articles", require("./routes/articlesRoutes"));
+app.use("/api/agents", require("./routes/agentsRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);

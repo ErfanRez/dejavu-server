@@ -32,7 +32,15 @@ const uploadPdf = (req, res, next) => {
       }
     });
 
-    req.pdfUrl = pdfFilePath; // Set req.pdfUrl
+    // Pass the generated file name to the next middleware or route
+    const outputPdfURL = path.join(
+      process.env.ROOT_PATH,
+      "uploads",
+      "factSheets",
+      `${req.body.title}.pdf`
+    );
+
+    req.pdfUrl = outputPdfURL; // Set req.pdfUrl
   } else {
     console.log("Title not provided.");
   }

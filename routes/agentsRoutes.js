@@ -6,7 +6,7 @@ const fileUpload = require("express-fileupload");
 
 router
   .use(fileUpload())
-  .get("/search", agentsControllers.searchAgentsByName)
+  .get("/search", agentsControllers.searchAgents)
   .get("/", agentsControllers.getAllAgents)
   .get("/:id", agentsControllers.getAgentById)
   .post("/", uploader, agentsControllers.createNewAgent)

@@ -6,27 +6,29 @@ const renameOldFile = require("../utils/renameOldFile");
 // @desc Get searched agents
 // @route GET /agents/search
 //! @access Private
-const searchAgentsByName = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
+const searchAgents = async (req, res) => {
+  const searchParams = req.query; // Get the search parameters from query params
 
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
+  if (Object.keys(searchParams).length === 0) {
+    return res.status(400).json({ error: "No search parameters provided." });
+  }
+
+  const where = {};
+
+  for (const param in searchParams) {
+    if (searchParams[param]) {
+      where[param] = {
+        contains: searchParams[param],
+      };
+    }
   }
 
   const agents = await prismadb.agent.findMany({
-    where: {
-      name: {
-        contains: searchString,
-      },
-    },
+    where: where,
     orderBy: {
       updatedAt: "desc",
     },
   });
-
-  //* If no agents
 
   if (!agents?.length) {
     return res.status(404).json({ message: "No agents found!" });
@@ -167,8 +169,7 @@ const updateAgent = async (req, res) => {
       renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);
 
       const newImagePath = path.join(
-        __dirname,
-        "..",
+        process.env.ROOT_PATH,
         "uploads",
         "images",
         "agents",
@@ -255,7 +256,7 @@ const deleteAgent = async (req, res) => {
 };
 
 module.exports = {
-  searchAgentsByName,
+  searchAgents,
   getAgentById,
   getAllAgents,
   createNewAgent,

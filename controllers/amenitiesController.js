@@ -178,7 +178,7 @@ const getAmenityById = async (req, res) => {
 // @route POST /:pId/amenities
 //! @access Private
 const createNewAmenity = async (req, res) => {
-  const { title } = req.body;
+  const { titles } = req.body;
 
   const { pId } = req.params;
 
@@ -199,15 +199,19 @@ const createNewAmenity = async (req, res) => {
 
   //* Confirm data
 
-  if (!title) {
-    return res.status(400).json({ message: "Amenity title required!" });
+  if (!titles) {
+    return res.status(400).json({ message: "Amenity titles required!" });
   }
 
   //* Create new amenity
 
   const amenity = await prismadb.amenity.create({
     data: {
-      title,
+      title: {
+        create: titles.map((amenityTitle) => ({
+          title: amenityTitle,
+        })),
+      },
       property: {
         connect: {
           id: pId,
@@ -220,7 +224,7 @@ const createNewAmenity = async (req, res) => {
     //*created
 
     res.status(201).json({
-      message: `New amenity ${title} for property ${property.title} created.`,
+      message: `New amenities for property ${property.title} created.`,
     });
   } else {
     res.status(400).json({ message: "Invalid amenity data received!" });

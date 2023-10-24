@@ -6,7 +6,7 @@ const fileUpload = require("express-fileupload");
 
 router
   .use(fileUpload())
-  .get("/search", usersController.searchUsersByUsername)
+  .get("/search", usersController.searchUsers)
   .get("/", usersController.getAllUsers)
   .get("/:uId", usersController.getUserById)
   .post("/", uploader, usersController.createNewUser)
