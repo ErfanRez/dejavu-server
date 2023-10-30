@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "Deja Vu Reve Back-End",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon server",
+    "dev": "nodemon app",
     "postinstall": "prisma generate"
   },
   "keywords": [],
