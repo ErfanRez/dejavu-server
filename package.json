@@ -4,7 +4,7 @@
   "description": "Deja Vu Reve Back-End",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node app.js",
     "dev": "nodemon server",
     "postinstall": "prisma generate"
   },
