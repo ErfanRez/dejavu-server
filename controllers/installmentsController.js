@@ -207,10 +207,13 @@ const createNewInstallments = async (req, res) => {
   for (const installment of installments) {
     const { title, percentage } = installment;
 
+    //* converts
+    const percentageInt = parseInt(percentage, 10);
+
     const newInstallment = await prismadb.installment.create({
       data: {
         title,
-        percentage,
+        percentage: percentageInt,
         property: {
           connect: {
             id: pId,
@@ -227,7 +230,6 @@ const createNewInstallments = async (req, res) => {
   if (createdInstallments.length > 0) {
     return res.status(201).json({
       message: `New installments created for property ${property.title}.`,
-      installments: createdInstallments,
     });
   } else {
     return res
@@ -268,6 +270,9 @@ const updateInstallment = async (req, res) => {
     return res.status(404).json({ message: "Installment not found!" });
   }
 
+  //* converts
+  const percentageInt = parseInt(percentage, 10);
+
   //* Update installment
 
   const updatedInstallment = await prismadb.installment.update({
@@ -276,7 +281,7 @@ const updateInstallment = async (req, res) => {
     },
     data: {
       title,
-      percentage,
+      percentage: percentageInt,
     },
   });
 
