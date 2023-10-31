@@ -215,8 +215,9 @@ const createNewRentUnit = async (req, res) => {
     bathrooms,
     parkingCount,
     description,
-    views,
   } = req.body;
+
+  let { views } = req.body;
 
   const { pId } = req.params;
 
@@ -341,8 +342,9 @@ const updateRentUnit = async (req, res) => {
     bathrooms,
     parkingCount,
     description,
-    views,
   } = req.body;
+
+  let { views } = req.body;
 
   const { rId } = req.params;
 

@@ -216,8 +216,9 @@ const createNewSaleUnit = async (req, res) => {
     bathrooms,
     parkingCount,
     description,
-    views,
   } = req.body;
+
+  let { views } = req.body;
 
   const { pId } = req.params;
 
@@ -346,8 +347,9 @@ const updateSaleUnit = async (req, res) => {
     bathrooms,
     parkingCount,
     description,
-    views,
   } = req.body;
+
+  let { views } = req.body;
 
   const { sId } = req.params;
 
