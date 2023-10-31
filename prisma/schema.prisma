@@ -107,7 +107,7 @@ model Amenity {
 model Installment {
   id         String   @id @default(uuid())
   title      String
-  percentage Int
+  percentage Decimal
   propertyId String // Foreign Key to Property model
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 

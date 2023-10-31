@@ -195,12 +195,12 @@ const createNewInstallments = async (req, res) => {
     const { title, percentage } = installment;
 
     //* converts
-    const percentageInt = parseInt(percentage, 10);
+    const percentageDecimal = parseFloat(percentage);
 
     const newInstallment = await prismadb.installment.create({
       data: {
         title,
-        percentage: percentageInt,
+        percentage: percentageDecimal,
         property: {
           connect: {
             id: pId,
@@ -258,7 +258,7 @@ const updateInstallment = async (req, res) => {
   }
 
   //* converts
-  const percentageInt = parseInt(percentage, 10);
+  const percentageDecimal = parseFloat(percentage);
 
   //* Update installment
 
@@ -268,7 +268,7 @@ const updateInstallment = async (req, res) => {
     },
     data: {
       title,
-      percentage: percentageInt,
+      percentage: percentageDecimal,
     },
   });
 
