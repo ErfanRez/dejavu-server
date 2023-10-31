@@ -205,22 +205,20 @@ const createNewAmenity = async (req, res) => {
 
   //* Create new amenity
 
-  const amenity = await prismadb.amenity.create({
-    data: {
-      title: {
-        create: titles.map((amenityTitle) => ({
-          title: amenityTitle,
-        })),
-      },
-      property: {
-        connect: {
-          id: pId,
+  const amenities = titles.map(async (amenityTitle) => {
+    await prismadb.amenity.create({
+      data: {
+        title: amenityTitle,
+        property: {
+          connect: {
+            id: pId,
+          },
         },
       },
-    },
+    });
   });
 
-  if (amenity) {
+  if (amenities) {
     //*created
 
     res.status(201).json({
