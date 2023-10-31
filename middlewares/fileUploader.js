@@ -33,12 +33,15 @@ const uploadPdf = (req, res, next) => {
     });
 
     // Pass the generated file name to the next middleware or route
-    const outputPdfURL = path.join(
-      process.env.ROOT_PATH,
-      "uploads",
-      "factSheets",
-      `${req.body.title}.pdf`
-    );
+
+    const outputPdfURL = new URL(
+      path.join(
+        process.env.ROOT_PATH,
+        "uploads",
+        "factSheets",
+        `${req.body.title}.pdf`
+      )
+    ).toString();
 
     req.pdfUrl = outputPdfURL; // Set req.pdfUrl
   } else {

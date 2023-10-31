@@ -168,13 +168,15 @@ const updateAgent = async (req, res) => {
     if (!convertedImage) {
       renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);
 
-      const newImagePath = path.join(
-        process.env.ROOT_PATH,
-        "uploads",
-        "images",
-        "agents",
-        `${name}.webp`
-      );
+      const newImagePath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "images",
+          "agents",
+          `${name}.webp`
+        )
+      ).toString();
 
       convertedImage = newImagePath;
     } else {

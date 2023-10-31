@@ -43,13 +43,16 @@ const uploader = async (req, res, next) => {
     await sharp(imageData).toFormat("webp").toFile(outputImagePath);
 
     // Pass the generated file name to the next middleware or route
-    const outputImageURL = path.join(
-      process.env.ROOT_PATH,
-      "uploads",
-      "images",
-      "agents",
-      `${req.body.name}.webp`
-    );
+
+    const outputImageURL = new URL(
+      path.join(
+        process.env.ROOT_PATH,
+        "uploads",
+        "images",
+        "agents",
+        `${req.body.name}.webp`
+      )
+    ).toString();
 
     req.convertedImage = outputImageURL;
 

@@ -184,7 +184,17 @@ const updateArticle = async (req, res) => {
         const files = fs.readdirSync(imagesFolder);
 
         // Create an array of file paths
-        convertedImages = files.map((file) => path.join(imagesFolder, file));
+        const outputImageURL = new URL(
+          path.join(
+            process.env.ROOT_PATH,
+            "uploads",
+            "images",
+            "articles",
+            title
+          )
+        ).toString();
+
+        convertedImages = files.map((file) => path.join(outputImageURL, file));
       }
     } else {
       // Define the path to the images folder

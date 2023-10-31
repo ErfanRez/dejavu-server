@@ -265,13 +265,15 @@ const updateProperty = async (req, res) => {
         const files = fs.readdirSync(imagesFolder);
 
         // Create an array of file paths
-        const outputImageURL = path.join(
-          process.env.ROOT_PATH,
-          "uploads",
-          "images",
-          "properties",
-          title
-        );
+        const outputImageURL = new URL(
+          path.join(
+            process.env.ROOT_PATH,
+            "uploads",
+            "images",
+            "properties",
+            title
+          )
+        ).toString();
 
         convertedImages = files.map((file) => path.join(outputImageURL, file));
       }
@@ -293,17 +295,18 @@ const updateProperty = async (req, res) => {
     if (!pdfUrl) {
       renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
 
-      const newPdfPath = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "factSheets",
-        `${title}.pdf`
-      );
+      const newPdfPath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "factSheets",
+          `${title}.pdf`
+        )
+      ).toString();
 
       pdfUrl = newPdfPath;
     } else {
-      // Define the path to the property's images folder
+      // Define the path to the factSheets folder
       const pdfFolder = path.join(
         __dirname,
         "..",

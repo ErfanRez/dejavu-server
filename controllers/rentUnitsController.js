@@ -396,13 +396,9 @@ const updateRentUnit = async (req, res) => {
         const files = fs.readdirSync(imagesFolder);
 
         // Create an array of file paths
-        const outputImageURL = path.join(
-          process.env.ROOT_PATH,
-          "uploads",
-          "images",
-          "rents",
-          title
-        );
+        const outputImageURL = new URL(
+          path.join(process.env.ROOT_PATH, "uploads", "images", "rents", title)
+        ).toString();
 
         convertedImages = files.map((file) => path.join(outputImageURL, file));
       }

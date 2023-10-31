@@ -187,13 +187,15 @@ const updateUser = async (req, res) => {
     if (!convertedImage) {
       renameOldFile("users", `${user.username}.webp`, `${username}.webp`);
 
-      const newImagePath = path.join(
-        process.env.ROOT_PATH,
-        "uploads",
-        "images",
-        "users",
-        `${username}.webp`
-      );
+      const newImagePath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "images",
+          "users",
+          `${username}.webp`
+        )
+      ).toString();
 
       convertedImage = newImagePath;
     } else {
