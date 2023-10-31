@@ -270,6 +270,12 @@ const createNewSaleUnit = async (req, res) => {
     return res.status(409).json({ message: "Unit title already exists!" });
   }
 
+  //* Check the type of 'views' property
+  if (!Array.isArray(views)) {
+    //* If 'views' is not an array, create an array with the single value
+    views = [views];
+  }
+
   //* converts
 
   const areaDecimal = parseFloat(area);
@@ -421,6 +427,12 @@ const updateSaleUnit = async (req, res) => {
 
       fileDelete(imagesFolder);
     }
+  }
+
+  //* Check the type of 'views' property
+  if (!Array.isArray(views)) {
+    //* If 'views' is not an array, create an array with the single value
+    views = [views];
   }
 
   //* converts
