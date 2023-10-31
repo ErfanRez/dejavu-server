@@ -18,9 +18,6 @@ const searchInstallments = async (req, res) => {
         contains: searchString,
       },
     },
-    orderBy: {
-      updatedAt: "desc",
-    },
   });
 
   //* If no installments
