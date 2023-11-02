@@ -10,6 +10,9 @@ const fs = require("fs");
 const searchSaleUnits = async (req, res) => {
   const searchParams = req.query; // Get the search parameters from query params
 
+  // Get the limit value from req.query
+  const limit = parseInt(req.query.limit) || 20;
+
   if (Object.keys(searchParams).length === 0) {
     return res.status(400).json({ error: "No search parameters provided." });
   }
@@ -26,6 +29,7 @@ const searchSaleUnits = async (req, res) => {
 
   const units = await prismadb.saleUnit.findMany({
     where: where,
+    take: limit,
     include: {
       images: true,
       views: true,
@@ -104,7 +108,11 @@ const searchUnitsByPID = async (req, res) => {
 const getAllSaleUnits = async (req, res) => {
   //* Get all saleUnits from DB
 
+  // Get the limit value from req.query
+  const limit = parseInt(req.query.limit) || 20;
+
   const units = await prismadb.saleUnit.findMany({
+    take: limit,
     include: {
       images: true,
       views: true,

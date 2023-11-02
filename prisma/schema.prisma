@@ -251,9 +251,9 @@ model Agent {
   id       String @id @default(uuid())
   name     String @unique
   imageUrl String @default("https://sketchub.in/storage/project_files/23247/7520688.png")
-  phone    String @default("tel:00971")
-  email    String @default("https://mail.google.com")
-  whatsapp String @default("https://api.whatsapp.com/send/?phone=")
+  phone    String @default("")
+  email    String @default("")
+  whatsapp String @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

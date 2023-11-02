@@ -11,6 +11,9 @@ const fs = require("fs");
 const searchProperties = async (req, res) => {
   const searchParams = req.query; // Get the search parameters from query params
 
+  // Get the limit value from req.query
+  const limit = parseInt(req.query.limit) || 20;
+
   if (Object.keys(searchParams).length === 0) {
     return res.status(400).json({ error: "No search parameters provided." });
   }
@@ -27,6 +30,7 @@ const searchProperties = async (req, res) => {
 
   const properties = await prismadb.property.findMany({
     where: where,
+    take: limit,
     include: {
       images: true,
       amenities: true,
@@ -84,7 +88,11 @@ const getPropertyById = async (req, res) => {
 const getAllProperties = async (req, res) => {
   //* Get all properties from DB
 
+  // Get the limit value from req.query
+  const limit = parseInt(req.query.limit) || 20;
+
   const properties = await prismadb.property.findMany({
+    take: limit,
     include: {
       images: true,
       amenities: true,
