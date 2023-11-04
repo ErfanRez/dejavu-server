@@ -32,6 +32,7 @@ const searchProperties = async (req, res) => {
     where: where,
     take: limit,
     include: {
+      agent: true,
       images: true,
       amenities: true,
       saleUnits: true,
@@ -67,6 +68,7 @@ const getPropertyById = async (req, res) => {
       id: pId,
     },
     include: {
+      agent: true,
       images: true,
       amenities: true,
       saleUnits: true,
@@ -94,6 +96,7 @@ const getAllProperties = async (req, res) => {
   const properties = await prismadb.property.findMany({
     take: limit,
     include: {
+      agent: true,
       images: true,
       amenities: true,
       saleUnits: true,
@@ -129,6 +132,7 @@ const createNewProperty = async (req, res) => {
     offPlan,
     completionDate,
     description,
+    agentId,
   } = req.body;
 
   // console.log(req.files);
@@ -145,9 +149,21 @@ const createNewProperty = async (req, res) => {
     !location ||
     !category ||
     !mapUrl ||
-    !description
+    !description ||
+    !agentId
   ) {
     return res.status(400).json({ message: "All fields required!" });
+  }
+
+  //? Does the agent exist?
+  const agent = await prismadb.agent.findUnique({
+    where: {
+      id: agentId,
+    },
+  });
+
+  if (!agent) {
+    return res.status(404).json({ message: "Agent not found!" });
   }
 
   //? Check for duplicate
@@ -183,6 +199,11 @@ const createNewProperty = async (req, res) => {
       completionDate,
       description,
       pdfUrl,
+      agent: {
+        connect: {
+          id: agentId,
+        },
+      },
       images: {
         create: convertedImages.map((url) => ({
           url,

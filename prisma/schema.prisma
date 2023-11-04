@@ -49,6 +49,20 @@ model FavRent {
   @@index([rentId])
 }
 
+model Agent {
+  id       String @id @default(uuid())
+  name     String @unique
+  imageUrl String @default("https://sketchub.in/storage/project_files/23247/7520688.png")
+  phone    String @default("")
+  email    String @default("")
+  whatsapp String @default("")
+
+  properties Property[] // Relation to Property model
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Property {
   id             String          @id @default(uuid())
   title          String          @unique
@@ -57,7 +71,6 @@ model Property {
   country        String
   location       String
   category       String
-  agentId        String          @default("541ddeb8-8082-4ee7-83db-f73c6c52fdb4")
   mapUrl         String
   offPlan        Boolean         @default(false)
   completionDate String?
@@ -69,8 +82,13 @@ model Property {
   installments   Installment[] // Relation to Installment model
   images         PropertyImage[] // Relation to PropertyImage model
 
+  agentId String // Foreign Key to Agent model
+  agent   Agent  @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([agentId])
 }
 
 model PropertyImage {
@@ -79,18 +97,12 @@ model PropertyImage {
   propertyId String // Foreign Key to Property model
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([propertyId])
 }
 
 model Category {
   id    String @id @default(uuid())
   title String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Amenity {
@@ -150,9 +162,6 @@ model SaleView {
   saleId String // Foreign Key to SalesDetail model
   sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([saleId])
 }
 
@@ -161,9 +170,6 @@ model SaleImage {
   url    String   @db.Text
   saleId String // Foreign Key to SalesDetail model
   sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([saleId])
 }
@@ -199,9 +205,6 @@ model RentImage {
   rentId String // Foreign Key to RentUnit model
   rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([rentId])
 }
 
@@ -211,18 +214,12 @@ model RentView {
   rentId String // Foreign Key to RentUnit model
   rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   @@index([rentId])
 }
 
 model Type {
   id    String @id @default(uuid())
   title String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Article {
@@ -246,16 +243,4 @@ model ArticleImage {
   updatedAt DateTime @updatedAt
 
   @@index([articleId])
-}
-
-model Agent {
-  id       String @id @default(uuid())
-  name     String @unique
-  imageUrl String @default("https://sketchub.in/storage/project_files/23247/7520688.png")
-  phone    String @default("")
-  email    String @default("")
-  whatsapp String @default("")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }

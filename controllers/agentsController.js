@@ -3,6 +3,47 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 
+// @desc Get all properties related to a specific agent
+// @route GET /:id/properties
+//! @access Public
+const getAllProperties = async (req, res) => {
+  const { id } = req.params;
+
+  //* Confirm data
+  if (!id) {
+    return res.status(400).json({ message: "Agent ID Required!" });
+  }
+
+  //? Does the property exist?
+  const agent = await prismadb.agent.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!agent) {
+    return res.status(404).json({ message: "Agent not found!" });
+  }
+
+  const properties = await prismadb.property.findMany({
+    where: {
+      agentId: id,
+    },
+    include: {
+      images: true,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  if (!properties?.length) {
+    return res.status(404).json({ message: "No properties found!" });
+  }
+
+  res.json(properties);
+};
+
 // @desc Get searched agents
 // @route GET /agents/search
 //! @access Private
@@ -258,6 +299,7 @@ const deleteAgent = async (req, res) => {
 };
 
 module.exports = {
+  getAllProperties,
   searchAgents,
   getAgentById,
   getAllAgents,
