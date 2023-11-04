@@ -264,6 +264,21 @@ const deleteAgent = async (req, res) => {
     return res.status(400).json({ message: "Agent ID required!" });
   }
 
+  const properties = await prismadb.property.findMany({
+    where: {
+      agentId: id,
+    },
+  });
+
+  if (properties?.length !== 0) {
+    return res
+      .status(403)
+      .json({
+        message:
+          "This Agent has connected properties! You should delete them first.",
+      });
+  }
+
   //? Does the agent exist to delete?
   const agent = await prismadb.agent.findUnique({
     where: {
