@@ -19,11 +19,20 @@ const searchSaleUnits = async (req, res) => {
 
   const where = {};
 
+  // Create a map of query parameter names to their corresponding Prisma filter conditions
+  const filterMap = {
+    title: { contains: searchParams.title },
+    type: { contains: searchParams.type },
+    area: { gte: parseFloat(searchParams.area) },
+    totalPrice: { gte: parseFloat(searchParams.totalPrice) },
+    rPSqft: { gte: parseFloat(searchParams.rPSqft) },
+    bedrooms: { gte: parseInt(searchParams.bedrooms) },
+    bathrooms: { gte: parseInt(searchParams.bathrooms) },
+  };
+
   for (const param in searchParams) {
-    if (searchParams[param]) {
-      where[param] = {
-        contains: searchParams[param],
-      };
+    if (searchParams[param] && filterMap[param]) {
+      where[param] = filterMap[param];
     }
   }
 
@@ -33,6 +42,14 @@ const searchSaleUnits = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -85,6 +102,14 @@ const searchUnitsByPID = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -116,6 +141,14 @@ const getAllSaleUnits = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -162,6 +195,14 @@ const getAllUnitsByPID = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -198,6 +239,14 @@ const getSaleUnitById = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
   });
 

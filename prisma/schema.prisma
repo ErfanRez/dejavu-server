@@ -57,6 +57,7 @@ model Property {
   country        String
   location       String
   category       String
+  agentId        String          @default("541ddeb8-8082-4ee7-83db-f73c6c52fdb4")
   mapUrl         String
   offPlan        Boolean         @default(false)
   completionDate String?
@@ -174,7 +175,7 @@ model RentUnit {
   unitNo       String
   floor        String
   area         Decimal
-  rentPrice    Decimal
+  totalPrice   Decimal
   bedrooms     Int
   bathrooms    Int
   parkingCount Int

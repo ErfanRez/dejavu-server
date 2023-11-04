@@ -19,11 +19,20 @@ const searchRentUnits = async (req, res) => {
 
   const where = {};
 
+  // Create a map of query parameter names to their corresponding Prisma filter conditions
+  const filterMap = {
+    title: { contains: searchParams.title },
+    type: { contains: searchParams.type },
+    area: { gte: parseFloat(searchParams.area) },
+    totalPrice: { gte: parseFloat(searchParams.totalPrice) },
+    rPSqft: { gte: parseFloat(searchParams.rPSqft) },
+    bedrooms: { gte: parseInt(searchParams.bedrooms) },
+    bathrooms: { gte: parseInt(searchParams.bathrooms) },
+  };
+
   for (const param in searchParams) {
-    if (searchParams[param]) {
-      where[param] = {
-        contains: searchParams[param],
-      };
+    if (searchParams[param] && filterMap[param]) {
+      where[param] = filterMap[param];
     }
   }
 
@@ -33,6 +42,14 @@ const searchRentUnits = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -85,6 +102,14 @@ const searchUnitsByPID = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -116,6 +141,14 @@ const getAllRentUnits = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -162,6 +195,14 @@ const getAllUnitsByPID = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -198,6 +239,14 @@ const getRentUnitById = async (req, res) => {
     include: {
       images: true,
       views: true,
+      property: {
+        // Include the related property
+        select: {
+          location: true,
+          city: true,
+          country: true,
+        },
+      },
     },
   });
 
@@ -218,7 +267,7 @@ const createNewRentUnit = async (req, res) => {
     unitNo,
     floor,
     area,
-    rentPrice,
+    totalPrice,
     bedrooms,
     bathrooms,
     parkingCount,
@@ -255,7 +304,7 @@ const createNewRentUnit = async (req, res) => {
     !unitNo ||
     !floor ||
     !area ||
-    !rentPrice ||
+    !totalPrice ||
     !bedrooms ||
     !bathrooms ||
     !parkingCount ||
@@ -286,7 +335,7 @@ const createNewRentUnit = async (req, res) => {
   //* converts
 
   const areaDecimal = parseFloat(area);
-  const priceDecimal = parseFloat(rentPrice);
+  const priceDecimal = parseFloat(totalPrice);
 
   const bedroomsInt = parseInt(bedrooms, 10);
   const bathroomsInt = parseInt(bathrooms, 10);
@@ -301,7 +350,7 @@ const createNewRentUnit = async (req, res) => {
       unitNo,
       floor,
       area: areaDecimal,
-      rentPrice: priceDecimal,
+      totalPrice: priceDecimal,
       bedrooms: bedroomsInt,
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
@@ -345,7 +394,7 @@ const updateRentUnit = async (req, res) => {
     unitNo,
     floor,
     area,
-    rentPrice,
+    totalPrice,
     bedrooms,
     bathrooms,
     parkingCount,
@@ -370,7 +419,7 @@ const updateRentUnit = async (req, res) => {
     !unitNo ||
     !floor ||
     !area ||
-    !rentPrice ||
+    !totalPrice ||
     !bedrooms ||
     !bathrooms ||
     !parkingCount ||
@@ -442,7 +491,7 @@ const updateRentUnit = async (req, res) => {
   //* converts
 
   const areaDecimal = parseFloat(area);
-  const priceDecimal = parseFloat(rentPrice);
+  const priceDecimal = parseFloat(totalPrice);
 
   const bedroomsInt = parseInt(bedrooms, 10);
   const bathroomsInt = parseInt(bathrooms, 10);
@@ -460,7 +509,7 @@ const updateRentUnit = async (req, res) => {
       unitNo,
       floor,
       area: areaDecimal,
-      rentPrice: priceDecimal,
+      totalPrice: priceDecimal,
       bedrooms: bedroomsInt,
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
