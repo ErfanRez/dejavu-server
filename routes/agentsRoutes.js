@@ -9,7 +9,6 @@ router
   .get("/search", agentsControllers.searchAgents)
   .get("/", agentsControllers.getAllAgents)
   .get("/:id", agentsControllers.getAgentById)
-  .get("/:id/properties", agentsControllers.getAllProperties)
   .post("/", uploader, agentsControllers.createNewAgent)
   .patch("/:id", uploader, agentsControllers.updateAgent)
   .delete("/:id", agentsControllers.deleteAgent);

@@ -40,17 +40,8 @@ const searchSaleUnits = async (req, res) => {
     where: where,
     take: limit,
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-        images: true,
-        views: true,
-      },
+      images: true,
+      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -101,15 +92,6 @@ const searchUnitsByPID = async (req, res) => {
       },
     },
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -141,15 +123,6 @@ const getAllSaleUnits = async (req, res) => {
   const units = await prismadb.saleUnit.findMany({
     take: limit,
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -196,15 +169,6 @@ const getAllUnitsByPID = async (req, res) => {
       propertyId: pId,
     },
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -241,15 +205,6 @@ const getSaleUnitById = async (req, res) => {
       id: sId,
     },
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },

@@ -35,9 +35,9 @@ const searchProperties = async (req, res) => {
       agent: true,
       images: true,
       amenities: true,
+      installments: true,
       saleUnits: true,
       rentUnits: true,
-      installments: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -71,9 +71,9 @@ const getPropertyById = async (req, res) => {
       agent: true,
       images: true,
       amenities: true,
+      installments: true,
       saleUnits: true,
       rentUnits: true,
-      installments: true,
     },
   });
 
@@ -99,9 +99,9 @@ const getAllProperties = async (req, res) => {
       agent: true,
       images: true,
       amenities: true,
+      installments: true,
       saleUnits: true,
       rentUnits: true,
-      installments: true,
     },
     orderBy: {
       updatedAt: "desc",

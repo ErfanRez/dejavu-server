@@ -40,15 +40,6 @@ const searchRentUnits = async (req, res) => {
     where: where,
     take: limit,
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -101,15 +92,6 @@ const searchUnitsByPID = async (req, res) => {
       },
     },
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -141,15 +123,6 @@ const getAllRentUnits = async (req, res) => {
   const units = await prismadb.rentUnit.findMany({
     take: limit,
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -196,15 +169,6 @@ const getAllUnitsByPID = async (req, res) => {
       propertyId: pId,
     },
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },
@@ -241,15 +205,6 @@ const getRentUnitById = async (req, res) => {
       id: rId,
     },
     include: {
-      property: {
-        // Include the related property
-        select: {
-          location: true,
-          city: true,
-          country: true,
-          agent: true,
-        },
-      },
       images: true,
       views: true,
     },

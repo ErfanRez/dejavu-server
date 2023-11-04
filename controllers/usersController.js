@@ -125,19 +125,12 @@ const createNewUser = async (req, res) => {
       .json({ message: "Username or email already exists!" });
   }
 
-  //* converts
-
-  isAdmin
-    ? (isAdminBoolean = JSON.parse(isAdmin))
-    : (isAdminBoolean = undefined);
-
   //* Create new user
 
   const user = await prismadb.user.create({
     data: {
       username,
       email,
-      isAdmin: isAdminBoolean,
       imageUrl: convertedImage,
     },
   });
@@ -155,7 +148,7 @@ const createNewUser = async (req, res) => {
 // @route PATCH /users/:uId
 //! @access Private
 const updateUser = async (req, res) => {
-  const { username, email, isAdmin } = req.body;
+  const { username, email } = req.body;
   const { uId } = req.params;
 
   // console.log(req.files);
@@ -213,12 +206,6 @@ const updateUser = async (req, res) => {
     }
   }
 
-  //* converts
-
-  isAdmin
-    ? (isAdminBoolean = JSON.parse(isAdmin))
-    : (isAdminBoolean = undefined);
-
   //* Update user
 
   const updatedUser = await prismadb.user.update({
@@ -228,7 +215,6 @@ const updateUser = async (req, res) => {
     data: {
       username,
       email,
-      isAdmin: isAdminBoolean,
       imageUrl: convertedImage,
     },
   });

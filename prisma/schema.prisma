@@ -12,12 +12,10 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  username String  @unique
-  email    String  @unique
-  //  password String
-  isAdmin  Boolean @default(false)
-  imageUrl String  @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
+  id       String @id @default(uuid())
+  username String @unique
+  email    String @unique
+  imageUrl String @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
 
   favSales FavSale[] // Relation to FavSale model
   favRents FavRent[] // Relation to FavRent model
