@@ -40,8 +40,6 @@ const searchSaleUnits = async (req, res) => {
     where: where,
     take: limit,
     include: {
-      images: true,
-      views: true,
       property: {
         // Include the related property
         select: {
@@ -49,6 +47,8 @@ const searchSaleUnits = async (req, res) => {
           city: true,
           country: true,
         },
+        images: true,
+        views: true,
       },
     },
     orderBy: {
@@ -100,8 +100,6 @@ const searchUnitsByPID = async (req, res) => {
       },
     },
     include: {
-      images: true,
-      views: true,
       property: {
         // Include the related property
         select: {
@@ -110,6 +108,8 @@ const searchUnitsByPID = async (req, res) => {
           country: true,
         },
       },
+      images: true,
+      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -139,8 +139,6 @@ const getAllSaleUnits = async (req, res) => {
   const units = await prismadb.saleUnit.findMany({
     take: limit,
     include: {
-      images: true,
-      views: true,
       property: {
         // Include the related property
         select: {
@@ -149,6 +147,8 @@ const getAllSaleUnits = async (req, res) => {
           country: true,
         },
       },
+      images: true,
+      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -193,8 +193,6 @@ const getAllUnitsByPID = async (req, res) => {
       propertyId: pId,
     },
     include: {
-      images: true,
-      views: true,
       property: {
         // Include the related property
         select: {
@@ -203,6 +201,8 @@ const getAllUnitsByPID = async (req, res) => {
           country: true,
         },
       },
+      images: true,
+      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -237,8 +237,6 @@ const getSaleUnitById = async (req, res) => {
       id: sId,
     },
     include: {
-      images: true,
-      views: true,
       property: {
         // Include the related property
         select: {
@@ -247,6 +245,8 @@ const getSaleUnitById = async (req, res) => {
           country: true,
         },
       },
+      images: true,
+      views: true,
     },
   });
 
