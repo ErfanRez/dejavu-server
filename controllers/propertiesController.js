@@ -36,8 +36,14 @@ const searchProperties = async (req, res) => {
       images: true,
       amenities: true,
       installments: true,
-      saleUnits: true,
-      rentUnits: true,
+      saleUnits: {
+        images: true,
+        views: true,
+      },
+      rentUnits: {
+        images: true,
+        views: true,
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -72,8 +78,14 @@ const getPropertyById = async (req, res) => {
       images: true,
       amenities: true,
       installments: true,
-      saleUnits: true,
-      rentUnits: true,
+      saleUnits: {
+        images: true,
+        views: true,
+      },
+      rentUnits: {
+        images: true,
+        views: true,
+      },
     },
   });
 
@@ -100,8 +112,14 @@ const getAllProperties = async (req, res) => {
       images: true,
       amenities: true,
       installments: true,
-      saleUnits: true,
-      rentUnits: true,
+      saleUnits: {
+        images: true,
+        views: true,
+      },
+      rentUnits: {
+        images: true,
+        views: true,
+      },
     },
     orderBy: {
       updatedAt: "desc",
