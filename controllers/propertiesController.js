@@ -34,7 +34,6 @@ const searchProperties = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      amenities: true,
       installments: true,
       saleUnits: {
         include: {
@@ -80,7 +79,6 @@ const getPropertyById = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      amenities: true,
       installments: true,
       saleUnits: {
         include: {
@@ -118,7 +116,6 @@ const getAllProperties = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      amenities: true,
       installments: true,
       saleUnits: {
         include: {
@@ -162,6 +159,7 @@ const createNewProperty = async (req, res) => {
     offPlan,
     completionDate,
     description,
+    amenities,
     agentId,
   } = req.body;
 
@@ -179,7 +177,7 @@ const createNewProperty = async (req, res) => {
     !location ||
     !category ||
     !mapUrl ||
-    !description ||
+    !amenities ||
     !agentId
   ) {
     return res.status(400).json({ message: "All fields required!" });
@@ -228,6 +226,7 @@ const createNewProperty = async (req, res) => {
       offPlan: offPlanBoolean,
       completionDate,
       description,
+      amenities,
       pdfUrl,
       agent: {
         connect: {
@@ -266,6 +265,7 @@ const updateProperty = async (req, res) => {
     offPlan,
     completionDate,
     description,
+    amenities,
   } = req.body;
 
   const { pId } = req.params;
@@ -286,8 +286,7 @@ const updateProperty = async (req, res) => {
     !country ||
     !location ||
     !category ||
-    !mapUrl ||
-    !description
+    !mapUrl
   ) {
     return res.status(400).json({ message: "All fields required!" });
   }
@@ -401,6 +400,7 @@ const updateProperty = async (req, res) => {
       offPlan: offPlanBoolean,
       completionDate,
       description,
+      amenities,
       pdfUrl,
       images: {
         deleteMany: {},

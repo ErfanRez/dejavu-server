@@ -4,11 +4,9 @@ const amenitiesController = require("../controllers/amenitiesController");
 
 router
   .get("/search", amenitiesController.searchAmenities)
-  .get("/:pId/search", amenitiesController.searchAmenitiesByPID)
   .get("/", amenitiesController.getAllAmenities)
-  .get("/:pId", amenitiesController.getAllAmenitiesByPID)
   .get("/get-one/:aId", amenitiesController.getAmenityById)
-  .post("/:pId", amenitiesController.createNewAmenity)
+  .post("/", amenitiesController.createNewAmenity)
   .patch("/:aId", amenitiesController.updateAmenity)
   .delete("/:aId", amenitiesController.deleteAmenity);
 

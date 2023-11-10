@@ -73,10 +73,10 @@ model Property {
   offPlan        Boolean         @default(false)
   completionDate String?
   pdfUrl         String?
-  description    String          @db.Text
+  description    String?         @db.Text
   saleUnits      SaleUnit[] // Relation to SaleUnit model
   rentUnits      RentUnit[] // Relation to RentUnit model
-  amenities      Amenity[] // Relation to Feature model
+  amenities      String[]
   installments   Installment[] // Relation to Installment model
   images         PropertyImage[] // Relation to PropertyImage model
 
@@ -104,15 +104,8 @@ model Category {
 }
 
 model Amenity {
-  id         String   @id @default(uuid())
-  title      String
-  propertyId String // Foreign Key to Property model
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([propertyId])
+  id    String @id @default(uuid())
+  title String
 }
 
 model Installment {

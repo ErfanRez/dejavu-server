@@ -18,67 +18,12 @@ const searchAmenities = async (req, res) => {
         contains: searchString,
       },
     },
-    orderBy: {
-      updatedAt: "desc",
-    },
   });
 
   //* If no amenities
 
   if (!amenities?.length) {
     return res.status(404).json({ message: "No amenities found!" });
-  }
-
-  res.json(amenities);
-};
-
-// @desc Get searched amenities related to a specific property
-// @route GET /:pId/amenities/search
-//! @access Public
-const searchAmenitiesByPID = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-  const { pId } = req.params;
-
-  //* Confirm data
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
-  }
-
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
-    where: {
-      id: pId,
-    },
-  });
-
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
-  }
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const amenities = await prismadb.amenity.findMany({
-    where: {
-      propertyId: pId,
-      title: {
-        contains: searchString,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no amenities
-
-  if (!amenities?.length) {
-    return res
-      .status(404)
-      .json({ message: `No amenities related to ${property.title} found!` });
   }
 
   res.json(amenities);
@@ -90,60 +35,12 @@ const searchAmenitiesByPID = async (req, res) => {
 const getAllAmenities = async (req, res) => {
   //* Get all amenities from DB
 
-  const amenities = await prismadb.amenity.findMany({
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
+  const amenities = await prismadb.amenity.findMany({});
 
   //* If no amenities
 
   if (!amenities?.length) {
     return res.status(404).json({ message: "No amenities found!" });
-  }
-
-  res.json(amenities);
-};
-
-// @desc Get all amenities related to a specific property
-// @route GET /:pId/amenities
-//! @access Public
-const getAllAmenitiesByPID = async (req, res) => {
-  const { pId } = req.params;
-
-  //* Confirm data
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
-  }
-
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
-    where: {
-      id: pId,
-    },
-  });
-
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
-  }
-
-  //* Get all amenities from DB
-
-  const amenities = await prismadb.amenity.findMany({
-    where: {
-      propertyId: pId,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no amenities
-
-  if (!amenities?.length) {
-    return res
-      .status(404)
-      .json({ message: `No amenities related to ${property.title} found!` });
   }
 
   res.json(amenities);
@@ -180,23 +77,6 @@ const getAmenityById = async (req, res) => {
 const createNewAmenity = async (req, res) => {
   const { titles } = req.body;
 
-  const { pId } = req.params;
-
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
-  }
-
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
-    where: {
-      id: pId,
-    },
-  });
-
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
-  }
-
   //* Confirm data
 
   if (!titles) {
@@ -209,11 +89,6 @@ const createNewAmenity = async (req, res) => {
     await prismadb.amenity.create({
       data: {
         title: amenityTitle,
-        property: {
-          connect: {
-            id: pId,
-          },
-        },
       },
     });
   });
@@ -222,7 +97,7 @@ const createNewAmenity = async (req, res) => {
     //*created
 
     res.status(201).json({
-      message: `New amenities for property ${property.title} created.`,
+      message: `New amenity created.`,
     });
   } else {
     res.status(400).json({ message: "Invalid amenity data received!" });
@@ -308,9 +183,7 @@ const deleteAmenity = async (req, res) => {
 
 module.exports = {
   searchAmenities,
-  searchAmenitiesByPID,
   getAllAmenities,
-  getAllAmenitiesByPID,
   getAmenityById,
   createNewAmenity,
   updateAmenity,
