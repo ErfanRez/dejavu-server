@@ -226,7 +226,11 @@ const createNewProperty = async (req, res) => {
       offPlan: offPlanBoolean,
       completionDate,
       description,
-      amenities,
+      amenities: {
+        create: amenities.map((title) => ({
+          title,
+        })),
+      },
       pdfUrl,
       agent: {
         connect: {
@@ -400,8 +404,10 @@ const updateProperty = async (req, res) => {
       offPlan: offPlanBoolean,
       completionDate,
       description,
-      amenities,
       pdfUrl,
+      amenities: {
+        deleteMany: {},
+      },
       images: {
         deleteMany: {},
       },
@@ -413,6 +419,11 @@ const updateProperty = async (req, res) => {
       id: pId,
     },
     data: {
+      amenities: {
+        create: amenities.map((title) => ({
+          title,
+        })),
+      },
       images: {
         create: convertedImages.map((url) => ({
           url,
