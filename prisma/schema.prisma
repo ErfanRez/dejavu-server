@@ -36,22 +36,22 @@ model User {
 
 // Intermediary for a many-to-many relationship
 model FavSale {
-  id       String   @id @default(uuid())
+  id       String       @id @default(uuid())
   userId   String // Foreign Key to User model
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   saleId   String // Foreign Key to SaleUnit model
-  saleUnit SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  saleUnit SaleProperty @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([saleId])
 }
 
 model FavRent {
-  id       String   @id @default(uuid())
+  id       String       @id @default(uuid())
   userId   String // Foreign Key to User
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   rentId   String // Foreign Key to RentUnit model
-  rentUnit RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
+  rentUnit RentProperty @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([rentId])
@@ -60,18 +60,20 @@ model FavRent {
 model Agent {
   id       String @id @default(uuid())
   name     String @unique
-  imageUrl String @default("https://img.freepik.com/premium-photo/young-hipster-man-black-suit-black-beard-sunglasses-modal-pose_862994-21465.jpg?w=360")
+  imageUrl String @default("https://img.freepik.com/free-photo/portrait-successful-man-having-stubble-posing-with-broad-smile-keeping-arms-folded_171337-1267.jpg?w=996&t=st=1700931110~exp=1700931710~hmac=6a5753d41fcd47041ee2bfb16f6786767071f13ff50b963bc45c3116a85da007")
   phone    String @default("")
   email    String @default("")
   whatsapp String @default("")
 
-  properties Property[] // Relation to Property model
+  properties Project[] // Relation to Property model
+  saleProps  SaleProperty[]
+  rentProps  RentProperty[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Property {
+model Project {
   id             String   @id @default(uuid())
   title          String   @unique
   owner          String
@@ -82,6 +84,7 @@ model Property {
   mapUrl         String
   offPlan        Boolean  @default(false)
   completionDate String?
+  pdfUrl         String?
   description    String?  @db.Text
   amenities      String[]
 
@@ -98,12 +101,12 @@ model Property {
 }
 
 model PropertyImage {
-  id         String   @id @default(uuid())
-  url        String   @db.Text
-  propertyId String // Foreign Key to Property model
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid())
+  url       String  @db.Text
+  projectId String // Foreign Key to Property model
+  property  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@index([propertyId])
+  @@index([projectId])
 }
 
 model Category {
@@ -112,19 +115,19 @@ model Category {
 }
 
 model Installment {
-  id         String   @id @default(uuid())
+  id         String  @id @default(uuid())
   title      String
   percentage Decimal
-  propertyId String // Foreign Key to Property model
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  projectId  String // Foreign Key to Property model
+  property   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([propertyId])
+  @@index([projectId])
 }
 
-model SaleUnit {
+model SaleProperty {
   id           String   @id @default(uuid())
   title        String   @unique
   owner        String
@@ -132,7 +135,6 @@ model SaleUnit {
   country      String
   location     String
   type         String
-  unitNo       String
   floor        String
   area         Decimal
   rPSqft       Decimal
@@ -140,6 +142,8 @@ model SaleUnit {
   bedrooms     Int
   bathrooms    Int
   parkingCount Int
+  mapUrl       String
+  unitNo       String?
   pdfUrl       String?
   bluePrint    String?
   description  String   @db.Text
@@ -148,31 +152,36 @@ model SaleUnit {
   views  SaleView[] // Relation to SaleView model
   images SaleImage[] // Relation to SaleImage model
 
+  agentId String // Foreign Key to Agent model
+  agent   Agent  @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
   favSales FavSale[] // Relation to FavSale model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([agentId])
 }
 
 model SaleView {
-  id     String   @id @default(uuid())
+  id     String       @id @default(uuid())
   title  String
   saleId String // Foreign Key to SalesDetail model
-  sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  sale   SaleProperty @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   @@index([saleId])
 }
 
 model SaleImage {
-  id     String   @id @default(uuid())
-  url    String   @db.Text
+  id     String       @id @default(uuid())
+  url    String       @db.Text
   saleId String // Foreign Key to SalesDetail model
-  sale   SaleUnit @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  sale   SaleProperty @relation(fields: [saleId], references: [id], onDelete: Cascade)
 
   @@index([saleId])
 }
 
-model RentUnit {
+model RentProperty {
   id           String   @id @default(uuid())
   title        String   @unique
   owner        String
@@ -180,41 +189,46 @@ model RentUnit {
   country      String
   location     String
   type         String
-  unitNo       String
+  unitNo       String?
   floor        String
   area         Decimal
   totalPrice   Decimal
   bedrooms     Int
   bathrooms    Int
   parkingCount Int
+  mapUrl       String
   pdfUrl       String?
-  bluePrint    String?
   description  String   @db.Text
   amenities    String[]
 
   views  RentView[] // Relation to RentView model
   images RentImage[] // Relation to RentImage model
 
+  agentId String // Foreign Key to Agent model
+  agent   Agent  @relation(fields: [agentId], references: [id], onDelete: Restrict)
+
   favRents FavRent[] // Relation to FavRent model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([agentId])
 }
 
 model RentImage {
-  id     String   @id @default(uuid())
-  url    String   @db.Text
+  id     String       @id @default(uuid())
+  url    String       @db.Text
   rentId String // Foreign Key to RentUnit model
-  rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
+  rent   RentProperty @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   @@index([rentId])
 }
 
 model RentView {
-  id     String   @id @default(uuid())
+  id     String       @id @default(uuid())
   title  String
   rentId String // Foreign Key to RentUnit model
-  rent   RentUnit @relation(fields: [rentId], references: [id], onDelete: Cascade)
+  rent   RentProperty @relation(fields: [rentId], references: [id], onDelete: Cascade)
 
   @@index([rentId])
 }

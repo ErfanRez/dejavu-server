@@ -31,6 +31,16 @@ const searchAgents = async (req, res) => {
           images: true,
         },
       },
+      saleProps: {
+        include: {
+          images: true,
+        },
+      },
+      rentProps: {
+        include: {
+          images: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -53,6 +63,16 @@ const getAllAgents = async (req, res) => {
   const agents = await prismadb.agent.findMany({
     include: {
       properties: {
+        include: {
+          images: true,
+        },
+      },
+      saleProps: {
+        include: {
+          images: true,
+        },
+      },
+      rentProps: {
         include: {
           images: true,
         },
@@ -90,6 +110,16 @@ const getAgentById = async (req, res) => {
     },
     include: {
       properties: {
+        include: {
+          images: true,
+        },
+      },
+      saleProps: {
+        include: {
+          images: true,
+        },
+      },
+      rentProps: {
         include: {
           images: true,
         },

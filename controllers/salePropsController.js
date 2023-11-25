@@ -4,10 +4,10 @@ const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const fs = require("fs");
 
-// @desc Get searched saleUnits
-// @route GET /sale-units/search
+// @desc Get searched sales
+// @route GET /sales/search
 //! @access Public
-const searchSaleUnits = async (req, res) => {
+const searchSales = async (req, res) => {
   const searchParams = req.query; // Get the search parameters from query params
 
   // Get the limit value from req.query
@@ -19,7 +19,7 @@ const searchSaleUnits = async (req, res) => {
 
   const where = {};
 
-  // Create a map of query parameter names to their corresponding Prisma filter conditions
+  //* Create a map of query parameter names to their corresponding Prisma filter conditions
   const filterMap = {
     title: { contains: searchParams.title },
     type: { contains: searchParams.type },
@@ -36,10 +36,11 @@ const searchSaleUnits = async (req, res) => {
     }
   }
 
-  const units = await prismadb.saleUnit.findMany({
+  const properties = await prismadb.saleProperty.findMany({
     where: where,
     take: limit,
     include: {
+      agent: true,
       images: true,
       views: true,
     },
@@ -48,81 +49,26 @@ const searchSaleUnits = async (req, res) => {
     },
   });
 
-  if (!units?.length) {
-    return res.status(404).json({ message: "No units found!" });
+  if (!properties?.length) {
+    return res.status(404).json({ message: "No properties found!" });
   }
 
-  res.json(units);
+  res.json(properties);
 };
 
-// @desc Get searched saleUnits related to a specific property
-// @route GET /:pId/sale-units/search
+// @desc Get all sales
+// @route GET /sales
 //! @access Public
-const searchUnitsByPID = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-  const { pId } = req.params;
-
-  //* Confirm data
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
-  }
-
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
-    where: {
-      id: pId,
-    },
-  });
-
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
-  }
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const units = await prismadb.saleUnit.findMany({
-    where: {
-      propertyId: pId,
-      title: {
-        contains: searchString,
-      },
-    },
-    include: {
-      images: true,
-      views: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no units
-
-  if (!units?.length) {
-    return res
-      .status(404)
-      .json({ message: `No units found related to ${property.title}!` });
-  }
-
-  res.json(units);
-};
-
-// @desc Get all saleUnits
-// @route GET /sale-units
-//! @access Public
-const getAllSaleUnits = async (req, res) => {
-  //* Get all saleUnits from DB
+const getAllSales = async (req, res) => {
+  //* Get all sales from DB
 
   // Get the limit value from req.query
   const limit = parseInt(req.query.limit) || 20;
 
-  const units = await prismadb.saleUnit.findMany({
+  const properties = await prismadb.saleProperty.findMany({
     take: limit,
     include: {
+      agent: true,
       images: true,
       views: true,
     },
@@ -131,30 +77,35 @@ const getAllSaleUnits = async (req, res) => {
     },
   });
 
-  //* If no units
+  //* If no properties
 
-  if (!units?.length) {
-    return res.status(400).json({ message: "No units found!" });
+  if (!properties?.length) {
+    return res.status(400).json({ message: "No properties found!" });
   }
 
-  res.json(units);
+  res.json(properties);
 };
 
-// @desc Get all saleUnits related to a specific property
-// @route GET /:pId/sale-units
+// @desc Get an unique saleProperty
+// @route GET /sales/:sId
 //! @access Public
-const getAllUnitsByPID = async (req, res) => {
-  const { pId } = req.params;
+const getSaleById = async (req, res) => {
+  const { sId } = req.params;
 
   //* Confirm data
-  if (!pId) {
+  if (!sId) {
     return res.status(400).json({ message: "Property ID Required!" });
   }
 
   //? Does the property exist?
-  const property = await prismadb.property.findUnique({
+  const property = await prismadb.saleProperty.findUnique({
     where: {
-      id: pId,
+      id: sId,
+    },
+    include: {
+      agent: true,
+      images: true,
+      views: true,
     },
   });
 
@@ -162,67 +113,19 @@ const getAllUnitsByPID = async (req, res) => {
     return res.status(404).json({ message: "Property not found!" });
   }
 
-  //* Get all saleUnits from DB
-
-  const units = await prismadb.saleUnit.findMany({
-    where: {
-      propertyId: pId,
-    },
-    include: {
-      images: true,
-      views: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no units
-
-  if (!units?.length) {
-    return res
-      .status(404)
-      .json({ message: `No units found related to ${property.title}!` });
-  }
-
-  res.json(units);
+  res.json(property);
 };
 
-// @desc Get an unique saleUnit
-// @route GET /sale-units/:sId
-//! @access Public
-const getSaleUnitById = async (req, res) => {
-  const { sId } = req.params;
-
-  //* Confirm data
-  if (!sId) {
-    return res.status(400).json({ message: "Unit ID Required!" });
-  }
-
-  //? Does the unit exist?
-  const unit = await prismadb.saleUnit.findUnique({
-    where: {
-      id: sId,
-    },
-    include: {
-      images: true,
-      views: true,
-    },
-  });
-
-  if (!unit) {
-    return res.status(404).json({ message: "Unit not found!" });
-  }
-
-  res.json(unit);
-};
-
-// @desc Create new saleUnit
-// @route POST /:pId/sale-unit
+// @desc Create new saleProperty
+// @route POST /sale-property
 //! @access Private
-const createNewSaleUnit = async (req, res) => {
+const createNewSale = async (req, res) => {
   const {
     title,
+    owner,
+    city,
+    country,
+    location,
     type,
     unitNo,
     floor,
@@ -232,27 +135,16 @@ const createNewSaleUnit = async (req, res) => {
     bedrooms,
     bathrooms,
     parkingCount,
+    mapUrl,
     description,
+    amenities,
+    agentId,
   } = req.body;
 
+  const pdfUrl = req.pdfUrl;
+  const bluePrint = req.bluePrint;
+
   let { views } = req.body;
-
-  const { pId } = req.params;
-
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
-  }
-
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
-    where: {
-      id: pId,
-    },
-  });
-
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
-  }
 
   // console.log(req.files);
   const convertedImages = req.convertedImages;
@@ -261,8 +153,11 @@ const createNewSaleUnit = async (req, res) => {
 
   if (
     !title ||
+    !owner ||
+    !city ||
+    !country ||
+    !location ||
     !type ||
-    !unitNo ||
     !floor ||
     !area ||
     !rPSqft ||
@@ -270,22 +165,36 @@ const createNewSaleUnit = async (req, res) => {
     !bedrooms ||
     !bathrooms ||
     !parkingCount ||
+    !mapUrl ||
     !description ||
+    !amenities ||
+    !agentId ||
     !views
   ) {
     return res.status(400).json({ message: "All fields required!" });
   }
 
+  //? Does the agent exist?
+  const agent = await prismadb.agent.findUnique({
+    where: {
+      id: agentId,
+    },
+  });
+
+  if (!agent) {
+    return res.status(404).json({ message: "Agent not found!" });
+  }
+
   //? Check for duplicate
 
-  const duplicate = await prismadb.saleUnit.findUnique({
+  const duplicate = await prismadb.saleProperty.findUnique({
     where: {
       title,
     },
   });
 
   if (duplicate) {
-    return res.status(409).json({ message: "Unit title already exists!" });
+    return res.status(409).json({ message: "Property title already exists!" });
   }
 
   //* Check the type of 'views' property
@@ -304,11 +213,15 @@ const createNewSaleUnit = async (req, res) => {
   const bathroomsInt = parseInt(bathrooms, 10);
   const parkingCountInt = parseInt(parkingCount, 10);
 
-  //* Create new saleUnit
+  //* Create new saleProperty
 
-  const unit = await prismadb.saleUnit.create({
+  const property = await prismadb.saleProperty.create({
     data: {
       title,
+      owner,
+      city,
+      country,
+      location,
       type,
       unitNo,
       floor,
@@ -318,10 +231,14 @@ const createNewSaleUnit = async (req, res) => {
       bedrooms: bedroomsInt,
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
+      mapUrl,
+      pdfUrl,
+      bluePrint,
       description,
-      property: {
+      amenities,
+      agent: {
         connect: {
-          id: pId,
+          id: agentId,
         },
       },
       views: {
@@ -337,23 +254,27 @@ const createNewSaleUnit = async (req, res) => {
     },
   });
 
-  if (unit) {
+  if (property) {
     //*created
 
     res.status(201).json({
-      message: `New unit ${title} for property ${property.title} created.`,
+      message: `New property ${title} created.`,
     });
   } else {
-    res.status(400).json({ message: "Invalid unit data received!" });
+    res.status(400).json({ message: "Invalid property data received!" });
   }
 };
 
-// @desc Update a saleUnit
-// @route PATCH /sale-units/:sId
+// @desc Update a saleProperty
+// @route PATCH /sales/:sId
 //! @access Private
-const updateSaleUnit = async (req, res) => {
+const updateSale = async (req, res) => {
   const {
     title,
+    owner,
+    city,
+    country,
+    location,
     type,
     unitNo,
     floor,
@@ -363,54 +284,46 @@ const updateSaleUnit = async (req, res) => {
     bedrooms,
     bathrooms,
     parkingCount,
+    mapUrl,
     description,
+    amenities,
   } = req.body;
+
+  let pdfUrl = req.pdfUrl;
+  let bluePrint = req.bluePrint;
 
   let { views } = req.body;
 
   const { sId } = req.params;
 
   if (!sId) {
-    return res.status(400).json({ message: "Unit ID required!" });
+    return res.status(400).json({ message: "Property ID required!" });
   }
 
   let convertedImages = req.convertedImages;
 
   //* Confirm data
 
-  if (
-    !title ||
-    !type ||
-    !unitNo ||
-    !floor ||
-    !area ||
-    !rPSqft ||
-    !totalPrice ||
-    !bedrooms ||
-    !bathrooms ||
-    !parkingCount ||
-    !description ||
-    !views
-  ) {
-    return res.status(400).json({ message: "All fields required!" });
+  if (!title) {
+    return res.status(400).json({ message: "Title required!" });
   }
 
-  //? Does the unit exist to update?
+  //? Does the property exist to update?
 
-  const unit = await prismadb.saleUnit.findUnique({
+  const property = await prismadb.saleProperty.findUnique({
     where: {
       id: sId,
     },
   });
 
-  if (!unit) {
-    return res.status(404).json({ message: "Unit not found!" });
+  if (!property) {
+    return res.status(404).json({ message: "property not found!" });
   }
 
-  if (title !== unit.title && title !== undefined) {
+  if (title !== property.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      renameOldFile("sales", unit.title, title);
+      renameOldFile("sales", property.title, title);
 
       const imagesFolder = path.join(
         __dirname,
@@ -441,10 +354,64 @@ const updateSaleUnit = async (req, res) => {
         "uploads",
         "images",
         "sales",
-        unit.title
+        property.title
       );
 
       fileDelete(imagesFolder);
+    }
+
+    //* Check if new pdf provided
+    if (!pdfUrl) {
+      renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
+
+      const newPdfPath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "factSheets",
+          `${title}.pdf`
+        )
+      ).toString();
+
+      pdfUrl = newPdfPath;
+    } else {
+      // Define the path to the factSheets folder
+      const pdfFile = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "factSheets",
+        `${property.title}.pdf`
+      );
+
+      fileDelete(pdfFile);
+    }
+
+    //* Check if new blueprint provided
+    if (!bluePrint) {
+      renameOldPdf(`${property.title}.webp`, `${title}.webp`);
+
+      const newBluePrint = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "bluePrints",
+          `${title}.webp`
+        )
+      ).toString();
+
+      bluePrint = newBluePrint;
+    } else {
+      // Define the path to the factSheets folder
+      const bluePrintFile = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "bluePrints",
+        `${property.title}.webp`
+      );
+
+      fileDelete(bluePrintFile);
     }
   }
 
@@ -464,14 +431,18 @@ const updateSaleUnit = async (req, res) => {
   const bathroomsInt = parseInt(bathrooms, 10);
   const parkingCountInt = parseInt(parkingCount, 10);
 
-  //* Update saleUnit
+  //* Update saleProperty
 
-  await prismadb.saleUnit.update({
+  await prismadb.saleProperty.update({
     where: {
       id: sId,
     },
     data: {
       title,
+      owner,
+      city,
+      country,
+      location,
       type,
       unitNo,
       floor,
@@ -481,7 +452,11 @@ const updateSaleUnit = async (req, res) => {
       bedrooms: bedroomsInt,
       bathrooms: bathroomsInt,
       parkingCount: parkingCountInt,
+      mapUrl,
+      pdfUrl,
+      bluePrint,
       description,
+      amenities,
       views: {
         deleteMany: {},
       },
@@ -491,7 +466,7 @@ const updateSaleUnit = async (req, res) => {
     },
   });
 
-  const updatedUnit = await prismadb.saleUnit.update({
+  const updatedProperty = await prismadb.saleProperty.update({
     where: {
       id: sId,
     },
@@ -509,37 +484,37 @@ const updateSaleUnit = async (req, res) => {
     },
   });
 
-  res.json({ message: `Unit ${updatedUnit.title} updated.` });
+  res.json({ message: `Property ${updatedProperty.title} updated.` });
 };
 
-// @desc Delete a saleUnit
-// @route DELETE /:pId/sale-units/:sId
+// @desc Delete a saleProperty
+// @route DELETE /sales/:sId
 //! @access Private
-const deleteSaleUnit = async (req, res) => {
+const deleteSale = async (req, res) => {
   const { sId } = req.params;
 
   //* Confirm data
   if (!sId) {
-    return res.status(400).json({ message: "Unit ID required!" });
+    return res.status(400).json({ message: "Property ID required!" });
   }
 
-  //? Does the unit exist to delete?
-  const unit = await prismadb.saleUnit.findUnique({
+  //? Does the property exist to delete?
+  const property = await prismadb.saleProperty.findUnique({
     where: {
       id: sId,
     },
   });
 
-  if (!unit) {
-    return res.status(404).json({ message: "Unit not found!" });
+  if (!property) {
+    return res.status(404).json({ message: "property not found!" });
   }
 
-  const result = await prismadb.saleUnit.delete({
+  const result = await prismadb.saleProperty.delete({
     where: {
       id: sId,
     },
   });
-  // Define the path to the saleUnit's images folder
+  // Define the path to the saleProperty's images folder
   const imagesFolder = path.join(
     __dirname,
     "..",
@@ -551,18 +526,38 @@ const deleteSaleUnit = async (req, res) => {
 
   fileDelete(imagesFolder);
 
+  // Define the path to the property's pdf file
+  const pdfFile = path.join(
+    __dirname,
+    "..",
+    "uploads",
+    "factSheets",
+    `${result.title}.pdf`
+  );
+
+  fileDelete(pdfFile);
+
+  // Define the path to the property's bluePrint image
+  const bluePrintFile = path.join(
+    __dirname,
+    "..",
+    "uploads",
+    "bluePrints",
+    `${result.title}.webp`
+  );
+
+  fileDelete(bluePrintFile);
+
   res.json({
-    message: `Unit ${result.title} with ID: ${result.id} deleted.`,
+    message: `Property ${result.title} with ID: ${result.id} deleted.`,
   });
 };
 
 module.exports = {
-  searchSaleUnits,
-  searchUnitsByPID,
-  getSaleUnitById,
-  getAllSaleUnits,
-  getAllUnitsByPID,
-  createNewSaleUnit,
-  updateSaleUnit,
-  deleteSaleUnit,
+  searchSales,
+  getSaleById,
+  getAllSales,
+  createNewSale,
+  updateSale,
+  deleteSale,
 };

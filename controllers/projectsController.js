@@ -5,10 +5,10 @@ const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
 const fs = require("fs");
 
-// @desc Get searched properties
-// @route GET /properties/search
+// @desc Get searched projects
+// @route GET /projects/search
 //! @access Public
-const searchProperties = async (req, res) => {
+const searchProjects = async (req, res) => {
   const searchParams = req.query; // Get the search parameters from query params
 
   // Get the limit value from req.query
@@ -28,126 +28,90 @@ const searchProperties = async (req, res) => {
     }
   }
 
-  const properties = await prismadb.property.findMany({
+  const projects = await prismadb.project.findMany({
     where: where,
     take: limit,
     include: {
       agent: true,
       images: true,
       installments: true,
-      saleUnits: {
-        include: {
-          images: true,
-          views: true,
-        },
-      },
-      rentUnits: {
-        include: {
-          images: true,
-          views: true,
-        },
-      },
     },
     orderBy: {
       updatedAt: "desc",
     },
   });
 
-  if (!properties?.length) {
-    return res.status(404).json({ message: "No properties found!" });
+  if (!projects?.length) {
+    return res.status(404).json({ message: "No projects found!" });
   }
 
-  res.json(properties);
+  res.json(projects);
 };
 
-// @desc Get an unique property
-// @route GET /properties/:pId
+// @desc Get an unique project
+// @route GET /projects/:id
 //! @access Public
-const getPropertyById = async (req, res) => {
-  const { pId } = req.params;
+const getProjectById = async (req, res) => {
+  const { id } = req.params;
 
   //* Confirm data
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
+  if (!id) {
+    return res.status(400).json({ message: "Project ID Required!" });
   }
 
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
+  //? Does the project exist?
+  const project = await prismadb.project.findUnique({
     where: {
-      id: pId,
+      id,
     },
     include: {
       agent: true,
       images: true,
       installments: true,
-      saleUnits: {
-        include: {
-          images: true,
-          views: true,
-        },
-      },
-      rentUnits: {
-        include: {
-          images: true,
-          views: true,
-        },
-      },
     },
   });
 
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
+  if (!project) {
+    return res.status(404).json({ message: "Project not found!" });
   }
 
-  res.json(property);
+  res.json(project);
 };
 
-// @desc Get all properties
-// @route GET /properties
+// @desc Get all projects
+// @route GET /projects
 //! @access Public
-const getAllProperties = async (req, res) => {
-  //* Get all properties from DB
+const getAllProjects = async (req, res) => {
+  //* Get all projects from DB
 
   // Get the limit value from req.query
   const limit = parseInt(req.query.limit) || 20;
 
-  const properties = await prismadb.property.findMany({
+  const projects = await prismadb.project.findMany({
     take: limit,
     include: {
       agent: true,
       images: true,
       installments: true,
-      saleUnits: {
-        include: {
-          images: true,
-          views: true,
-        },
-      },
-      rentUnits: {
-        include: {
-          images: true,
-          views: true,
-        },
-      },
     },
     orderBy: {
       updatedAt: "desc",
     },
   });
 
-  //* If no properties
+  //* If no projects
 
-  if (!properties?.length) {
-    return res.status(404).json({ message: "No properties found!" });
+  if (!projects?.length) {
+    return res.status(404).json({ message: "No projects found!" });
   }
 
-  res.json(properties);
+  res.json(projects);
 };
 
-// @desc Create new property
-// @route POST /property
+// @desc Create new project
+// @route POST /project
 //! @access Private
-const createNewProperty = async (req, res) => {
+const createNewProject = async (req, res) => {
   const {
     title,
     owner,
@@ -196,14 +160,14 @@ const createNewProperty = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.property.findUnique({
+  const duplicate = await prismadb.project.findUnique({
     where: {
       title,
     },
   });
 
   if (duplicate) {
-    return res.status(409).json({ message: "Property title already exists!" });
+    return res.status(409).json({ message: "Project title already exists!" });
   }
 
   //* converts
@@ -212,9 +176,9 @@ const createNewProperty = async (req, res) => {
     ? (offPlanBoolean = JSON.parse(offPlan))
     : (offPlanBoolean = undefined);
 
-  //* Create new property
+  //* Create new project
 
-  const property = await prismadb.property.create({
+  const project = await prismadb.project.create({
     data: {
       title,
       owner,
@@ -241,19 +205,19 @@ const createNewProperty = async (req, res) => {
     },
   });
 
-  if (property) {
+  if (project) {
     //*created
 
-    res.status(201).json({ message: `New property ${title} created.` });
+    res.status(201).json({ message: `New project ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid property data received!" });
+    res.status(400).json({ message: "Invalid project data received!" });
   }
 };
 
-// @desc Update a property
-// @route PATCH /properties/:pId
+// @desc Update a project
+// @route PATCH /projects/:id
 //! @access Private
-const updateProperty = async (req, res) => {
+const updateProject = async (req, res) => {
   const {
     title,
     owner,
@@ -268,52 +232,44 @@ const updateProperty = async (req, res) => {
     amenities,
   } = req.body;
 
-  const { pId } = req.params;
+  const { id } = req.params;
 
   let convertedImages = req.convertedImages;
   let pdfUrl = req.pdfUrl;
 
   //* Confirm data
 
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID required!" });
+  if (!id) {
+    return res.status(400).json({ message: "Project ID required!" });
   }
 
-  if (
-    !title ||
-    !owner ||
-    !city ||
-    !country ||
-    !location ||
-    !category ||
-    !mapUrl
-  ) {
-    return res.status(400).json({ message: "All fields required!" });
+  if (!title) {
+    return res.status(400).json({ message: "Title required!" });
   }
 
-  //? Does the property exist to update?
+  //? Does the project exist to update?
 
-  const property = await prismadb.property.findUnique({
+  const project = await prismadb.project.findUnique({
     where: {
-      id: pId,
+      id,
     },
   });
 
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
+  if (!project) {
+    return res.status(404).json({ message: "Project not found!" });
   }
 
-  if (title !== property.title && title !== undefined) {
+  if (title !== project.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      renameOldFile("properties", property.title, title);
+      renameOldFile("projects", project.title, title);
 
       const imagesFolder = path.join(
         __dirname,
         "..",
         "uploads",
         "images",
-        "properties",
+        "projects",
         title
       );
 
@@ -328,7 +284,7 @@ const updateProperty = async (req, res) => {
             process.env.ROOT_PATH,
             "uploads",
             "images",
-            "properties",
+            "projects",
             title
           )
         ).toString();
@@ -336,14 +292,14 @@ const updateProperty = async (req, res) => {
         convertedImages = files.map((file) => path.join(outputImageURL, file));
       }
     } else {
-      // Define the path to the property's images folder
+      // Define the path to the project's images folder
       const imagesFolder = path.join(
         __dirname,
         "..",
         "uploads",
         "images",
-        "properties",
-        property.title
+        "projects",
+        project.title
       );
 
       fileDelete(imagesFolder);
@@ -351,7 +307,7 @@ const updateProperty = async (req, res) => {
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
+      renameOldPdf(`${project.title}.pdf`, `${title}.pdf`);
 
       const newPdfPath = new URL(
         path.join(
@@ -365,15 +321,15 @@ const updateProperty = async (req, res) => {
       pdfUrl = newPdfPath;
     } else {
       // Define the path to the factSheets folder
-      const pdfFolder = path.join(
+      const pdfFile = path.join(
         __dirname,
         "..",
         "uploads",
         "factSheets",
-        `${property.title}.pdf`
+        `${project.title}.pdf`
       );
 
-      fileDelete(pdfFolder);
+      fileDelete(pdfFile);
     }
   }
 
@@ -383,11 +339,11 @@ const updateProperty = async (req, res) => {
     ? (offPlanBoolean = JSON.parse(offPlan))
     : (offPlanBoolean = undefined);
 
-  //* Update property
+  //* Update project
 
-  await prismadb.property.update({
+  await prismadb.project.update({
     where: {
-      id: pId,
+      id,
     },
     data: {
       title,
@@ -408,9 +364,9 @@ const updateProperty = async (req, res) => {
     },
   });
 
-  const updatedProperty = await prismadb.property.update({
+  const updatedProject = await prismadb.project.update({
     where: {
-      id: pId,
+      id,
     },
     data: {
       images: {
@@ -421,51 +377,51 @@ const updateProperty = async (req, res) => {
     },
   });
 
-  res.json({ message: `property ${updatedProperty.title} updated.` });
+  res.json({ message: `project ${updatedProject.title} updated.` });
 };
 
-// @desc Delete a property
-// @route DELETE /properties/:pId
+// @desc Delete a project
+// @route DELETE /projects/:id
 //! @access Private
-const deleteProperty = async (req, res) => {
-  const { pId } = req.params;
+const deleteProject = async (req, res) => {
+  const { id } = req.params;
 
   //* Confirm data
-  if (!pId) {
-    return res.status(400).json({ message: "Property ID required!" });
+  if (!id) {
+    return res.status(400).json({ message: "Project ID required!" });
   }
 
-  //? Does the property exist to delete?
-  const property = await prismadb.property.findUnique({
+  //? Does the project exist to delete?
+  const project = await prismadb.project.findUnique({
     where: {
-      id: pId,
+      id,
     },
   });
 
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
+  if (!project) {
+    return res.status(404).json({ message: "Project not found!" });
   }
 
-  const result = await prismadb.property.delete({
+  const result = await prismadb.project.delete({
     where: {
-      id: pId,
+      id,
     },
   });
 
-  // Define the path to the property's images folder
+  // Define the path to the project's images folder
   const imagesFolder = path.join(
     __dirname,
     "..",
     "uploads",
     "images",
-    "properties",
+    "projects",
     result.title
   );
 
   fileDelete(imagesFolder);
 
-  // Define the path to the property's images folder
-  const pdfFolder = path.join(
+  // Define the path to the project's pdf file
+  const pdfFile = path.join(
     __dirname,
     "..",
     "uploads",
@@ -473,18 +429,18 @@ const deleteProperty = async (req, res) => {
     `${result.title}.pdf`
   );
 
-  fileDelete(pdfFolder);
+  fileDelete(pdfFile);
 
   res.json({
-    message: `Property ${result.title} with ID: ${result.id} deleted.`,
+    message: `Project ${result.title} with ID: ${result.id} deleted.`,
   });
 };
 
 module.exports = {
-  searchProperties,
-  getPropertyById,
-  getAllProperties,
-  createNewProperty,
-  updateProperty,
-  deleteProperty,
+  searchProjects,
+  getProjectById,
+  getAllProjects,
+  createNewProject,
+  updateProject,
+  deleteProject,
 };

@@ -18,6 +18,15 @@ const uploader = (subFolderName) => async (req, res, next) => {
   } else if (req.body.title !== undefined) {
     // Title is provided
 
+    // Check the MIME type of each uploaded image file
+    for (const file of imageFiles) {
+      if (!file.mimetype.startsWith("image")) {
+        return res
+          .status(400)
+          .json({ message: "Only image files are allowed." });
+      }
+    }
+
     // Define the output folder for converted images
     const outputFolder = path.join(
       __dirname,
@@ -37,15 +46,6 @@ const uploader = (subFolderName) => async (req, res, next) => {
     } else {
       // Folder doesn't exist, create it
       fs.mkdirSync(outputFolder, { recursive: true });
-    }
-
-    // Check the MIME type of each uploaded image file
-    for (const file of imageFiles) {
-      if (!file.mimetype.startsWith("image")) {
-        return res
-          .status(400)
-          .json({ message: "Only image files are allowed." });
-      }
     }
 
     const convertedImages = [];
