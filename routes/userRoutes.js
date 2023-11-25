@@ -8,9 +8,9 @@ router
   .use(fileUpload())
   .get("/search", usersController.searchUsers)
   .get("/", usersController.getAllUsers)
-  .get("/:uId", usersController.getUserById)
-  .post("/", uploader, usersController.createNewUser)
-  .patch("/:uId", uploader, usersController.updateUser)
-  .delete("/:uId", usersController.deleteUser);
+  .get("/:id", usersController.getUserById)
+  .post("/", uploader("users"), usersController.createNewUser)
+  .patch("/:id", uploader, usersController.updateUser)
+  .delete("/:id", usersController.deleteUser);
 
 module.exports = router;

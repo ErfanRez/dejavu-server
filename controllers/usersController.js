@@ -67,20 +67,20 @@ const getAllUsers = async (req, res) => {
 };
 
 // @desc Get an unique user
-// @route GET /users/:uId
+// @route GET /users/:id
 //! @access Private
 const getUserById = async (req, res) => {
-  const { uId } = req.params;
+  const { id } = req.params;
 
   //* Confirm data
-  if (!uId) {
+  if (!id) {
     return res.status(400).json({ message: "User ID Required!" });
   }
 
   //? Does the user exist?
   const user = await prismadb.user.findUnique({
     where: {
-      id: uId,
+      id,
     },
     include: {
       favSales: true,
@@ -99,7 +99,7 @@ const getUserById = async (req, res) => {
 // @route POST /user
 //! @access Private
 const createNewUser = async (req, res) => {
-  const { username, email, isAdmin } = req.body;
+  const { username, email } = req.body;
 
   // console.log(req.files);
   const convertedImage = req.convertedImage;
@@ -145,18 +145,18 @@ const createNewUser = async (req, res) => {
 };
 
 // @desc Update a user
-// @route PATCH /users/:uId
+// @route PATCH /users/:id
 //! @access Private
 const updateUser = async (req, res) => {
   const { username, email } = req.body;
-  const { uId } = req.params;
+  const { id } = req.params;
 
   // console.log(req.files);
   let convertedImage = req.convertedImage;
 
   //* Confirm data
 
-  if (!uId) {
+  if (!id) {
     return res.status(400).json({ message: "User ID required!" });
   }
 
@@ -167,7 +167,7 @@ const updateUser = async (req, res) => {
   //? Does the user exist to update?
   const user = await prismadb.user.findUnique({
     where: {
-      id: uId,
+      id,
     },
   });
 
@@ -210,7 +210,7 @@ const updateUser = async (req, res) => {
 
   const updatedUser = await prismadb.user.update({
     where: {
-      id: uId,
+      id: id,
     },
     data: {
       username,
@@ -223,20 +223,20 @@ const updateUser = async (req, res) => {
 };
 
 // @desc Delete a user
-// @route DELETE /users/:uId
+// @route DELETE /users/:id
 //! @access Private
 const deleteUser = async (req, res) => {
-  const { uId } = req.params;
+  const { id } = req.params;
 
   //* Confirm data
-  if (!uId) {
+  if (!id) {
     return res.status(400).json({ message: "User ID required!" });
   }
 
   //? Does the user exist to delete?
   const user = await prismadb.user.findUnique({
     where: {
-      id: uId,
+      id,
     },
   });
 
@@ -246,7 +246,7 @@ const deleteUser = async (req, res) => {
 
   const result = await prismadb.user.delete({
     where: {
-      id: uId,
+      id: id,
     },
   });
 

@@ -11,6 +11,16 @@ datasource db {
   relationMode = "prisma"
 }
 
+model Admin {
+  id       String @id @default(uuid())
+  username String @unique
+  email    String @unique
+  imageUrl String @default("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
   id       String @id @default(uuid())
   username String @unique
@@ -50,7 +60,7 @@ model FavRent {
 model Agent {
   id       String @id @default(uuid())
   name     String @unique
-  imageUrl String @default("https://sketchub.in/storage/project_files/23247/7520688.png")
+  imageUrl String @default("https://img.freepik.com/premium-photo/young-hipster-man-black-suit-black-beard-sunglasses-modal-pose_862994-21465.jpg?w=360")
   phone    String @default("")
   email    String @default("")
   whatsapp String @default("")
@@ -62,23 +72,21 @@ model Agent {
 }
 
 model Property {
-  id             String          @id @default(uuid())
-  title          String          @unique
+  id             String   @id @default(uuid())
+  title          String   @unique
   owner          String
   city           String
   country        String
   location       String
   category       String
   mapUrl         String
-  offPlan        Boolean         @default(false)
+  offPlan        Boolean  @default(false)
   completionDate String?
-  pdfUrl         String?
-  description    String?         @db.Text
-  saleUnits      SaleUnit[] // Relation to SaleUnit model
-  rentUnits      RentUnit[] // Relation to RentUnit model
+  description    String?  @db.Text
   amenities      String[]
-  installments   Installment[] // Relation to Installment model
-  images         PropertyImage[] // Relation to PropertyImage model
+
+  installments Installment[] // Relation to Installment model
+  images       PropertyImage[] // Relation to PropertyImage model
 
   agentId String // Foreign Key to Agent model
   agent   Agent  @relation(fields: [agentId], references: [id], onDelete: Restrict)
@@ -103,11 +111,6 @@ model Category {
   title String @unique
 }
 
-model Amenity {
-  id    String @id @default(uuid())
-  title String
-}
-
 model Installment {
   id         String   @id @default(uuid())
   title      String
@@ -122,8 +125,12 @@ model Installment {
 }
 
 model SaleUnit {
-  id           String      @id @default(uuid())
-  title        String      @unique
+  id           String   @id @default(uuid())
+  title        String   @unique
+  owner        String
+  city         String
+  country      String
+  location     String
   type         String
   unitNo       String
   floor        String
@@ -133,18 +140,18 @@ model SaleUnit {
   bedrooms     Int
   bathrooms    Int
   parkingCount Int
-  description  String      @db.Text
-  propertyId   String // Foreign Key to Property model
-  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  views        SaleView[] // Relation to SaleView model
-  images       SaleImage[] // Relation to SaleImage model
+  pdfUrl       String?
+  bluePrint    String?
+  description  String   @db.Text
+  amenities    String[]
+
+  views  SaleView[] // Relation to SaleView model
+  images SaleImage[] // Relation to SaleImage model
 
   favSales FavSale[] // Relation to FavSale model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([propertyId])
 }
 
 model SaleView {
@@ -166,8 +173,12 @@ model SaleImage {
 }
 
 model RentUnit {
-  id           String      @id @default(uuid())
-  title        String      @unique
+  id           String   @id @default(uuid())
+  title        String   @unique
+  owner        String
+  city         String
+  country      String
+  location     String
   type         String
   unitNo       String
   floor        String
@@ -176,18 +187,18 @@ model RentUnit {
   bedrooms     Int
   bathrooms    Int
   parkingCount Int
-  description  String      @db.Text
-  propertyId   String // Foreign Key to Property model
-  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  views        RentView[] // Relation to RentView model
-  images       RentImage[] // Relation to RentImage model
+  pdfUrl       String?
+  bluePrint    String?
+  description  String   @db.Text
+  amenities    String[]
+
+  views  RentView[] // Relation to RentView model
+  images RentImage[] // Relation to RentImage model
 
   favRents FavRent[] // Relation to FavRent model
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([propertyId])
 }
 
 model RentImage {
@@ -211,6 +222,11 @@ model RentView {
 model Type {
   id    String @id @default(uuid())
   title String @unique
+}
+
+model Amenity {
+  id    String @id @default(uuid())
+  title String
 }
 
 model Article {
