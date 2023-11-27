@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 const uploader = async (req, res, next) => {
-  const imageFile = req.files?.image;
+  const imageFile = req.files?.bluePrint;
 
   // Check if a file was uploaded
   if (!imageFile) {
@@ -16,7 +16,7 @@ const uploader = async (req, res, next) => {
     // Get the uploaded file data
     const imageData = imageFile.data;
 
-    // Define the output folder for converted images
+    // Define the output folder for converted image
     const outputFolder = path.join(
       __dirname,
       "..",
