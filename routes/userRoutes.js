@@ -10,7 +10,7 @@ router
   .get("/", usersController.getAllUsers)
   .get("/:id", usersController.getUserById)
   .post("/", uploader("users"), usersController.createNewUser)
-  .patch("/:id", uploader, usersController.updateUser)
+  .patch("/:id", uploader("users"), usersController.updateUser)
   .delete("/:id", usersController.deleteUser);
 
 module.exports = router;
