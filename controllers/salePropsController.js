@@ -2,6 +2,7 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
+const renameOldPdf = require("../utils/renameOldPdf");
 const fs = require("fs");
 
 // @desc Get searched sales
@@ -389,12 +390,13 @@ const updateSale = async (req, res) => {
 
     //* Check if new blueprint provided
     if (!bluePrint) {
-      renameOldPdf(`${property.title}.webp`, `${title}.webp`);
+      renameOldFile("bluePrints", `${property.title}.webp`, `${title}.webp`);
 
       const newBluePrint = new URL(
         path.join(
           process.env.ROOT_PATH,
           "uploads",
+          "images",
           "bluePrints",
           `${title}.webp`
         )
@@ -407,6 +409,7 @@ const updateSale = async (req, res) => {
         __dirname,
         "..",
         "uploads",
+        "images",
         "bluePrints",
         `${property.title}.webp`
       );
@@ -542,6 +545,7 @@ const deleteSale = async (req, res) => {
     __dirname,
     "..",
     "uploads",
+    "images",
     "bluePrints",
     `${result.title}.webp`
   );

@@ -26,7 +26,7 @@ const searchAgents = async (req, res) => {
   const agents = await prismadb.agent.findMany({
     where: where,
     include: {
-      properties: {
+      projects: {
         include: {
           images: true,
         },
@@ -62,7 +62,7 @@ const getAllAgents = async (req, res) => {
 
   const agents = await prismadb.agent.findMany({
     include: {
-      properties: {
+      projects: {
         include: {
           images: true,
         },
@@ -109,7 +109,7 @@ const getAgentById = async (req, res) => {
       id,
     },
     include: {
-      properties: {
+      projects: {
         include: {
           images: true,
         },
@@ -274,19 +274,6 @@ const deleteAgent = async (req, res) => {
     return res.status(400).json({ message: "Agent ID required!" });
   }
 
-  const properties = await prismadb.property.findMany({
-    where: {
-      agentId: id,
-    },
-  });
-
-  if (properties?.length !== 0) {
-    return res.status(403).json({
-      message:
-        "This Agent has connected properties! You should delete them first.",
-    });
-  }
-
   //? Does the agent exist to delete?
   const agent = await prismadb.agent.findUnique({
     where: {
@@ -296,6 +283,19 @@ const deleteAgent = async (req, res) => {
 
   if (!agent) {
     return res.status(404).json({ message: "Agent not found!" });
+  }
+
+  const projects = await prismadb.project.findMany({
+    where: {
+      agentId: id,
+    },
+  });
+
+  if (projects?.length !== 0) {
+    return res.status(403).json({
+      message:
+        "This Agent has connected projects! You should delete them first.",
+    });
   }
 
   const result = await prismadb.agent.delete({

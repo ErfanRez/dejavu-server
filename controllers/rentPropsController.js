@@ -2,6 +2,7 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
+const renameOldPdf = require("../utils/renameOldPdf");
 const fs = require("fs");
 
 // @desc Get searched rentProperties

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 function renameFile(oldFileName, newFileName) {
-  const oldImagePath = path.join(
+  const oldPdfPath = path.join(
     __dirname,
     "..",
     "uploads",
@@ -10,7 +10,7 @@ function renameFile(oldFileName, newFileName) {
     oldFileName
   );
 
-  const newImagePath = path.join(
+  const newPdfPath = path.join(
     __dirname,
     "..",
     "uploads",
@@ -18,8 +18,8 @@ function renameFile(oldFileName, newFileName) {
     newFileName
   );
 
-  if (fs.existsSync(oldImagePath)) {
-    fs.renameSync(oldImagePath, newImagePath);
+  if (fs.existsSync(oldPdfPath)) {
+    fs.renameSync(oldPdfPath, newPdfPath);
   }
 }
 

@@ -65,9 +65,9 @@ model Agent {
   email    String?
   whatsapp String?
 
-  properties Project[] // Relation to Property model
-  saleProps  SaleProperty[]
-  rentProps  RentProperty[]
+  projects  Project[] // Relation to Property model
+  saleProps SaleProperty[]
+  rentProps RentProperty[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -189,7 +189,6 @@ model RentProperty {
   country      String
   location     String
   type         String
-  unitNo       String?
   floor        String
   area         Decimal
   totalPrice   Decimal
@@ -197,6 +196,7 @@ model RentProperty {
   bathrooms    Int
   parkingCount Int
   mapUrl       String
+  unitNo       String?
   pdfUrl       String?
   description  String   @db.Text
   amenities    String[]
