@@ -29,7 +29,7 @@ const searchInstallments = async (req, res) => {
   res.json(installments);
 };
 
-// @desc Get searched installments related to a specific property
+// @desc Get searched installments related to a specific project
 // @route GET /:pId/installments/search
 //! @access Public
 const searchInstallmentsByPID = async (req, res) => {
@@ -38,18 +38,18 @@ const searchInstallmentsByPID = async (req, res) => {
 
   //* Confirm data
   if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Project ID Required!" });
   }
 
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
+  //? Does the project exist?
+  const project = await prismadb.project.findUnique({
     where: {
       id: pId,
     },
   });
 
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
+  if (!project) {
+    return res.status(404).json({ message: "Project not found!" });
   }
 
   if (!searchString) {
@@ -60,7 +60,7 @@ const searchInstallmentsByPID = async (req, res) => {
 
   const installments = await prismadb.installment.findMany({
     where: {
-      propertyId: pId,
+      projectId: pId,
       title: {
         contains: searchString,
       },
@@ -72,7 +72,7 @@ const searchInstallmentsByPID = async (req, res) => {
   if (!installments?.length) {
     return res
       .status(400)
-      .json({ message: `No installments related to ${property.title} found!` });
+      .json({ message: `No installments related to ${project.title} found!` });
   }
 
   res.json(installments);
@@ -95,7 +95,7 @@ const getAllInstallments = async (req, res) => {
   res.json(installments);
 };
 
-// @desc Get all installments related to a specific property
+// @desc Get all installments related to a specific project
 // @route GET /:pId/installments
 //! @access Public
 const getAllInstallmentsByPID = async (req, res) => {
@@ -103,25 +103,25 @@ const getAllInstallmentsByPID = async (req, res) => {
 
   //* Confirm data
   if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Project ID Required!" });
   }
 
-  //? Does the property exist?
-  const property = await prismadb.property.findUnique({
+  //? Does the project exist?
+  const project = await prismadb.project.findUnique({
     where: {
       id: pId,
     },
   });
 
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
+  if (!project) {
+    return res.status(404).json({ message: "Project not found!" });
   }
 
   //* Get all installments from DB
 
   const installments = await prismadb.installment.findMany({
     where: {
-      propertyId: pId,
+      projectId: pId,
     },
   });
 
@@ -130,7 +130,7 @@ const getAllInstallmentsByPID = async (req, res) => {
   if (!installments?.length) {
     return res
       .status(404)
-      .json({ message: `No installments related to ${property.title} found!` });
+      .json({ message: `No installments related to ${project.title} found!` });
   }
 
   res.json(installments);
@@ -169,18 +169,18 @@ const createNewInstallments = async (req, res) => {
   const { pId } = req.params;
 
   if (!pId) {
-    return res.status(400).json({ message: "Property ID Required!" });
+    return res.status(400).json({ message: "Project ID Required!" });
   }
 
-  // Does the property exist?
-  const property = await prismadb.property.findUnique({
+  // Does the project exist?
+  const project = await prismadb.project.findUnique({
     where: {
       id: pId,
     },
   });
 
-  if (!property) {
-    return res.status(404).json({ message: "Property not found!" });
+  if (!project) {
+    return res.status(404).json({ message: "Project not found!" });
   }
 
   // Confirm data
@@ -201,7 +201,7 @@ const createNewInstallments = async (req, res) => {
       data: {
         title,
         percentage: percentageDecimal,
-        property: {
+        project: {
           connect: {
             id: pId,
           },
@@ -216,7 +216,7 @@ const createNewInstallments = async (req, res) => {
 
   if (createdInstallments.length > 0) {
     return res.status(201).json({
-      message: `New installments created for property ${property.title}.`,
+      message: `New installments created for project ${project.title}.`,
     });
   } else {
     return res

@@ -47,20 +47,20 @@ const getAllAmenities = async (req, res) => {
 };
 
 // @desc Get an unique amenity
-// @route GET /amenities/:aId
+// @route GET /amenities/:id
 //! @access Public
 const getAmenityById = async (req, res) => {
-  const { aId } = req.params;
+  const { id } = req.params;
 
   //* Confirm data
-  if (!aId) {
+  if (!id) {
     return res.status(400).json({ message: "Amenity ID Required!" });
   }
 
   //? Does the amenity exist?
   const amenity = await prismadb.amenity.findUnique({
     where: {
-      id: aId,
+      id,
     },
   });
 
@@ -105,16 +105,16 @@ const createNewAmenity = async (req, res) => {
 };
 
 // @desc Update a amenity
-// @route PATCH /amenities/:aId
+// @route PATCH /amenities/:id
 //! @access Private
 const updateAmenity = async (req, res) => {
   const { title } = req.body;
 
-  const { aId } = req.params;
+  const { id } = req.params;
 
   //* Confirm data
 
-  if (!aId) {
+  if (!id) {
     return res.status(400).json({ message: "Amenity ID required!" });
   }
 
@@ -126,7 +126,7 @@ const updateAmenity = async (req, res) => {
 
   const amenity = await prismadb.amenity.findUnique({
     where: {
-      id: aId,
+      id,
     },
   });
 
@@ -138,7 +138,7 @@ const updateAmenity = async (req, res) => {
 
   const updatedAmenity = await prismadb.amenity.update({
     where: {
-      id: aId,
+      id,
     },
     data: {
       title,
@@ -149,20 +149,20 @@ const updateAmenity = async (req, res) => {
 };
 
 // @desc Delete a amenity
-// @route DELETE /amenities/:aId
+// @route DELETE /amenities/:id
 //! @access Private
 const deleteAmenity = async (req, res) => {
-  const { aId } = req.params;
+  const { id } = req.params;
 
   //* Confirm data
-  if (!aId) {
+  if (!id) {
     return res.status(400).json({ message: "Amenity ID required!" });
   }
 
   //? Does the amenity exist to delete?
   const amenity = await prismadb.amenity.findUnique({
     where: {
-      id: aId,
+      id,
     },
   });
 
@@ -172,7 +172,7 @@ const deleteAmenity = async (req, res) => {
 
   const result = await prismadb.amenity.delete({
     where: {
-      id: aId,
+      id,
     },
   });
 
