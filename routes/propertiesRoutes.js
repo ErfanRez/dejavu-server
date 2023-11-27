@@ -28,6 +28,7 @@ router
     uploadPic("sales"),
     salePropsController.updateSale
   )
+  .patch("/sales/:sId", salePropsController.updatePropertyAgent)
   .delete("/sales/:sId", salePropsController.deleteSale)
 
   //! rent properties routes /rents
@@ -46,6 +47,7 @@ router
     uploadPic("rents"),
     rentPropsController.updateRent
   )
+  .patch("/rents/:rId", rentPropsController.updatePropertyAgent)
   .delete("/rents/:rId", rentPropsController.deleteRent);
 
 module.exports = router;

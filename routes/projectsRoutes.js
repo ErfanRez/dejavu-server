@@ -23,6 +23,7 @@ router
     uploadPic("projects"),
     projectsController.updateProject
   )
+  .patch("/:id", projectsController.updateProjectAgent)
   .delete("/:id", projectsController.deleteProject);
 
 module.exports = router;

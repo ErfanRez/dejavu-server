@@ -490,6 +490,66 @@ const updateSale = async (req, res) => {
   res.json({ message: `Property ${updatedProperty.title} updated.` });
 };
 
+// @desc Update a property
+// @route PATCH /rents/:rId
+//! @access Private
+const updatePropertyAgent = async (req, res) => {
+  const { sId } = req.params;
+  const { agentId } = req.body;
+
+  // Confirm data
+  if (!agentId) {
+    return res.status(400).json({ message: "Agent ID is required!" });
+  }
+
+  // Check if the property exists
+  const existingProperty = await prismadb.saleProperty.findUnique({
+    where: {
+      id: sId,
+    },
+    include: {
+      agent: true,
+    },
+  });
+
+  if (!existingProperty) {
+    return res.status(404).json({ message: "Property not found!" });
+  }
+
+  // Check if the new agent exists
+  const newAgent = await prismadb.agent.findUnique({
+    where: {
+      id: agentId,
+    },
+  });
+
+  if (!newAgent) {
+    return res.status(404).json({ message: "Agent not found!" });
+  }
+
+  // Update the property with the new agent
+  const updatedProperty = await prismadb.saleProperty.update({
+    where: {
+      id: propertyId,
+    },
+    data: {
+      agent: {
+        connect: {
+          id: agentId,
+        },
+      },
+    },
+  });
+
+  if (updatedProperty) {
+    res.status(200).json({
+      message: `Agent for property ${existingProperty.title} updated.`,
+    });
+  } else {
+    res.status(400).json({ message: "Failed to update property agent." });
+  }
+};
+
 // @desc Delete a saleProperty
 // @route DELETE /sales/:sId
 //! @access Private
@@ -563,5 +623,6 @@ module.exports = {
   getAllSales,
   createNewSale,
   updateSale,
+  updatePropertyAgent,
   deleteSale,
 };

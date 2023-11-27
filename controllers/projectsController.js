@@ -380,6 +380,66 @@ const updateProject = async (req, res) => {
   res.json({ message: `project ${updatedProject.title} updated.` });
 };
 
+// @desc Update a project
+// @route PATCH /projects/:id
+//! @access Private
+const updateProjectAgent = async (req, res) => {
+  const { id } = req.params;
+  const { agentId } = req.body;
+
+  // Confirm data
+  if (!agentId) {
+    return res.status(400).json({ message: "Agent ID is required!" });
+  }
+
+  // Check if the project exists
+  const existingProject = await prismadb.project.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      agent: true,
+    },
+  });
+
+  if (!existingProject) {
+    return res.status(404).json({ message: "Project not found!" });
+  }
+
+  // Check if the new agent exists
+  const newAgent = await prismadb.agent.findUnique({
+    where: {
+      id: agentId,
+    },
+  });
+
+  if (!newAgent) {
+    return res.status(404).json({ message: "Agent not found!" });
+  }
+
+  // Update the project with the new agent
+  const updatedProject = await prismadb.project.update({
+    where: {
+      id: projectId,
+    },
+    data: {
+      agent: {
+        connect: {
+          id: agentId,
+        },
+      },
+    },
+  });
+
+  if (updatedProject) {
+    res
+      .status(200)
+      .json({ message: `Agent for project ${existingProject.title} updated.` });
+  } else {
+    res.status(400).json({ message: "Failed to update project agent." });
+  }
+};
+
 // @desc Delete a project
 // @route DELETE /projects/:id
 //! @access Private
@@ -442,5 +502,6 @@ module.exports = {
   getAllProjects,
   createNewProject,
   updateProject,
+  updateProjectAgent,
   deleteProject,
 };
