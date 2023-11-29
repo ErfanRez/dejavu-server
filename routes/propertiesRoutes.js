@@ -11,43 +11,43 @@ router
   .use(fileUpload())
 
   //! sale properties routes /sales
-  .get("/sales/search", salePropsController.searchSales)
-  .get("/sales", salePropsController.getAllSales)
-  .get("/sales/:sId", salePropsController.getSaleById)
+  .get("/sale/search", salePropsController.searchSales)
+  .get("/sale", salePropsController.getAllSales)
+  .get("/sale/:sId", salePropsController.getSaleById)
   .post(
-    "/sales",
+    "/sale",
     uploadPdf,
     bluePrint,
     uploadPic("sales"),
     salePropsController.createNewSale
   )
   .patch(
-    "/sales/:sId",
+    "/sale/:sId",
     uploadPdf,
     bluePrint,
     uploadPic("sales"),
     salePropsController.updateSale
   )
-  .patch("/sales/:sId", salePropsController.updatePropertyAgent)
-  .delete("/sales/:sId", salePropsController.deleteSale)
+  .patch("/sale/:sId", salePropsController.updatePropertyAgent)
+  .delete("/sale/:sId", salePropsController.deleteSale)
 
   //! rent properties routes /rents
-  .get("/rents/search", rentPropsController.searchRents)
-  .get("/rents", rentPropsController.getAllRents)
-  .get("/rents/:rId", rentPropsController.getRentById)
+  .get("/rent/search", rentPropsController.searchRents)
+  .get("/rent", rentPropsController.getAllRents)
+  .get("/rent/:rId", rentPropsController.getRentById)
   .post(
-    "/rents",
+    "/rent",
     uploadPdf,
     uploadPic("rents"),
     rentPropsController.createNewRent
   )
   .patch(
-    "/rents/:rId",
+    "/rent/:rId",
     uploadPdf,
     uploadPic("rents"),
     rentPropsController.updateRent
   )
-  .patch("/rents/:rId", rentPropsController.updatePropertyAgent)
-  .delete("/rents/:rId", rentPropsController.deleteRent);
+  .patch("/rent/:rId", rentPropsController.updatePropertyAgent)
+  .delete("/rent/:rId", rentPropsController.deleteRent);
 
 module.exports = router;
