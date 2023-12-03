@@ -63,7 +63,7 @@ model Agent {
   imageUrl String?
   phone    String?
   email    String?
-  whatsapp String?
+  whatsApp String?
 
   projects  Project[] // Relation to Property model
   saleProps SaleProperty[]
