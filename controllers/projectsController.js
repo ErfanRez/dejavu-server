@@ -24,7 +24,7 @@ const searchProjects = async (req, res) => {
   for (const param in searchParams) {
     if (searchParams[param]) {
       where[param] = {
-        contains: searchParams[param],
+        contains: capitalize(searchParams[param]),
       };
     }
   }
@@ -173,6 +173,11 @@ const createNewProject = async (req, res) => {
 
   //* converts
 
+  const capTitle = capitalize(title);
+  const capOwner = capitalize(owner);
+  const capCity = capitalize(city);
+  const capCountry = capitalize(country);
+
   offPlan
     ? (offPlanBoolean = JSON.parse(offPlan))
     : (offPlanBoolean = undefined);
@@ -181,10 +186,10 @@ const createNewProject = async (req, res) => {
 
   const project = await prismadb.project.create({
     data: {
-      title,
-      owner,
-      city,
-      country,
+      title: capTitle,
+      owner: capOwner,
+      city: capCity,
+      country: capCountry,
       location,
       category,
       mapUrl,
@@ -336,6 +341,11 @@ const updateProject = async (req, res) => {
 
   //* converts
 
+  const capTitle = capitalize(title);
+  const capOwner = capitalize(owner);
+  const capCity = capitalize(city);
+  const capCountry = capitalize(country);
+
   offPlan
     ? (offPlanBoolean = JSON.parse(offPlan))
     : (offPlanBoolean = undefined);
@@ -347,10 +357,10 @@ const updateProject = async (req, res) => {
       id,
     },
     data: {
-      title,
-      owner,
-      city,
-      country,
+      title: capTitle,
+      owner: capOwner,
+      city: capCity,
+      country: capCountry,
       location,
       category,
       mapUrl,

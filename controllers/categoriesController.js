@@ -93,11 +93,15 @@ const createNewCategory = async (req, res) => {
     return res.status(409).json({ message: "Category title already exists!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //* Create new category
 
   const category = await prismadb.category.create({
     data: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -106,7 +110,7 @@ const createNewCategory = async (req, res) => {
 
     res.status(201).json({ message: `New category ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid category data received!" });
+    res.status(400).json({ message: "Invalid data received!" });
   }
 };
 
@@ -140,6 +144,10 @@ const updateCategory = async (req, res) => {
     return res.status(404).json({ message: "Category not found!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //* Update category
 
   const updatedCategory = await prismadb.category.update({
@@ -147,11 +155,11 @@ const updateCategory = async (req, res) => {
       id,
     },
     data: {
-      title,
+      title: capTitle,
     },
   });
 
-  res.json({ message: `category ${updatedCategory.title} updated.` });
+  res.json({ message: `Category ${updatedCategory.title} updated.` });
 };
 
 // @desc Delete a category

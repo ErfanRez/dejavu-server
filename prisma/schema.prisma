@@ -222,12 +222,12 @@ model Type {
 
 model Amenity {
   id    String @id @default(uuid())
-  title String
+  title String @unique
 }
 
 model View {
   id    String @id @default(uuid())
-  title String
+  title String @unique
 }
 
 model Article {

@@ -93,11 +93,15 @@ const createNewType = async (req, res) => {
     return res.status(409).json({ message: "Type title already exists!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //* Create new type
 
   const type = await prismadb.type.create({
     data: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -106,7 +110,7 @@ const createNewType = async (req, res) => {
 
     res.status(201).json({ message: `New type ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid type data received!" });
+    res.status(400).json({ message: "Invalid data received!" });
   }
 };
 
@@ -140,6 +144,10 @@ const updateType = async (req, res) => {
     return res.status(404).json({ message: "Type not found!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //* Update type
 
   const updatedType = await prismadb.type.update({
@@ -147,11 +155,11 @@ const updateType = async (req, res) => {
       id,
     },
     data: {
-      title,
+      title: capTitle,
     },
   });
 
-  res.json({ message: `type ${updatedType.title} updated.` });
+  res.json({ message: `Type ${updatedType.title} updated.` });
 };
 
 // @desc Delete a type

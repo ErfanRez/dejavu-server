@@ -163,11 +163,14 @@ const createNewAgent = async (req, res) => {
     return res.status(409).json({ message: "Agent already exists!" });
   }
 
+  //* Converts
+  const capName = capitalize(name);
+
   //* Create new agent
 
   const agent = await prismadb.agent.create({
     data: {
-      name,
+      name: capName,
       imageUrl: convertedImage,
       phone,
       email,
@@ -247,6 +250,9 @@ const updateAgent = async (req, res) => {
     }
   }
 
+  //* Converts
+  const capName = capitalize(name);
+
   //* Update agent
 
   const updatedAgent = await prismadb.agent.update({
@@ -254,7 +260,7 @@ const updateAgent = async (req, res) => {
       id,
     },
     data: {
-      name,
+      name: capName,
       imageUrl: convertedImage,
       phone,
       email,

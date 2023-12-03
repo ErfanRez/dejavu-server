@@ -23,8 +23,8 @@ const searchRents = async (req, res) => {
 
   //* Create a map of query parameter names to their corresponding Prisma filter conditions
   const filterMap = {
-    title: { contains: searchParams.title },
-    type: { contains: searchParams.type },
+    title: { contains: capitalize(searchParams.title) },
+    type: { contains: capitalize(searchParams.type) },
     area: { lte: parseFloat(searchParams.area) },
     totalPrice: { lte: parseFloat(searchParams.totalPrice) },
     bedrooms: { gte: parseInt(searchParams.bedrooms) },
@@ -138,12 +138,11 @@ const createNewRent = async (req, res) => {
     mapUrl,
     description,
     amenities,
+    views,
     agentId,
   } = req.body;
 
   const pdfUrl = req.pdfUrl;
-
-  let { views } = req.body;
 
   // console.log(req.files);
   const convertedImages = req.convertedImages;
@@ -195,13 +194,12 @@ const createNewRent = async (req, res) => {
     return res.status(409).json({ message: "Property title already exists!" });
   }
 
-  //* Check the type of 'views' property
-  if (!Array.isArray(views)) {
-    //* If 'views' is not an array, create an array with the single value
-    views = [views];
-  }
-
   //* converts
+
+  const capTitle = capitalize(title);
+  const capOwner = capitalize(owner);
+  const capCity = capitalize(city);
+  const capCountry = capitalize(country);
 
   const areaDecimal = parseFloat(area);
   const priceDecimal = parseFloat(totalPrice);
@@ -214,10 +212,10 @@ const createNewRent = async (req, res) => {
 
   const property = await prismadb.rentProperty.create({
     data: {
-      title,
-      owner,
-      city,
-      country,
+      title: capTitle,
+      owner: capOwner,
+      city: capCity,
+      country: capCountry,
       location,
       type,
       unitNo,
@@ -231,15 +229,11 @@ const createNewRent = async (req, res) => {
       pdfUrl,
       description,
       amenities,
+      views,
       agent: {
         connect: {
           id: agentId,
         },
-      },
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
       },
       images: {
         create: convertedImages.map((url) => ({
@@ -281,11 +275,10 @@ const updateRent = async (req, res) => {
     mapUrl,
     description,
     amenities,
+    views,
   } = req.body;
 
   let pdfUrl = req.pdfUrl;
-
-  let { views } = req.body;
 
   const { rId } = req.params;
 
@@ -381,13 +374,12 @@ const updateRent = async (req, res) => {
     }
   }
 
-  //* Check the type of 'views' property
-  if (!Array.isArray(views)) {
-    //* If 'views' is not an array, create an array with the single value
-    views = [views];
-  }
-
   //* converts
+
+  const capTitle = capitalize(title);
+  const capOwner = capitalize(owner);
+  const capCity = capitalize(city);
+  const capCountry = capitalize(country);
 
   const areaDecimal = parseFloat(area);
   const priceDecimal = parseFloat(totalPrice);
@@ -403,10 +395,10 @@ const updateRent = async (req, res) => {
       id: rId,
     },
     data: {
-      title,
-      owner,
-      city,
-      country,
+      title: capTitle,
+      owner: capOwner,
+      city: capCity,
+      country: capCountry,
       location,
       type,
       unitNo,
@@ -420,9 +412,7 @@ const updateRent = async (req, res) => {
       pdfUrl,
       description,
       amenities,
-      views: {
-        deleteMany: {},
-      },
+      views,
       images: {
         deleteMany: {},
       },
@@ -434,11 +424,6 @@ const updateRent = async (req, res) => {
       id: rId,
     },
     data: {
-      views: {
-        create: views.map((viewTitle) => ({
-          title: viewTitle,
-        })),
-      },
       images: {
         create: convertedImages.map((url) => ({
           url,

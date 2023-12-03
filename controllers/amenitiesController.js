@@ -76,32 +76,43 @@ const getAmenityById = async (req, res) => {
 // @route POST /:pId/amenities
 //! @access Private
 const createNewAmenity = async (req, res) => {
-  const { titles } = req.body;
+  const { title } = req.body;
 
   //* Confirm data
 
-  if (!titles) {
-    return res.status(400).json({ message: "Amenity titles required!" });
+  if (!title) {
+    return res.status(400).json({ message: "Amenity title required!" });
   }
+
+  //? Check for duplicate
+  const duplicate = await prismadb.amenity.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Amenity title already exists!" });
+  }
+
+  //* Converts
+
+  const capTitle = capitalize(title);
 
   //* Create new amenity
 
-  const amenities = titles.map(async (amenityTitle) => {
-    await prismadb.amenity.create({
-      data: {
-        title: amenityTitle,
-      },
-    });
+  const amenity = await prismadb.amenity.create({
+    data: {
+      title: capTitle,
+    },
   });
 
-  if (amenities) {
+  if (amenity) {
     //*created
 
-    res.status(201).json({
-      message: `New amenity created.`,
-    });
+    res.status(201).json({ message: `New amenity ${title} created.` });
   } else {
-    res.status(400).json({ message: "Invalid amenity data received!" });
+    res.status(400).json({ message: "Invalid data received!" });
   }
 };
 
@@ -135,6 +146,10 @@ const updateAmenity = async (req, res) => {
     return res.status(404).json({ message: "Amenity not found!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //* Update amenity
 
   const updatedAmenity = await prismadb.amenity.update({
@@ -142,7 +157,7 @@ const updateAmenity = async (req, res) => {
       id,
     },
     data: {
-      title,
+      title: capTitle,
     },
   });
 
