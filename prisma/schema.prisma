@@ -149,7 +149,6 @@ model SaleProperty {
   description  String   @db.Text
   amenities    String[]
 
-  views  SaleView[] // Relation to SaleView model
   images SaleImage[] // Relation to SaleImage model
 
   agentId String // Foreign Key to Agent model
@@ -161,15 +160,6 @@ model SaleProperty {
   updatedAt DateTime @updatedAt
 
   @@index([agentId])
-}
-
-model SaleView {
-  id     String       @id @default(uuid())
-  title  String
-  saleId String // Foreign Key to SalesDetail model
-  sale   SaleProperty @relation(fields: [saleId], references: [id], onDelete: Cascade)
-
-  @@index([saleId])
 }
 
 model SaleImage {
@@ -201,7 +191,6 @@ model RentProperty {
   description  String   @db.Text
   amenities    String[]
 
-  views  RentView[] // Relation to RentView model
   images RentImage[] // Relation to RentImage model
 
   agentId String // Foreign Key to Agent model
@@ -224,21 +213,17 @@ model RentImage {
   @@index([rentId])
 }
 
-model RentView {
-  id     String       @id @default(uuid())
-  title  String
-  rentId String // Foreign Key to RentUnit model
-  rent   RentProperty @relation(fields: [rentId], references: [id], onDelete: Cascade)
-
-  @@index([rentId])
-}
-
 model Type {
   id    String @id @default(uuid())
   title String @unique
 }
 
 model Amenity {
+  id    String @id @default(uuid())
+  title String
+}
+
+model View {
   id    String @id @default(uuid())
   title String
 }
