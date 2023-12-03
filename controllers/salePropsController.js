@@ -44,7 +44,6 @@ const searchSales = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -72,7 +71,6 @@ const getAllSales = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -107,7 +105,6 @@ const getSaleById = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      views: true,
     },
   });
 

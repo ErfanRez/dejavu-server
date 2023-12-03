@@ -43,7 +43,6 @@ const searchRents = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -71,7 +70,6 @@ const getAllRents = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      views: true,
     },
     orderBy: {
       updatedAt: "desc",
@@ -106,7 +104,6 @@ const getRentById = async (req, res) => {
     include: {
       agent: true,
       images: true,
-      views: true,
     },
   });
 
