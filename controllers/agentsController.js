@@ -139,7 +139,7 @@ const getAgentById = async (req, res) => {
 // @route POST /agent
 //! @access Private
 const createNewAgent = async (req, res) => {
-  const { name, phone, email, whatsapp } = req.body;
+  const { name, phone, email, whatsApp } = req.body;
 
   // console.log(req.files);
   const convertedImage = req.convertedImage;
@@ -174,7 +174,7 @@ const createNewAgent = async (req, res) => {
       imageUrl: convertedImage,
       phone,
       email,
-      whatsapp,
+      whatsApp,
     },
   });
 
@@ -191,7 +191,7 @@ const createNewAgent = async (req, res) => {
 // @route PATCH /agents/:id
 //! @access Private
 const updateAgent = async (req, res) => {
-  const { name, email, phone, whatsapp } = req.body;
+  const { name, email, phone, whatsApp } = req.body;
   const { id } = req.params;
 
   // console.log(req.files);
@@ -264,7 +264,7 @@ const updateAgent = async (req, res) => {
       imageUrl: convertedImage,
       phone,
       email,
-      whatsapp,
+      whatsApp,
     },
   });
 
