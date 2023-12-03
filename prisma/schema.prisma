@@ -148,6 +148,7 @@ model SaleProperty {
   bluePrint    String?
   description  String   @db.Text
   amenities    String[]
+  views        String[]
 
   images SaleImage[] // Relation to SaleImage model
 
@@ -190,6 +191,7 @@ model RentProperty {
   pdfUrl       String?
   description  String   @db.Text
   amenities    String[]
+  views        String[]
 
   images RentImage[] // Relation to RentImage model
 
