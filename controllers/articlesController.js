@@ -3,6 +3,7 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const fs = require("fs");
+const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched articles
 // @route GET /articles/search

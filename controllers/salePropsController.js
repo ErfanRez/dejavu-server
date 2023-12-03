@@ -4,6 +4,7 @@ const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
 const fs = require("fs");
+const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched sales
 // @route GET /sales/search
