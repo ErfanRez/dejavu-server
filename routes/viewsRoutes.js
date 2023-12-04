@@ -3,7 +3,7 @@ const router = express.Router();
 const viewsController = require("../controllers/viewsController");
 
 router
-  .get("/search", viewsController.searchTypes)
+  .get("/search", viewsController.searchViews)
   .get("/", viewsController.getAllViews)
   .get("/:id", viewsController.getViewById)
   .post("/", viewsController.createNewView)
