@@ -208,7 +208,9 @@ const deleteAmenity = async (req, res) => {
 // @route DELETE /amenities
 //! @access Private
 const deleteAmenities = async (req, res) => {
-  const { ids } = req.params;
+  const { ids } = req.body;
+
+  console.log(req.body);
 
   //* Confirm data
   if (!ids) {

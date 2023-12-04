@@ -206,7 +206,7 @@ const deleteView = async (req, res) => {
 // @route DELETE /views
 //! @access Private
 const deleteViews = async (req, res) => {
-  const { ids } = req.params;
+  const { ids } = req.body;
 
   //* Confirm data
   if (!ids) {

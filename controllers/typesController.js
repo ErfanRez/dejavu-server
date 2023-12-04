@@ -206,7 +206,7 @@ const deleteType = async (req, res) => {
 // @route DELETE /types
 //! @access Private
 const deleteTypes = async (req, res) => {
-  const { ids } = req.params;
+  const { ids } = req.body;
 
   //* Confirm data
   if (!ids) {

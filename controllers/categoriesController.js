@@ -206,7 +206,7 @@ const deleteCategory = async (req, res) => {
 // @route DELETE /categories
 //! @access Private
 const deleteCategories = async (req, res) => {
-  const { ids } = req.params;
+  const { ids } = req.body;
 
   //* Confirm data
   if (!ids) {
