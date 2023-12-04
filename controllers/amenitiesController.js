@@ -197,6 +197,43 @@ const deleteAmenity = async (req, res) => {
   });
 };
 
+// @desc Delete a amenity
+// @route DELETE /amenities
+//! @access Private
+const deleteAmenities = async (req, res) => {
+  const { ids } = req.params;
+
+  //* Confirm data
+  if (!ids) {
+    return res.status(400).json({ message: "Amenities IDs required!" });
+  }
+
+  //? Does the amenities exist to delete?
+  const amenities = await prismadb.amenity.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  if (!amenities) {
+    return res.status(404).json({ message: "Amenities not found!" });
+  }
+
+  await prismadb.amenity.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  res.json({
+    message: "Amenities deleted.",
+  });
+};
+
 module.exports = {
   searchAmenities,
   getAllAmenities,
@@ -204,4 +241,5 @@ module.exports = {
   createNewAmenity,
   updateAmenity,
   deleteAmenity,
+  deleteAmenities,
 };

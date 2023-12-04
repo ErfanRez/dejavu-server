@@ -195,6 +195,43 @@ const deleteType = async (req, res) => {
   });
 };
 
+// @desc Delete types
+// @route DELETE /types
+//! @access Private
+const deleteTypes = async (req, res) => {
+  const { ids } = req.params;
+
+  //* Confirm data
+  if (!ids) {
+    return res.status(400).json({ message: "Types IDs required!" });
+  }
+
+  //? Does the types exist to delete?
+  const types = await prismadb.type.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  if (!types) {
+    return res.status(404).json({ message: "Types not found!" });
+  }
+
+  await prismadb.type.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  res.json({
+    message: "Types deleted.",
+  });
+};
+
 module.exports = {
   searchTypes,
   getTypeById,
@@ -202,4 +239,5 @@ module.exports = {
   createNewType,
   updateType,
   deleteType,
+  deleteTypes,
 };

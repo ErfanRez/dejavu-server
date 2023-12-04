@@ -36,6 +36,7 @@ app.use("/api/fav", require("./routes/favUnitsRoutes"));
 app.use("/api/projects", require("./routes/projectsRoutes"));
 app.use("/api/properties", require("./routes/propertiesRoutes"));
 app.use("/api/amenities", require("./routes/amenitiesRoutes"));
+app.use("/api/views", require("./routes/viewsRoutes"));
 app.use("/api/installments", require("./routes/installmentsRoutes"));
 app.use("/api/categories", require("./routes/categoriesRoutes"));
 app.use("/api/types", require("./routes/typesRoutes"));

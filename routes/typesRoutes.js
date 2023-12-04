@@ -8,6 +8,7 @@ router
   .get("/:id", typesControllers.getTypeById)
   .post("/", typesControllers.createNewType)
   .patch("/:id", typesControllers.updateType)
-  .delete("/:id", typesControllers.deleteType);
+  .delete("/:id", typesControllers.deleteType)
+  .delete("/", typesControllers.deleteTypes);
 
 module.exports = router;

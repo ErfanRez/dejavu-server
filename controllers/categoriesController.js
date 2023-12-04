@@ -195,6 +195,43 @@ const deleteCategory = async (req, res) => {
   });
 };
 
+// @desc Delete categories
+// @route DELETE /categories
+//! @access Private
+const deleteCategories = async (req, res) => {
+  const { ids } = req.params;
+
+  //* Confirm data
+  if (!ids) {
+    return res.status(400).json({ message: "Categories IDs required!" });
+  }
+
+  //? Does the categories exist to delete?
+  const categories = await prismadb.category.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  if (!categories) {
+    return res.status(404).json({ message: "Categories not found!" });
+  }
+
+  await prismadb.category.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  res.json({
+    message: "Categories deleted.",
+  });
+};
+
 module.exports = {
   searchCategories,
   getCategoryById,
@@ -202,4 +239,5 @@ module.exports = {
   createNewCategory,
   updateCategory,
   deleteCategory,
+  deleteCategories,
 };

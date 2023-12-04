@@ -112,6 +112,9 @@ model ProjectImage {
 model Category {
   id    String @id @default(uuid())
   title String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Installment {
@@ -218,16 +221,25 @@ model RentImage {
 model Type {
   id    String @id @default(uuid())
   title String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Amenity {
   id    String @id @default(uuid())
   title String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model View {
   id    String @id @default(uuid())
   title String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Article {

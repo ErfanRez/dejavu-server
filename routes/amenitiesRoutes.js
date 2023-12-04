@@ -5,9 +5,10 @@ const amenitiesController = require("../controllers/amenitiesController");
 router
   .get("/search", amenitiesController.searchAmenities)
   .get("/", amenitiesController.getAllAmenities)
-  .get("/get-one/:id", amenitiesController.getAmenityById)
+  .get("/:id", amenitiesController.getAmenityById)
   .post("/", amenitiesController.createNewAmenity)
   .patch("/:id", amenitiesController.updateAmenity)
-  .delete("/:id", amenitiesController.deleteAmenity);
+  .delete("/:id", amenitiesController.deleteAmenity)
+  .delete("/", amenitiesController.deleteAmenities);
 
 module.exports = router;
