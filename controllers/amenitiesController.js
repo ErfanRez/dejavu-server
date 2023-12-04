@@ -19,6 +19,9 @@ const searchAmenities = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no amenities
@@ -36,7 +39,11 @@ const searchAmenities = async (req, res) => {
 const getAllAmenities = async (req, res) => {
   //* Get all amenities from DB
 
-  const amenities = await prismadb.amenity.findMany({});
+  const amenities = await prismadb.amenity.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
 
   //* If no amenities
 

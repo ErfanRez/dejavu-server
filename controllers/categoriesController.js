@@ -19,6 +19,9 @@ const searchCategories = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no categories
@@ -34,7 +37,11 @@ const searchCategories = async (req, res) => {
 const getAllCategories = async (req, res) => {
   //* Get all categories from DB
 
-  const categories = await prismadb.category.findMany({});
+  const categories = await prismadb.category.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
 
   //* If no categories
 

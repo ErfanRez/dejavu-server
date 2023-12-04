@@ -19,6 +19,9 @@ const searchInstallments = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no installments
@@ -85,7 +88,11 @@ const searchInstallmentsByPID = async (req, res) => {
 const getAllInstallments = async (req, res) => {
   //* Get all installments from DB
 
-  const installments = await prismadb.installment.findMany();
+  const installments = await prismadb.installment.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
 
   //* If no installments
 

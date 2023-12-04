@@ -19,6 +19,9 @@ const searchTypes = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no types
@@ -59,7 +62,11 @@ const getTypeById = async (req, res) => {
 const getAllTypes = async (req, res) => {
   //* Get all types from DB
 
-  const types = await prismadb.type.findMany({});
+  const types = await prismadb.type.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
 
   //* If no types
 

@@ -19,6 +19,9 @@ const searchViews = async (req, res) => {
         contains: searchString,
       },
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
   });
 
   //* If no views
@@ -59,7 +62,11 @@ const getViewById = async (req, res) => {
 const getAllViews = async (req, res) => {
   //* Get all views from DB
 
-  const views = await prismadb.view.findMany({});
+  const views = await prismadb.view.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
 
   //* If no views
 
