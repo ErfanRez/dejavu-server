@@ -210,8 +210,6 @@ const deleteAmenity = async (req, res) => {
 const deleteAmenities = async (req, res) => {
   const { ids } = req.body;
 
-  console.log(req.body);
-
   //* Confirm data
   if (!ids) {
     return res.status(400).json({ message: "Amenities IDs required!" });
