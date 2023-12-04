@@ -152,10 +152,9 @@ const createNewAgent = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.agent.findFirst({
+  const duplicate = await prismadb.agent.findUnique({
     where: {
       name,
-      phone,
     },
   });
 
