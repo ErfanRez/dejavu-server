@@ -138,7 +138,6 @@ model SaleProperty {
   country      String
   location     String
   type         String
-  floor        String
   area         Decimal
   rPSqft       Decimal
   totalPrice   Decimal
@@ -146,6 +145,7 @@ model SaleProperty {
   bathrooms    Int
   parkingCount Int
   mapUrl       String
+  floor        String?
   unitNo       String?
   pdfUrl       String?
   bluePrint    String?
@@ -183,7 +183,7 @@ model RentProperty {
   country      String
   location     String
   type         String
-  floor        String
+  floor        String?
   area         Decimal
   totalPrice   Decimal
   bedrooms     Int

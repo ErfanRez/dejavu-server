@@ -156,7 +156,6 @@ const createNewSale = async (req, res) => {
     !country ||
     !location ||
     !type ||
-    !floor ||
     !area ||
     !rPSqft ||
     !totalPrice ||
