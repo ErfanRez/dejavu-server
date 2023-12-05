@@ -292,16 +292,42 @@ const deleteAgent = async (req, res) => {
     return res.status(404).json({ message: "Agent not found!" });
   }
 
-  const projects = await prismadb.project.findMany({
-    where: {
-      agentId: id,
-    },
-  });
+  const [projects, sales, rents] = await Promise.all([
+    prismadb.project.findMany({
+      where: {
+        agentId: id,
+      },
+    }),
+    prismadb.saleProperty.findMany({
+      where: {
+        agentId: id,
+      },
+    }),
+    prismadb.rentProperty.findMany({
+      where: {
+        agentId: id,
+      },
+    }),
+  ]);
 
-  if (projects?.length !== 0) {
+  if (projects.length !== 0) {
     return res.status(403).json({
       message:
         "This Agent has connected projects! You should delete them first.",
+    });
+  }
+
+  if (sales.length !== 0) {
+    return res.status(403).json({
+      message:
+        "This Agent has connected properties! You should delete them first.",
+    });
+  }
+
+  if (rents.length !== 0) {
+    return res.status(403).json({
+      message:
+        "This Agent has connected properties! You should delete them first.",
     });
   }
 
