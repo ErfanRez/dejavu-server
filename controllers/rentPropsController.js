@@ -558,31 +558,27 @@ const deleteRents = async (req, res) => {
       .json({ message: "Property IDs required in an array!" });
   }
 
-  //? Check if properties exist to delete
-  const properties = await prismadb.rentProperty.findMany({
-    where: {
-      id: {
-        in: ids,
+  for (const rId of ids) {
+    //? Does the property exist to delete?
+    const property = await prismadb.rentProperty.findUnique({
+      where: {
+        id: rId,
       },
-    },
-  });
+    });
 
-  if (properties.length !== ids.length) {
-    return res
-      .status(404)
-      .json({ message: "One or more properties not found!" });
-  }
+    if (!property) {
+      return res
+        .status(404)
+        .json({ message: `Property with ID ${rId} not found!` });
+    }
 
-  const deleteResults = await prismadb.rentProperty.deleteMany({
-    where: {
-      id: {
-        in: ids,
+    const result = await prismadb.rentProperty.delete({
+      where: {
+        id: rId,
       },
-    },
-  });
+    });
 
-  // Loop through deleted properties and perform additional cleanup
-  deleteResults.forEach((result) => {
+    // Define the path to the rentProperty's images folder
     const imagesFolder = path.join(
       __dirname,
       "..",
@@ -594,6 +590,7 @@ const deleteRents = async (req, res) => {
 
     fileDelete(imagesFolder);
 
+    // Define the path to the property's pdf file
     const pdfFile = path.join(
       __dirname,
       "..",
@@ -603,10 +600,10 @@ const deleteRents = async (req, res) => {
     );
 
     fileDelete(pdfFile);
-  });
+  }
 
   res.json({
-    message: `Properties deleted.`,
+    message: "Properties deleted successfully.",
   });
 };
 

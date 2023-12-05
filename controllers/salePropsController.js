@@ -612,31 +612,27 @@ const deleteSales = async (req, res) => {
       .json({ message: "Property IDs required in an array!" });
   }
 
-  //? Check if properties exist to delete
-  const properties = await prismadb.saleProperty.findMany({
-    where: {
-      id: {
-        in: ids,
+  for (const sId of ids) {
+    //? Does the property exist to delete?
+    const property = await prismadb.saleProperty.findUnique({
+      where: {
+        id: sId,
       },
-    },
-  });
+    });
 
-  if (properties.length !== ids.length) {
-    return res
-      .status(404)
-      .json({ message: "One or more properties not found!" });
-  }
+    if (!property) {
+      return res
+        .status(404)
+        .json({ message: `Property with ID ${sId} not found!` });
+    }
 
-  const deleteResults = await prismadb.saleProperty.deleteMany({
-    where: {
-      id: {
-        in: ids,
+    const result = await prismadb.saleProperty.delete({
+      where: {
+        id: sId,
       },
-    },
-  });
+    });
 
-  // Loop through deleted properties and perform additional cleanup
-  deleteResults.forEach((result) => {
+    // Define the path to the saleProperty's images folder
     const imagesFolder = path.join(
       __dirname,
       "..",
@@ -648,6 +644,7 @@ const deleteSales = async (req, res) => {
 
     fileDelete(imagesFolder);
 
+    // Define the path to the property's pdf file
     const pdfFile = path.join(
       __dirname,
       "..",
@@ -658,6 +655,7 @@ const deleteSales = async (req, res) => {
 
     fileDelete(pdfFile);
 
+    // Define the path to the property's bluePrint image
     const bluePrintFile = path.join(
       __dirname,
       "..",
@@ -668,10 +666,10 @@ const deleteSales = async (req, res) => {
     );
 
     fileDelete(bluePrintFile);
-  });
+  }
 
   res.json({
-    message: `Properties deleted.`,
+    message: "Properties deleted successfully.",
   });
 };
 
