@@ -24,6 +24,7 @@ router
     projectsController.updateProject
   )
   .patch("/agent/:id", projectsController.updateProjectAgent)
-  .delete("/:id", projectsController.deleteProject);
+  .delete("/:id", projectsController.deleteProject)
+  .delete("/", projectsController.deleteProjects);
 
 module.exports = router;

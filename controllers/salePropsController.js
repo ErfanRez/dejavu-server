@@ -599,6 +599,82 @@ const deleteSale = async (req, res) => {
   });
 };
 
+// @desc Delete saleProperties
+// @route DELETE /sales
+//! @access Private
+const deleteSales = async (req, res) => {
+  const { ids } = req.body;
+
+  //* Confirm data
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Property IDs required in an array!" });
+  }
+
+  //? Check if properties exist to delete
+  const properties = await prismadb.saleProperty.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  if (properties.length !== ids.length) {
+    return res
+      .status(404)
+      .json({ message: "One or more properties not found!" });
+  }
+
+  const deleteResults = await prismadb.saleProperty.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  // Loop through deleted properties and perform additional cleanup
+  deleteResults.forEach((result) => {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "sales",
+      result.title
+    );
+
+    fileDelete(imagesFolder);
+
+    const pdfFile = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "factSheets",
+      `${result.title}.pdf`
+    );
+
+    fileDelete(pdfFile);
+
+    const bluePrintFile = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "bluePrints",
+      `${result.title}.webp`
+    );
+
+    fileDelete(bluePrintFile);
+  });
+
+  res.json({
+    message: `Properties deleted.`,
+  });
+};
+
 module.exports = {
   searchSales,
   getSaleById,
@@ -607,4 +683,5 @@ module.exports = {
   updateSale,
   updatePropertyAgent,
   deleteSale,
+  deleteSales,
 };

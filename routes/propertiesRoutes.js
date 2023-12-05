@@ -30,6 +30,7 @@ router
   )
   .patch("/sale/agent/:sId", salePropsController.updatePropertyAgent)
   .delete("/sale/:sId", salePropsController.deleteSale)
+  .delete("/sale", salePropsController.deleteSales)
 
   //! rent properties routes /rents
   .get("/rent/search", rentPropsController.searchRents)
@@ -48,6 +49,7 @@ router
     rentPropsController.updateRent
   )
   .patch("/rent/agent/:rId", rentPropsController.updatePropertyAgent)
-  .delete("/rent/:rId", rentPropsController.deleteRent);
+  .delete("/rent/:rId", rentPropsController.deleteRent)
+  .delete("/rent", rentPropsController.deleteRents);
 
 module.exports = router;

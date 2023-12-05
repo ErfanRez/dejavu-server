@@ -507,6 +507,69 @@ const deleteProject = async (req, res) => {
   });
 };
 
+// @desc Delete projects
+// @route DELETE /projects
+//! @access Private
+const deleteProjects = async (req, res) => {
+  const { ids } = req.body;
+
+  //* Confirm data
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Project IDs required in an array!" });
+  }
+
+  //? Check if projects exist to delete
+  const projects = await prismadb.project.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  if (projects.length !== ids.length) {
+    return res.status(404).json({ message: "One or more projects not found!" });
+  }
+
+  const deleteResults = await prismadb.project.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  // Loop through deleted projects and perform additional cleanup
+  deleteResults.forEach((result) => {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "projects",
+      result.title
+    );
+
+    fileDelete(imagesFolder);
+
+    const pdfFile = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "factSheets",
+      `${result.title}.pdf`
+    );
+
+    fileDelete(pdfFile);
+  });
+
+  res.json({
+    message: "Projects deleted.",
+  });
+};
+
 module.exports = {
   searchProjects,
   getProjectById,
@@ -515,4 +578,5 @@ module.exports = {
   updateProject,
   updateProjectAgent,
   deleteProject,
+  deleteProjects,
 };

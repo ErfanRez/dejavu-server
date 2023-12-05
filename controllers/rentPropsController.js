@@ -546,6 +546,70 @@ const deleteRent = async (req, res) => {
   });
 };
 
+// @desc Delete rentProperties
+// @route DELETE /rents
+const deleteRents = async (req, res) => {
+  const { ids } = req.body;
+
+  //* Confirm data
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Property IDs required in an array!" });
+  }
+
+  //? Check if properties exist to delete
+  const properties = await prismadb.rentProperty.findMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  if (properties.length !== ids.length) {
+    return res
+      .status(404)
+      .json({ message: "One or more properties not found!" });
+  }
+
+  const deleteResults = await prismadb.rentProperty.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  });
+
+  // Loop through deleted properties and perform additional cleanup
+  deleteResults.forEach((result) => {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "rents",
+      result.title
+    );
+
+    fileDelete(imagesFolder);
+
+    const pdfFile = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "factSheets",
+      `${result.title}.pdf`
+    );
+
+    fileDelete(pdfFile);
+  });
+
+  res.json({
+    message: `Properties deleted.`,
+  });
+};
+
 module.exports = {
   searchRents,
   getAllRents,
@@ -554,4 +618,5 @@ module.exports = {
   updateRent,
   updatePropertyAgent,
   deleteRent,
+  deleteRents,
 };
