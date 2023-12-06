@@ -149,7 +149,7 @@ model SaleProperty {
   unitNo       String?
   pdfUrl       String?
   bluePrint    String?
-  description  String   @db.Text
+  description  String?  @db.Text
   amenities    String[]
   views        String[]
 
@@ -192,7 +192,7 @@ model RentProperty {
   mapUrl       String
   unitNo       String?
   pdfUrl       String?
-  description  String   @db.Text
+  description  String?  @db.Text
   amenities    String[]
   views        String[]
 

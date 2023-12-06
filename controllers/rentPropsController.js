@@ -159,7 +159,6 @@ const createNewRent = async (req, res) => {
     !bathrooms ||
     !parkingCount ||
     !mapUrl ||
-    !description ||
     !amenities ||
     !agentId ||
     !views
