@@ -527,7 +527,7 @@ const updatePropertyAgent = async (req, res) => {
   // Update the property with the new agent
   const updatedProperty = await prismadb.saleProperty.update({
     where: {
-      id: propertyId,
+      id: sId,
     },
     data: {
       agent: {

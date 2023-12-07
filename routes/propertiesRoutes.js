@@ -10,7 +10,7 @@ const bluePrint = require("../middlewares/bluePrint");
 router
   .use(fileUpload())
 
-  //! sale properties routes /sales
+  //! sale properties routes /sale
   .get("/sale/search", salePropsController.searchSales)
   .get("/sale", salePropsController.getAllSales)
   .get("/sale/:sId", salePropsController.getSaleById)
@@ -32,7 +32,7 @@ router
   .delete("/sale/:sId", salePropsController.deleteSale)
   .delete("/sale", salePropsController.deleteSales)
 
-  //! rent properties routes /rents
+  //! rent properties routes /rent
   .get("/rent/search", rentPropsController.searchRents)
   .get("/rent", rentPropsController.getAllRents)
   .get("/rent/:rId", rentPropsController.getRentById)

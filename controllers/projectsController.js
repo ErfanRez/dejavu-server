@@ -437,7 +437,7 @@ const updateProjectAgent = async (req, res) => {
   // Update the project with the new agent
   const updatedProject = await prismadb.project.update({
     where: {
-      id: projectId,
+      id,
     },
     data: {
       agent: {

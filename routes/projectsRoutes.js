@@ -7,7 +7,7 @@ const uploadPdf = require("../middlewares/fileUploader");
 
 router
   .use(fileUpload())
-  //! Properties Routes /properties/
+  //! Properties Routes /projects/
   .get("/search", projectsController.searchProjects)
   .get("/", projectsController.getAllProjects)
   .get("/:id", projectsController.getProjectById)

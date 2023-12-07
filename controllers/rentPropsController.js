@@ -482,7 +482,7 @@ const updatePropertyAgent = async (req, res) => {
   // Update the property with the new agent
   const updatedProperty = await prismadb.rentProperty.update({
     where: {
-      id: propertyId,
+      id: rId,
     },
     data: {
       agent: {
