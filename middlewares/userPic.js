@@ -1,6 +1,6 @@
 const sharp = require("sharp");
 const path = require("path");
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 
 const uploader = (subFolderName) => async (req, res, next) => {
   const imageFile = req.files?.image;
@@ -26,8 +26,12 @@ const uploader = (subFolderName) => async (req, res, next) => {
     );
 
     // Create the output folder if it doesn't exist
-    if (!fs.existsSync(outputFolder)) {
-      fs.mkdirSync(outputFolder, { recursive: true });
+    try {
+      await fsPromises.mkdir(outputFolder, { recursive: true });
+    } catch (error) {
+      console.error("Error creating output folder:", error);
+      // Handle the error, for example, by sending an error response
+      return res.status(500).json({ message: "Internal Server Error" });
     }
 
     // Process the uploaded image and convert it to WebP format
@@ -40,10 +44,16 @@ const uploader = (subFolderName) => async (req, res, next) => {
     console.log(outputImagePath);
 
     // Convert the image to WebP format using Sharp
-    await sharp(imageData).toFormat("webp").toFile(outputImagePath);
+    try {
+      await sharp(imageData).toFormat("webp").toFile(outputImagePath);
+      console.log("Image converted to WebP.");
+    } catch (error) {
+      console.error("Error converting image to WebP:", error);
+      // Handle the error, for example, by sending an error response
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
 
     // Pass the generated file name to the next middleware or route
-
     const outputImageURL = new URL(
       path.join(
         process.env.ROOT_PATH,

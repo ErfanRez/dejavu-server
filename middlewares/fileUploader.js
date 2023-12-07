@@ -1,8 +1,9 @@
 const path = require("path");
 const fs = require("fs");
+const fsPromises = require("fs").promises;
 
 // PDF file upload middleware
-const uploadPdf = (req, res, next) => {
+const uploadPdf = async (req, res, next) => {
   const pdfFile = req.files?.pdf;
 
   if (!pdfFile) {
@@ -16,7 +17,7 @@ const uploadPdf = (req, res, next) => {
 
     // Create the folder if it doesn't exist
     if (!fs.existsSync(outputFolder)) {
-      fs.mkdirSync(outputFolder, { recursive: true });
+      await fsPromises(outputFolder, { recursive: true });
     }
 
     // Generate a unique file name for the pdf file

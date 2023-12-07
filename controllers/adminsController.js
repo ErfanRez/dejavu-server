@@ -166,7 +166,11 @@ const updateAdmin = async (req, res) => {
   if (username !== admin.username && username !== undefined) {
     //* Check if new image provided
     if (!convertedImage) {
-      renameOldFile("admins", `${admin.username}.webp`, `${username}.webp`);
+      await renameOldFile(
+        "admins",
+        `${admin.username}.webp`,
+        `${username}.webp`
+      );
 
       const newImagePath = new URL(
         path.join(
@@ -190,7 +194,7 @@ const updateAdmin = async (req, res) => {
         `${admin.username}.webp`
       );
 
-      fileDelete(imagesFolder);
+      await fileDelete(imagesFolder);
     }
   }
 
@@ -248,7 +252,7 @@ const deleteAdmin = async (req, res) => {
     `${admin.username}.webp`
   );
 
-  fileDelete(imagesFolder);
+  await fileDelete(imagesFolder);
 
   res.json({
     message: `Admin ${result.username} with ID: ${result.id} deleted.`,

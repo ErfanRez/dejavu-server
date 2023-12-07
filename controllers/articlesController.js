@@ -2,8 +2,7 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
-const fs = require("fs");
-const capitalize = require("../utils/capitalizer");
+const fsPromises = require("fs").promises;
 
 // @desc Get searched articles
 // @route GET /articles/search
@@ -168,7 +167,7 @@ const updateArticle = async (req, res) => {
   if (title !== article.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      renameOldFile("articles", article.title, title);
+      await renameOldFile("articles", article.title, title);
 
       const imagesFolder = path.join(
         __dirname,
@@ -180,22 +179,28 @@ const updateArticle = async (req, res) => {
       );
 
       // Check if the folder exists
-      if (fs.existsSync(imagesFolder)) {
-        // List all files in the folder
-        const files = fs.readdirSync(imagesFolder);
+      if (await fsPromises.stat(imagesFolder)) {
+        try {
+          // List all files in the folder
+          const files = await fsPromises.readdir(imagesFolder);
 
-        // Create an array of file paths
-        const outputImageURL = new URL(
-          path.join(
-            process.env.ROOT_PATH,
-            "uploads",
-            "images",
-            "articles",
-            title
-          )
-        ).toString();
+          // Create an array of file paths
+          const outputImageURL = new URL(
+            path.join(
+              process.env.ROOT_PATH,
+              "uploads",
+              "images",
+              "articles",
+              title
+            )
+          ).toString();
 
-        convertedImages = files.map((file) => path.join(outputImageURL, file));
+          convertedImages = files.map((file) =>
+            path.join(outputImageURL, file)
+          );
+        } catch (error) {
+          console.error("Error reading files from folder:", error);
+        }
       }
     } else {
       // Define the path to the images folder
@@ -208,7 +213,7 @@ const updateArticle = async (req, res) => {
         article.title
       );
 
-      fileDelete(imagesFolder);
+      await fileDelete(imagesFolder);
     }
   }
 
@@ -282,7 +287,7 @@ const deleteArticle = async (req, res) => {
     result.title
   );
 
-  fileDelete(imagesFolder);
+  await fileDelete(imagesFolder);
 
   res.json({
     message: `Article ${result.title} with ID: ${result.id} deleted.`,

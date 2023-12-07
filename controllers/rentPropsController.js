@@ -3,7 +3,7 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched rentProperties
@@ -304,7 +304,7 @@ const updateRent = async (req, res) => {
   if (title !== property.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      renameOldFile("rents", property.title, title);
+      await renameOldFile("rents", property.title, title);
 
       const imagesFolder = path.join(
         __dirname,
@@ -316,16 +316,28 @@ const updateRent = async (req, res) => {
       );
 
       // Check if the folder exists
-      if (fs.existsSync(imagesFolder)) {
-        // List all files in the folder
-        const files = fs.readdirSync(imagesFolder);
+      if (await fsPromises.stat(imagesFolder)) {
+        try {
+          // List all files in the folder
+          const files = await fsPromises.readdir(imagesFolder);
 
-        // Create an array of file paths
-        const outputImageURL = new URL(
-          path.join(process.env.ROOT_PATH, "uploads", "images", "rents", title)
-        ).toString();
+          // Create an array of file paths
+          const outputImageURL = new URL(
+            path.join(
+              process.env.ROOT_PATH,
+              "uploads",
+              "images",
+              "rents",
+              title
+            )
+          ).toString();
 
-        convertedImages = files.map((file) => path.join(outputImageURL, file));
+          convertedImages = files.map((file) =>
+            path.join(outputImageURL, file)
+          );
+        } catch (error) {
+          console.error("Error reading files from folder:", error);
+        }
       }
     } else {
       // Define the path to the images folder
@@ -338,12 +350,12 @@ const updateRent = async (req, res) => {
         property.title
       );
 
-      fileDelete(imagesFolder);
+      await fileDelete(imagesFolder);
     }
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
+      await renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
 
       const newPdfPath = new URL(
         path.join(
@@ -365,7 +377,7 @@ const updateRent = async (req, res) => {
         `${property.title}.pdf`
       );
 
-      fileDelete(pdfFile);
+      await fileDelete(pdfFile);
     }
   }
 
@@ -527,7 +539,7 @@ const deleteRent = async (req, res) => {
     result.title
   );
 
-  fileDelete(imagesFolder);
+  await fileDelete(imagesFolder);
 
   // Define the path to the property's pdf file
   const pdfFile = path.join(
@@ -538,7 +550,7 @@ const deleteRent = async (req, res) => {
     `${result.title}.pdf`
   );
 
-  fileDelete(pdfFile);
+  await fileDelete(pdfFile);
 
   res.json({
     message: `Property ${result.title} with ID: ${result.id} deleted.`,
@@ -587,7 +599,7 @@ const deleteRents = async (req, res) => {
       result.title
     );
 
-    fileDelete(imagesFolder);
+    await fileDelete(imagesFolder);
 
     // Define the path to the property's pdf file
     const pdfFile = path.join(
@@ -598,7 +610,7 @@ const deleteRents = async (req, res) => {
       `${result.title}.pdf`
     );
 
-    fileDelete(pdfFile);
+    await fileDelete(pdfFile);
   }
 
   res.json({

@@ -3,7 +3,7 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched sales
@@ -313,7 +313,7 @@ const updateSale = async (req, res) => {
   if (title !== property.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      renameOldFile("sales", property.title, title);
+      await renameOldFile("sales", property.title, title);
 
       const imagesFolder = path.join(
         __dirname,
@@ -325,16 +325,28 @@ const updateSale = async (req, res) => {
       );
 
       // Check if the folder exists
-      if (fs.existsSync(imagesFolder)) {
-        // List all files in the folder
-        const files = fs.readdirSync(imagesFolder);
+      if (await fsPromises.stat(imagesFolder)) {
+        try {
+          // List all files in the folder
+          const files = await fsPromises.readdir(imagesFolder);
 
-        // Create an array of file paths
-        const outputImageURL = new URL(
-          path.join(process.env.ROOT_PATH, "uploads", "images", "sales", title)
-        ).toString();
+          // Create an array of file paths
+          const outputImageURL = new URL(
+            path.join(
+              process.env.ROOT_PATH,
+              "uploads",
+              "images",
+              "sales",
+              title
+            )
+          ).toString();
 
-        convertedImages = files.map((file) => path.join(outputImageURL, file));
+          convertedImages = files.map((file) =>
+            path.join(outputImageURL, file)
+          );
+        } catch (error) {
+          console.error("Error reading files from folder:", error);
+        }
       }
     } else {
       // Define the path to the images folder
@@ -347,12 +359,12 @@ const updateSale = async (req, res) => {
         property.title
       );
 
-      fileDelete(imagesFolder);
+      await fileDelete(imagesFolder);
     }
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
+      await renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
 
       const newPdfPath = new URL(
         path.join(
@@ -374,12 +386,16 @@ const updateSale = async (req, res) => {
         `${property.title}.pdf`
       );
 
-      fileDelete(pdfFile);
+      await fileDelete(pdfFile);
     }
 
     //* Check if new blueprint provided
     if (!bluePrint) {
-      renameOldFile("bluePrints", `${property.title}.webp`, `${title}.webp`);
+      await renameOldFile(
+        "bluePrints",
+        `${property.title}.webp`,
+        `${title}.webp`
+      );
 
       const newBluePrint = new URL(
         path.join(
@@ -403,7 +419,7 @@ const updateSale = async (req, res) => {
         `${property.title}.webp`
       );
 
-      fileDelete(bluePrintFile);
+      await fileDelete(bluePrintFile);
     }
   }
 
@@ -568,7 +584,7 @@ const deleteSale = async (req, res) => {
     result.title
   );
 
-  fileDelete(imagesFolder);
+  await fileDelete(imagesFolder);
 
   // Define the path to the property's pdf file
   const pdfFile = path.join(
@@ -579,7 +595,7 @@ const deleteSale = async (req, res) => {
     `${result.title}.pdf`
   );
 
-  fileDelete(pdfFile);
+  await fileDelete(pdfFile);
 
   // Define the path to the property's bluePrint image
   const bluePrintFile = path.join(
@@ -591,7 +607,7 @@ const deleteSale = async (req, res) => {
     `${result.title}.webp`
   );
 
-  fileDelete(bluePrintFile);
+  await fileDelete(bluePrintFile);
 
   res.json({
     message: `Property ${result.title} with ID: ${result.id} deleted.`,
@@ -641,7 +657,7 @@ const deleteSales = async (req, res) => {
       result.title
     );
 
-    fileDelete(imagesFolder);
+    await fileDelete(imagesFolder);
 
     // Define the path to the property's pdf file
     const pdfFile = path.join(
@@ -652,7 +668,7 @@ const deleteSales = async (req, res) => {
       `${result.title}.pdf`
     );
 
-    fileDelete(pdfFile);
+    await fileDelete(pdfFile);
 
     // Define the path to the property's bluePrint image
     const bluePrintFile = path.join(
@@ -664,7 +680,7 @@ const deleteSales = async (req, res) => {
       `${result.title}.webp`
     );
 
-    fileDelete(bluePrintFile);
+    await fileDelete(bluePrintFile);
   }
 
   res.json({

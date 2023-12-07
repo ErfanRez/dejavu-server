@@ -1,6 +1,6 @@
 const sharp = require("sharp");
 const path = require("path");
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 
 const uploader = (subFolderName) => async (req, res, next) => {
   let imageFiles = req.files?.images || [];
@@ -37,15 +37,24 @@ const uploader = (subFolderName) => async (req, res, next) => {
       req.body.title
     );
 
-    if (fs.existsSync(outputFolder)) {
-      // Folder already exists, delete its contents
-      fs.readdirSync(outputFolder).forEach((file) => {
-        const filePath = path.join(outputFolder, file);
-        fs.unlinkSync(filePath);
-      });
-    } else {
-      // Folder doesn't exist, create it
-      fs.mkdirSync(outputFolder, { recursive: true });
+    try {
+      if (await fsPromises.stat(outputFolder)) {
+        // Folder already exists, delete its contents
+        const files = await fsPromises.readdir(outputFolder);
+
+        for (const file of files) {
+          const filePath = path.join(outputFolder, file);
+          await fsPromises.unlink(filePath);
+        }
+      }
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        // Folder doesn't exist, create it
+        await fsPromises.mkdir(outputFolder, { recursive: true });
+      } else {
+        console.error("Error checking/deleting folder contents:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
     }
 
     const convertedImages = [];
@@ -63,7 +72,13 @@ const uploader = (subFolderName) => async (req, res, next) => {
       console.log(outputImagePath);
 
       // Convert the image to WebP format using Sharp
-      await sharp(imageData).toFormat("webp").toFile(outputImagePath);
+      try {
+        await sharp(imageData).toFormat("webp").toFile(outputImagePath);
+        console.log("Image converted to WebP.");
+      } catch (conversionError) {
+        console.error("Error converting image to WebP:", conversionError);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
 
       const outputImageURL = new URL(
         path.join(

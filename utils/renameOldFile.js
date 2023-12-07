@@ -1,7 +1,7 @@
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 const path = require("path");
 
-function renameFile(subFolderName, oldFileName, newFileName) {
+const renameFile = async (subFolderName, oldFileName, newFileName) => {
   const oldImagePath = path.join(
     __dirname,
     "..",
@@ -20,9 +20,13 @@ function renameFile(subFolderName, oldFileName, newFileName) {
     newFileName
   );
 
-  if (fs.existsSync(oldImagePath)) {
-    fs.renameSync(oldImagePath, newImagePath);
+  if (await fsPromises.stat(oldImagePath)) {
+    try {
+      await fsPromises.rename(oldImagePath, newImagePath);
+    } catch (error) {
+      console.error("Error renaming file:", error);
+    }
   }
-}
+};
 
 module.exports = renameFile;

@@ -1,7 +1,7 @@
-const fs = require("fs");
+const fsPromises = require("fs").promises;
 const path = require("path");
 
-function renameFile(oldFileName, newFileName) {
+const renameFile = async (oldFileName, newFileName) => {
   const oldPdfPath = path.join(
     __dirname,
     "..",
@@ -18,9 +18,13 @@ function renameFile(oldFileName, newFileName) {
     newFileName
   );
 
-  if (fs.existsSync(oldPdfPath)) {
-    fs.renameSync(oldPdfPath, newPdfPath);
+  if (await fsPromises.stat(oldPdfPath)) {
+    try {
+      await fsPromises.rename(oldPdfPath, newPdfPath);
+    } catch (error) {
+      console.error("Error renaming file:", error);
+    }
   }
-}
+};
 
 module.exports = renameFile;

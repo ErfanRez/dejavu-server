@@ -221,7 +221,7 @@ const updateAgent = async (req, res) => {
   if (name !== agent.name && name !== undefined) {
     //* Check if new image provided
     if (!convertedImage) {
-      renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);
+      await renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);
 
       const newImagePath = new URL(
         path.join(
@@ -245,7 +245,7 @@ const updateAgent = async (req, res) => {
         `${agent.name}.webp`
       );
 
-      fileDelete(imagesFolder);
+      await fileDelete(imagesFolder);
     }
   }
 
@@ -347,7 +347,7 @@ const deleteAgent = async (req, res) => {
     `${result.name}.webp`
   );
 
-  fileDelete(imagesFolder);
+  await fileDelete(imagesFolder);
 
   res.json({
     message: `Agent ${result.name} with ID: ${result.id} deleted.`,
