@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
+const capitalizer = require("../utils/capitalizer");
 
 // PDF file upload middleware
 const uploadPdf = async (req, res, next) => {
@@ -21,7 +22,7 @@ const uploadPdf = async (req, res, next) => {
     }
 
     // Generate a unique file name for the pdf file
-    const pdfFileName = `${req.body.title}.pdf`;
+    const pdfFileName = `${capitalizer(req.body.title)}.pdf`;
 
     // Define the full output file path
     const pdfFilePath = path.join(outputFolder, pdfFileName);
@@ -40,7 +41,7 @@ const uploadPdf = async (req, res, next) => {
         process.env.ROOT_PATH,
         "uploads",
         "factSheets",
-        `${req.body.title}.pdf`
+        `${capitalizer(req.body.title)}.pdf`
       )
     ).toString();
 

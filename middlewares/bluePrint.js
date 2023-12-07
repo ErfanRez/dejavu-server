@@ -1,6 +1,7 @@
 const sharp = require("sharp");
 const path = require("path");
 const fsPromises = require("fs").promises;
+const capitalizer = require("../utils/capitalizer");
 
 const uploader = async (req, res, next) => {
   const imageFile = req.files?.bluePrint;
@@ -37,7 +38,7 @@ const uploader = async (req, res, next) => {
 
     // Process the uploaded image and convert it to WebP format
     // Generate a unique file name for the WebP image
-    const webpFileName = `${req.body.title}.webp`;
+    const webpFileName = `${capitalizer(req.body.title)}.webp`;
 
     // Define the full output file path
     const outputImagePath = path.join(outputFolder, webpFileName);
@@ -60,7 +61,7 @@ const uploader = async (req, res, next) => {
         "uploads",
         "images",
         "bluePrints",
-        `${req.body.title}.webp`
+        `${capitalizer(req.body.title)}.webp`
       )
     ).toString();
 

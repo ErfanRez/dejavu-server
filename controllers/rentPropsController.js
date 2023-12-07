@@ -289,6 +289,10 @@ const updateRent = async (req, res) => {
     return res.status(400).json({ message: "Title required!" });
   }
 
+  //* converts
+
+  const capTitle = capitalize(title);
+
   //? Does the property exist to update?
 
   const property = await prismadb.rentProperty.findUnique({
@@ -301,10 +305,10 @@ const updateRent = async (req, res) => {
     return res.status(404).json({ message: "Property not found!" });
   }
 
-  if (title !== property.title && title !== undefined) {
+  if (capTitle !== property.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      await renameOldFile("rents", property.title, title);
+      await renameOldFile("rents", property.title, capTitle);
 
       const imagesFolder = path.join(
         __dirname,
@@ -312,7 +316,7 @@ const updateRent = async (req, res) => {
         "uploads",
         "images",
         "rents",
-        title
+        capTitle
       );
 
       // Check if the folder exists
@@ -328,7 +332,7 @@ const updateRent = async (req, res) => {
               "uploads",
               "images",
               "rents",
-              title
+              capTitle
             )
           ).toString();
 
@@ -355,14 +359,14 @@ const updateRent = async (req, res) => {
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      await renameOldPdf(`${property.title}.pdf`, `${title}.pdf`);
+      await renameOldPdf(`${property.title}.pdf`, `${capTitle}.pdf`);
 
       const newPdfPath = new URL(
         path.join(
           process.env.ROOT_PATH,
           "uploads",
           "factSheets",
-          `${title}.pdf`
+          `${capTitle}.pdf`
         )
       ).toString();
 
@@ -383,7 +387,6 @@ const updateRent = async (req, res) => {
 
   //* converts
 
-  const capTitle = capitalize(title);
   const capOwner = capitalize(owner);
   const capCity = capitalize(city);
   const capCountry = capitalize(country);

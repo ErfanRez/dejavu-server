@@ -180,7 +180,7 @@ const createNewAgent = async (req, res) => {
   if (agent) {
     //*created
 
-    res.status(201).json({ message: `New agent ${name} created.` });
+    res.status(201).json({ message: `New agent ${capName} created.` });
   } else {
     res.status(400).json({ message: "Invalid agent data received!" });
   }
@@ -207,6 +207,9 @@ const updateAgent = async (req, res) => {
     return res.status(400).json({ message: "Agent name required!" });
   }
 
+  //* Converts
+  const capName = capitalize(name);
+
   //? Does the agent exist to update?
   const agent = await prismadb.agent.findUnique({
     where: {
@@ -218,10 +221,10 @@ const updateAgent = async (req, res) => {
     return res.status(404).json({ message: "Agent not found!" });
   }
 
-  if (name !== agent.name && name !== undefined) {
+  if (capName !== agent.name && name !== undefined) {
     //* Check if new image provided
     if (!convertedImage) {
-      await renameOldFile("agents", `${agent.name}.webp`, `${name}.webp`);
+      await renameOldFile("agents", `${agent.name}.webp`, `${capName}.webp`);
 
       const newImagePath = new URL(
         path.join(
@@ -229,7 +232,7 @@ const updateAgent = async (req, res) => {
           "uploads",
           "images",
           "agents",
-          `${name}.webp`
+          `${capName}.webp`
         )
       ).toString();
 
@@ -248,9 +251,6 @@ const updateAgent = async (req, res) => {
       await fileDelete(imagesFolder);
     }
   }
-
-  //* Converts
-  const capName = capitalize(name);
 
   //* Update agent
 

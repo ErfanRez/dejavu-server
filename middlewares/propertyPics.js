@@ -1,6 +1,7 @@
 const sharp = require("sharp");
 const path = require("path");
 const fsPromises = require("fs").promises;
+const capitalizer = require("../utils/capitalizer");
 
 const uploader = (subFolderName) => async (req, res, next) => {
   let imageFiles = req.files?.images || [];
@@ -34,7 +35,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       "uploads",
       "images",
       subFolderName,
-      req.body.title
+      capitalizer(req.body.title)
     );
 
     try {
@@ -86,7 +87,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
           "uploads",
           "images",
           subFolderName,
-          req.body.title,
+          capitalizer(req.body.title),
           webpFileName
         )
       ).toString();

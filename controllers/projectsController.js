@@ -253,6 +253,8 @@ const updateProject = async (req, res) => {
     return res.status(400).json({ message: "Title required!" });
   }
 
+  const capTitle = capitalize(title);
+
   //? Does the project exist to update?
 
   const project = await prismadb.project.findUnique({
@@ -265,10 +267,10 @@ const updateProject = async (req, res) => {
     return res.status(404).json({ message: "Project not found!" });
   }
 
-  if (title !== project.title && title !== undefined) {
+  if (capTitle !== project.title && title !== undefined) {
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      await renameOldFile("projects", project.title, title);
+      await renameOldFile("projects", project.title, capTitle);
 
       const imagesFolder = path.join(
         __dirname,
@@ -276,7 +278,7 @@ const updateProject = async (req, res) => {
         "uploads",
         "images",
         "projects",
-        title
+        capTitle
       );
 
       // Check if the folder exists
@@ -292,7 +294,7 @@ const updateProject = async (req, res) => {
               "uploads",
               "images",
               "sales",
-              title
+              capTitle
             )
           ).toString();
 
@@ -319,14 +321,14 @@ const updateProject = async (req, res) => {
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      await renameOldPdf(`${project.title}.pdf`, `${title}.pdf`);
+      await renameOldPdf(`${project.title}.pdf`, `${capTitle}.pdf`);
 
       const newPdfPath = new URL(
         path.join(
           process.env.ROOT_PATH,
           "uploads",
           "factSheets",
-          `${title}.pdf`
+          `${capTitle}.pdf`
         )
       ).toString();
 
@@ -346,8 +348,6 @@ const updateProject = async (req, res) => {
   }
 
   //* converts
-
-  const capTitle = capitalize(title);
   const capOwner = capitalize(owner);
   const capCity = capitalize(city);
   const capCountry = capitalize(country);
