@@ -16,8 +16,10 @@ const uploader = (subFolderName) => async (req, res, next) => {
   if (imageFiles.length === 0 && req.method !== "PATCH") {
     return res.status(400).json({ message: "At least one image required!" });
     // If it's a PATCH request, don't send an error response.
-  } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
+  } else if (req.body.title !== undefined) {
     // Title is provided
+
+    const capTitle = capitalizer(req.body.title);
 
     // Check the MIME type of each uploaded image file
     for (const file of imageFiles) {
@@ -35,7 +37,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       "uploads",
       "images",
       subFolderName,
-      capitalizer(req.body.title)
+      capTitle
     );
 
     try {
@@ -77,7 +79,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
           "uploads",
           "images",
           subFolderName,
-          capitalizer(req.body.title),
+          capTitle,
           webpFileName
         )
       ).toString();

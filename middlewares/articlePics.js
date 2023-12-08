@@ -16,7 +16,7 @@ const uploader = async (req, res, next) => {
   if (imageFiles.length === 0) {
     console.log("No files were uploaded.");
     req.convertedImages = [];
-  } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
+  } else if (req.body.title !== undefined) {
     // Title is provided
 
     // Check the MIME type of each uploaded image file

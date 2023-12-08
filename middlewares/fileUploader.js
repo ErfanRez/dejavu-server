@@ -13,6 +13,8 @@ const uploadPdf = async (req, res, next) => {
       return res.status(400).json({ message: "Only PDF files are allowed." });
     }
 
+    const capTitle = capitalizer(req.body.title);
+
     const outputFolder = path.join(__dirname, "..", "uploads", "factSheets"); // Modify the folder path if needed
 
     // Create the folder if it doesn't exist
@@ -26,7 +28,7 @@ const uploadPdf = async (req, res, next) => {
     }
 
     // Generate a unique file name for the pdf file
-    const pdfFileName = `${capitalizer(req.body.title)}.pdf`;
+    const pdfFileName = `${capTitle}.pdf`;
 
     // Define the full output file path
     const pdfFilePath = path.join(outputFolder, pdfFileName);
@@ -45,7 +47,7 @@ const uploadPdf = async (req, res, next) => {
         process.env.ROOT_PATH,
         "uploads",
         "factSheets",
-        `${capitalizer(req.body.title)}.pdf`
+        `${capTitle}.pdf`
       )
     ).toString();
 

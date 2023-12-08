@@ -14,6 +14,8 @@ const uploader = async (req, res, next) => {
       return res.status(400).json({ message: "Only image files are allowed." });
     }
 
+    const capTitle = capitalizer(req.body.title);
+
     // Get the uploaded file data
     const imageData = imageFile.data;
 
@@ -38,7 +40,7 @@ const uploader = async (req, res, next) => {
 
     // Process the uploaded image and convert it to WebP format
     // Generate a unique file name for the WebP image
-    const webpFileName = `${capitalizer(req.body.title)}.webp`;
+    const webpFileName = `${capTitle}.webp`;
 
     // Define the full output file path
     const outputImagePath = path.join(outputFolder, webpFileName);
@@ -61,7 +63,7 @@ const uploader = async (req, res, next) => {
         "uploads",
         "images",
         "bluePrints",
-        `${capitalizer(req.body.title)}.webp`
+        `${capTitle}.webp`
       )
     ).toString();
 
