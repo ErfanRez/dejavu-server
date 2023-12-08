@@ -141,6 +141,17 @@ const updateAmenity = async (req, res) => {
     return res.status(400).json({ message: "Amenity title required!" });
   }
 
+  //? Check for duplicate
+  const duplicate = await prismadb.amenity.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Amenity title already exists!" });
+  }
+
   //? Does the amenity exist to update?
 
   const amenity = await prismadb.amenity.findUnique({

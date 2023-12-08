@@ -108,6 +108,17 @@ const createNewArticle = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
+  //? Check for duplicate
+  const duplicate = await prismadb.article.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Article title already exists!" });
+  }
+
   //* Create new article
 
   const article = await prismadb.article.create({
@@ -150,6 +161,17 @@ const updateArticle = async (req, res) => {
 
   if (!title || !description || !body) {
     return res.status(400).json({ message: "All fields required!" });
+  }
+
+  //? Check for duplicate
+  const duplicate = await prismadb.article.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Article title already exists!" });
   }
 
   //? Does the article exist to update?

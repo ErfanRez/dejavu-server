@@ -1,5 +1,4 @@
 const prismadb = require("../lib/prismadb");
-const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched installments
 // @route GET /installments/search

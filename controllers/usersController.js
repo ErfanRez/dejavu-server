@@ -112,12 +112,19 @@ const createNewUser = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.user.findUnique({
+  const duplicateUsername = await prismadb.user.findUnique({
     where: {
       username,
+    },
+  });
+
+  const duplicateEmail = await prismadb.user.findUnique({
+    where: {
       email,
     },
   });
+
+  const duplicate = duplicateUsername || duplicateEmail;
 
   if (duplicate) {
     return res
@@ -162,6 +169,28 @@ const updateUser = async (req, res) => {
 
   if (!username || !email) {
     return res.status(400).json({ message: "Username and email required!" });
+  }
+
+  //? Check for duplicate
+
+  const duplicateUsername = await prismadb.user.findUnique({
+    where: {
+      username,
+    },
+  });
+
+  const duplicateEmail = await prismadb.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  const duplicate = duplicateUsername || duplicateEmail;
+
+  if (duplicate) {
+    return res
+      .status(409)
+      .json({ message: "Username or email already exists!" });
   }
 
   //? Does the user exist to update?

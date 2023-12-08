@@ -289,6 +289,18 @@ const updateRent = async (req, res) => {
     return res.status(400).json({ message: "Title required!" });
   }
 
+  //? Check for duplicate
+
+  const duplicate = await prismadb.rentProperty.findUnique({
+    where: {
+      title,
+    },
+  });
+
+  if (duplicate) {
+    return res.status(409).json({ message: "Property title already exists!" });
+  }
+
   //* converts
 
   const capTitle = capitalize(title);
