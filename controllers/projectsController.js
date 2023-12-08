@@ -258,18 +258,6 @@ const updateProject = async (req, res) => {
 
   const capTitle = capitalize(title);
 
-  //? Check for duplicate
-
-  const duplicate = await prismadb.project.findUnique({
-    where: {
-      title: capTitle,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Project title already exists!" });
-  }
-
   //? Does the project exist to update?
 
   const project = await prismadb.project.findUnique({

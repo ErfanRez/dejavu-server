@@ -143,17 +143,6 @@ const updateCategory = async (req, res) => {
 
   const capTitle = capitalize(title);
 
-  //? Check for duplicate
-  const duplicate = await prismadb.category.findUnique({
-    where: {
-      title: capTitle,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Category title already exists!" });
-  }
-
   //? Does the category exist to update?
 
   const category = await prismadb.category.findUnique({

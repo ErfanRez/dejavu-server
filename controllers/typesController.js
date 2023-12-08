@@ -143,17 +143,6 @@ const updateType = async (req, res) => {
 
   const capTitle = capitalize(title);
 
-  //? Check for duplicate
-  const duplicate = await prismadb.type.findUnique({
-    where: {
-      title: capTitle,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Type title already exists!" });
-  }
-
   //? Does the type exist to update?
 
   const type = await prismadb.type.findUnique({

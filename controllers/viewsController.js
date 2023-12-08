@@ -143,17 +143,6 @@ const updateView = async (req, res) => {
 
   const capTitle = capitalize(title);
 
-  //? Check for duplicate
-  const duplicate = await prismadb.view.findUnique({
-    where: {
-      title: capTitle,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "View title already exists!" });
-  }
-
   //? Does the view exist to update?
 
   const view = await prismadb.view.findUnique({

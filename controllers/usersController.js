@@ -171,28 +171,6 @@ const updateUser = async (req, res) => {
     return res.status(400).json({ message: "Username and email required!" });
   }
 
-  //? Check for duplicate
-
-  const duplicateUsername = await prismadb.user.findUnique({
-    where: {
-      username,
-    },
-  });
-
-  const duplicateEmail = await prismadb.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  const duplicate = duplicateUsername || duplicateEmail;
-
-  if (duplicate) {
-    return res
-      .status(409)
-      .json({ message: "Username or email already exists!" });
-  }
-
   //? Does the user exist to update?
   const user = await prismadb.user.findUnique({
     where: {

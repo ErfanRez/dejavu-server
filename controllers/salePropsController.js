@@ -305,18 +305,6 @@ const updateSale = async (req, res) => {
 
   const capTitle = capitalize(title);
 
-  //? Check for duplicate
-
-  const duplicate = await prismadb.saleProperty.findUnique({
-    where: {
-      title: capTitle,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Property title already exists!" });
-  }
-
   //? Does the property exist to update?
 
   const property = await prismadb.saleProperty.findUnique({
