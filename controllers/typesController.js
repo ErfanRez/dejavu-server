@@ -89,20 +89,20 @@ const createNewType = async (req, res) => {
     return res.status(400).json({ message: "Type title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.type.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
   if (duplicate) {
     return res.status(409).json({ message: "Type title already exists!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Create new type
 
@@ -139,10 +139,14 @@ const updateType = async (req, res) => {
     return res.status(400).json({ message: "Type title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.type.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -161,10 +165,6 @@ const updateType = async (req, res) => {
   if (!type) {
     return res.status(404).json({ message: "Type not found!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Update type
 

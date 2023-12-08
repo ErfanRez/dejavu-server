@@ -89,20 +89,20 @@ const createNewCategory = async (req, res) => {
     return res.status(400).json({ message: "Category title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.category.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
   if (duplicate) {
     return res.status(409).json({ message: "Category title already exists!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Create new category
 
@@ -139,10 +139,14 @@ const updateCategory = async (req, res) => {
     return res.status(400).json({ message: "Category title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.category.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -161,10 +165,6 @@ const updateCategory = async (req, res) => {
   if (!category) {
     return res.status(404).json({ message: "Category not found!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Update category
 

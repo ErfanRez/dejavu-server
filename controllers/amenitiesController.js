@@ -91,20 +91,20 @@ const createNewAmenity = async (req, res) => {
     return res.status(400).json({ message: "Amenity title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.amenity.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
   if (duplicate) {
     return res.status(409).json({ message: "Amenity title already exists!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Create new amenity
 
@@ -141,10 +141,14 @@ const updateAmenity = async (req, res) => {
     return res.status(400).json({ message: "Amenity title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.amenity.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -163,10 +167,6 @@ const updateAmenity = async (req, res) => {
   if (!amenity) {
     return res.status(404).json({ message: "Amenity not found!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Update amenity
 

@@ -170,6 +170,10 @@ const createNewSale = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
+  //* converts
+
+  const capTitle = capitalize(title);
+
   //? Does the agent exist?
   const agent = await prismadb.agent.findUnique({
     where: {
@@ -185,7 +189,7 @@ const createNewSale = async (req, res) => {
 
   const duplicate = await prismadb.saleProperty.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -195,7 +199,6 @@ const createNewSale = async (req, res) => {
 
   //* converts
 
-  const capTitle = capitalize(title);
   const capOwner = capitalize(owner);
   const capCity = capitalize(city);
   const capCountry = capitalize(country);
@@ -298,21 +301,21 @@ const updateSale = async (req, res) => {
     return res.status(400).json({ message: "Title required!" });
   }
 
+  //* converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
 
   const duplicate = await prismadb.saleProperty.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
   if (duplicate) {
     return res.status(409).json({ message: "Property title already exists!" });
   }
-
-  //* converts
-
-  const capTitle = capitalize(title);
 
   //? Does the property exist to update?
 

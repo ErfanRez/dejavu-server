@@ -150,27 +150,28 @@ const createNewAgent = async (req, res) => {
     return res.status(400).json({ message: "Agent name required!" });
   }
 
+  //* Converts
+  const capName = capitalize(name);
+
   //? Check for duplicate
 
-  const duplicate = await prismadb.agent.findUnique({
+  const duplicateUsername = await prismadb.agent.findUnique({
     where: {
-      OR: [
-        {
-          name,
-        },
-        {
-          email,
-        },
-      ],
+      name: capName,
     },
   });
+
+  const duplicateEmail = await prismadb.agent.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  const duplicate = duplicateUsername || duplicateEmail;
 
   if (duplicate) {
     return res.status(409).json({ message: "Agent already exists!" });
   }
-
-  //* Converts
-  const capName = capitalize(name);
 
   //* Create new agent
 
@@ -214,27 +215,28 @@ const updateAgent = async (req, res) => {
     return res.status(400).json({ message: "Agent name required!" });
   }
 
+  //* Converts
+  const capName = capitalize(name);
+
   //? Check for duplicate
 
-  const duplicate = await prismadb.agent.findUnique({
+  const duplicateUsername = await prismadb.agent.findUnique({
     where: {
-      OR: [
-        {
-          name,
-        },
-        {
-          email,
-        },
-      ],
+      name: capName,
     },
   });
+
+  const duplicateEmail = await prismadb.agent.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  const duplicate = duplicateUsername || duplicateEmail;
 
   if (duplicate) {
     return res.status(409).json({ message: "Agent already exists!" });
   }
-
-  //* Converts
-  const capName = capitalize(name);
 
   //? Does the agent exist to update?
   const agent = await prismadb.agent.findUnique({

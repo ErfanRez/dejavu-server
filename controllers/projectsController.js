@@ -148,6 +148,10 @@ const createNewProject = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
+  //* converts
+
+  const capTitle = capitalize(title);
+
   //? Does the agent exist?
   const agent = await prismadb.agent.findUnique({
     where: {
@@ -163,7 +167,7 @@ const createNewProject = async (req, res) => {
 
   const duplicate = await prismadb.project.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -173,7 +177,6 @@ const createNewProject = async (req, res) => {
 
   //* converts
 
-  const capTitle = capitalize(title);
   const capOwner = capitalize(owner);
   const capCity = capitalize(city);
   const capCountry = capitalize(country);
@@ -253,19 +256,19 @@ const updateProject = async (req, res) => {
     return res.status(400).json({ message: "Title required!" });
   }
 
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
 
   const duplicate = await prismadb.project.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
   if (duplicate) {
     return res.status(409).json({ message: "Project title already exists!" });
   }
-
-  const capTitle = capitalize(title);
 
   //? Does the project exist to update?
 

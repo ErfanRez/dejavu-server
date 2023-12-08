@@ -89,20 +89,20 @@ const createNewView = async (req, res) => {
     return res.status(400).json({ message: "View title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.view.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
   if (duplicate) {
     return res.status(409).json({ message: "View title already exists!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Create new view
 
@@ -139,10 +139,14 @@ const updateView = async (req, res) => {
     return res.status(400).json({ message: "View title required!" });
   }
 
+  //* Converts
+
+  const capTitle = capitalize(title);
+
   //? Check for duplicate
   const duplicate = await prismadb.view.findUnique({
     where: {
-      title,
+      title: capTitle,
     },
   });
 
@@ -161,10 +165,6 @@ const updateView = async (req, res) => {
   if (!view) {
     return res.status(404).json({ message: "View not found!" });
   }
-
-  //* Converts
-
-  const capTitle = capitalize(title);
 
   //* Update view
 
