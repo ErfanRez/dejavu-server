@@ -273,7 +273,7 @@ const updateProject = async (req, res) => {
 
   if (capTitle !== project.title && title !== undefined) {
     //* Check if new images provided
-    if (convertedImages?.length === 0) {
+    if (convertedImages.length === 0) {
       await renameOldFile("projects", project.title, capTitle, res);
 
       const imagesFolder = path.join(

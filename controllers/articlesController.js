@@ -189,7 +189,7 @@ const updateArticle = async (req, res) => {
 
   if (title !== article.title && title !== undefined) {
     //* Check if new images provided
-    if (convertedImages?.length === 0) {
+    if (convertedImages.length === 0) {
       await renameOldFile("articles", article.title, title, res);
 
       const imagesFolder = path.join(
