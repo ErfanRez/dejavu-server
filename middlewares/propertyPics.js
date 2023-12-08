@@ -13,7 +13,11 @@ const uploader = (subFolderName) => async (req, res, next) => {
   }
 
   // Check if any files were uploaded
-  if (imageFiles.length === 0 && req.method !== "PATCH") {
+  if (
+    imageFiles.length === 0 &&
+    req.method !== "PATCH" &&
+    req.method !== "patch"
+  ) {
     return res.status(400).json({ message: "At least one image required!" });
     // If it's a PATCH request, don't send an error response.
   } else if (req.body.title !== undefined) {
