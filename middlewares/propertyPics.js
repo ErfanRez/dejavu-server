@@ -40,7 +40,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       // File already exists, delete it before saving the new one
       try {
         await fsPromises.rm(outputFolder, { recursive: true, force: true });
-        console.log("Existing image deleted.");
+        console.log("Existing folder deleted.");
       } catch (deleteError) {
         console.error("Error deleting existing image:", deleteError);
         return res.status(500).json({ message: "Internal Server Error" });
@@ -98,7 +98,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       return; // Stop further execution
     }
   } else {
-    console.log("Title not provided.");
+    console.log("Title or images not provided.");
   }
 
   next();
