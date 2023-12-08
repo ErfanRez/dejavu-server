@@ -35,15 +35,19 @@ const uploader = (subFolderName) => async (req, res, next) => {
       capTitle
     );
 
-    try {
-      // Check if the folder exists for POST method
-      if (req.method === "POST" || req.method === "post") {
-        if (!fs.existsSync(outputFolder)) {
-          // Folder already exists, delete its contents
-          await fsPromises.rm(outputFolder, { recursive: true, force: true });
-        }
+    // Check if the file already exists
+    if (fs.existsSync(outputFolder)) {
+      // File already exists, delete it before saving the new one
+      try {
+        await fsPromises.rm(outputFolder, { recursive: true, force: true });
+        console.log("Existing image deleted.");
+      } catch (deleteError) {
+        console.error("Error deleting existing image:", deleteError);
+        return res.status(500).json({ message: "Internal Server Error" });
       }
+    }
 
+    try {
       // Create the output folder if it doesn't exist
       await fsPromises.mkdir(outputFolder, { recursive: true });
 

@@ -3,6 +3,7 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const capitalize = require("../utils/capitalizer");
+const fs = require("fs");
 
 // @desc Get searched agents
 // @route GET /agents/search
@@ -257,6 +258,29 @@ const updateAgent = async (req, res) => {
       );
 
       await fileDelete(imagesFolder);
+    }
+  } else {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "agents",
+      `${agent.name}.webp`
+    );
+
+    if (fs.existsSync(imagesFolder)) {
+      const newImagePath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "images",
+          "agents",
+          `${agent.name}.webp`
+        )
+      ).toString();
+
+      convertedImage = newImagePath;
     }
   }
 

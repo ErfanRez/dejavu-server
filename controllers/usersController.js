@@ -2,6 +2,7 @@ const prismadb = require("../lib/prismadb");
 const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
+const fs = require("fs");
 
 // @desc Get searched users
 // @route GET /users/search
@@ -210,6 +211,29 @@ const updateUser = async (req, res) => {
       );
 
       await fileDelete(imagesFolder);
+    }
+  } else {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "users",
+      `${user.username}.webp`
+    );
+
+    if (fs.existsSync(imagesFolder)) {
+      const newImagePath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "images",
+          "users",
+          `${user.username}.webp`
+        )
+      ).toString();
+
+      convertedImage = newImagePath;
     }
   }
 

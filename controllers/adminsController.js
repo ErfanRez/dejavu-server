@@ -1,7 +1,24 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
+const fs = require("fs");
+const bcrypt = require("bcrypt");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
+
+function exclude(admins) {
+  const adminsWithoutPassword = admins?.map((admin) => {
+    const { password, ...adminWithoutPassword } = admin;
+    return adminWithoutPassword;
+  });
+
+  return adminsWithoutPassword;
+}
+
+const excludePassword = (admin) => {
+  // Destructure the admin object and exclude the 'password' property
+  const { password, ...adminWithoutPassword } = admin;
+  return adminWithoutPassword;
+};
 
 // @desc Get searched admins
 // @route GET /admins/search
@@ -34,7 +51,9 @@ const searchAdmins = async (req, res) => {
     return res.status(404).json({ message: "No admins found!" });
   }
 
-  res.json(admins);
+  const adminsWithoutPassword = exclude(admins);
+
+  res.json(adminsWithoutPassword);
 };
 
 // @desc Get all admins
@@ -55,7 +74,9 @@ const getAllAdmins = async (req, res) => {
     return res.status(404).json({ message: "No admins found!" });
   }
 
-  res.json(admins);
+  const adminsWithoutPassword = exclude(admins);
+
+  res.json(adminsWithoutPassword);
 };
 
 // @desc Get an unique admin
@@ -80,44 +101,55 @@ const getAdminById = async (req, res) => {
     return res.status(404).json({ message: "Admin not found!" });
   }
 
-  res.json(admin);
+  const adminWithoutPassword = excludePassword(admin);
+
+  res.json(adminWithoutPassword);
 };
 
 // @desc Create new admin
 // @route POST /admin
 //! @access Private
 const createNewAdmin = async (req, res) => {
-  const { username, email } = req.body;
+  const { username, password, email } = req.body;
 
   // console.log(req.files);
   const convertedImage = req.convertedImage;
 
   //* Confirm data
 
-  if (!username || !email) {
-    return res.status(400).json({ message: "username and email required!" });
+  if (!username || !password || !email) {
+    return res.status(400).json({ message: "All fields are required!" });
   }
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.admin.findUnique({
+  const duplicateUsername = await prismadb.admin.findUnique({
     where: {
       username,
+    },
+  });
+
+  const duplicateEmail = await prismadb.admin.findUnique({
+    where: {
       email,
     },
   });
 
+  const duplicate = duplicateUsername || duplicateEmail;
+
   if (duplicate) {
-    return res
-      .status(409)
-      .json({ message: "username or email already exists!" });
+    return res.status(409).json({ message: "Admin already exists!" });
   }
+
+  // Hash password
+  const hashedPwd = await bcrypt.hash(password, 10);
 
   //* Create new admin
 
   const admin = await prismadb.admin.create({
     data: {
       username,
+      password: hashedPwd,
       email,
       imageUrl: convertedImage,
     },
@@ -136,7 +168,7 @@ const createNewAdmin = async (req, res) => {
 // @route PATCH /admins/:id
 //! @access Private
 const updateAdmin = async (req, res) => {
-  const { username, email } = req.body;
+  const { username, password, email } = req.body;
   const { id } = req.params;
 
   // console.log(req.files);
@@ -151,6 +183,8 @@ const updateAdmin = async (req, res) => {
   if (!username || !email) {
     return res.status(400).json({ message: "username and email required!" });
   }
+
+  let hashedPwd = undefined;
 
   //? Does the admin exist to update?
   const admin = await prismadb.admin.findUnique({
@@ -196,6 +230,34 @@ const updateAdmin = async (req, res) => {
 
       await fileDelete(imagesFolder);
     }
+  } else {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "admins",
+      `${admin.username}.webp`
+    );
+
+    if (fs.existsSync(imagesFolder)) {
+      const newImagePath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "images",
+          "admins",
+          `${admin.username}.webp`
+        )
+      ).toString();
+
+      convertedImage = newImagePath;
+    }
+  }
+
+  if (password) {
+    // Hash password
+    hashedPwd = await bcrypt.hash(password, 10); // salt rounds
   }
 
   //* Update admin
@@ -206,6 +268,7 @@ const updateAdmin = async (req, res) => {
     },
     data: {
       username,
+      password: hashedPwd,
       email,
       imageUrl: convertedImage,
     },
@@ -234,6 +297,16 @@ const deleteAdmin = async (req, res) => {
 
   if (!admin) {
     return res.status(404).json({ message: "Admin not found!" });
+  }
+
+  // Count the total number of admins
+  const totalAdmins = await prismadb.admin.count();
+
+  // Check if there are only two admins left
+  if (totalAdmins <= 2) {
+    return res.status(400).json({
+      message: "Cannot delete admin. At least two admins must exist.",
+    });
   }
 
   const result = await prismadb.admin.delete({
