@@ -4,6 +4,7 @@ const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
 const fsPromises = require("fs").promises;
+const fs = require("fs");
 const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched rentProperties
@@ -310,8 +311,8 @@ const updateRent = async (req, res) => {
 
   if (capTitle !== property.title && title !== undefined) {
     //* Check if new images provided
-    if (convertedImages.length === 0) {
-      await renameOldFile("rents", property.title, capTitle);
+    if (convertedImages?.length === 0) {
+      await renameOldFile("rents", property.title, capTitle, res);
 
       const imagesFolder = path.join(
         __dirname,
@@ -323,7 +324,7 @@ const updateRent = async (req, res) => {
       );
 
       // Check if the folder exists
-      if (await fsPromises.stat(imagesFolder)) {
+      if (fs.existsSync(imagesFolder)) {
         try {
           // List all files in the folder
           const files = await fsPromises.readdir(imagesFolder);
@@ -344,6 +345,7 @@ const updateRent = async (req, res) => {
           );
         } catch (error) {
           console.error("Error reading files from folder:", error);
+          res.status(500).json({ message: "Internal Server Error" });
         }
       }
     } else {
@@ -357,12 +359,12 @@ const updateRent = async (req, res) => {
         property.title
       );
 
-      await fileDelete(imagesFolder);
+      await fileDelete(imagesFolder, res);
     }
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      await renameOldPdf(`${property.title}.pdf`, `${capTitle}.pdf`);
+      await renameOldPdf(`${property.title}.pdf`, `${capTitle}.pdf`, res);
 
       const newPdfPath = new URL(
         path.join(
@@ -384,7 +386,39 @@ const updateRent = async (req, res) => {
         `${property.title}.pdf`
       );
 
-      await fileDelete(pdfFile);
+      await fileDelete(pdfFile, res);
+    }
+  } else {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "rents",
+      property.title
+    );
+    // Check if the folder exists
+    if (fs.existsSync(imagesFolder)) {
+      try {
+        // List all files in the folder
+        const files = await fsPromises.readdir(imagesFolder);
+
+        // Create an array of file paths
+        const outputImageURL = new URL(
+          path.join(
+            process.env.ROOT_PATH,
+            "uploads",
+            "images",
+            "rents",
+            property.title
+          )
+        ).toString();
+
+        convertedImages = files.map((file) => path.join(outputImageURL, file));
+      } catch (error) {
+        console.error("Error reading files from folder:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     }
   }
 

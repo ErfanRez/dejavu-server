@@ -4,6 +4,7 @@ const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const renameOldPdf = require("../utils/renameOldPdf");
 const fsPromises = require("fs").promises;
+const fs = require("fs");
 const capitalize = require("../utils/capitalizer");
 
 // @desc Get searched sales
@@ -319,8 +320,8 @@ const updateSale = async (req, res) => {
 
   if (capTitle !== property.title && title !== undefined) {
     //* Check if new images provided
-    if (convertedImages.length === 0) {
-      await renameOldFile("sales", property.title, capTitle);
+    if (convertedImages?.length === 0) {
+      await renameOldFile("sales", property.title, capTitle, res);
 
       const imagesFolder = path.join(
         __dirname,
@@ -332,7 +333,7 @@ const updateSale = async (req, res) => {
       );
 
       // Check if the folder exists
-      if (await fsPromises.stat(imagesFolder)) {
+      if (fs.existsSync(imagesFolder)) {
         try {
           // List all files in the folder
           const files = await fsPromises.readdir(imagesFolder);
@@ -353,6 +354,7 @@ const updateSale = async (req, res) => {
           );
         } catch (error) {
           console.error("Error reading files from folder:", error);
+          res.status(500).json({ message: "Internal Server Error" });
         }
       }
     } else {
@@ -366,12 +368,12 @@ const updateSale = async (req, res) => {
         property.title
       );
 
-      await fileDelete(imagesFolder);
+      await fileDelete(imagesFolder, res);
     }
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      await renameOldPdf(`${property.title}.pdf`, `${capTitle}.pdf`);
+      await renameOldPdf(`${property.title}.pdf`, `${capTitle}.pdf`, res);
 
       const newPdfPath = new URL(
         path.join(
@@ -393,7 +395,7 @@ const updateSale = async (req, res) => {
         `${property.title}.pdf`
       );
 
-      await fileDelete(pdfFile);
+      await fileDelete(pdfFile, res);
     }
 
     //* Check if new blueprint provided
@@ -401,7 +403,8 @@ const updateSale = async (req, res) => {
       await renameOldFile(
         "bluePrints",
         `${property.title}.webp`,
-        `${capTitle}.webp`
+        `${capTitle}.webp`,
+        res
       );
 
       const newBluePrint = new URL(
@@ -416,7 +419,7 @@ const updateSale = async (req, res) => {
 
       bluePrint = newBluePrint;
     } else {
-      // Define the path to the factSheets folder
+      // Define the path to the bluePrints folder
       const bluePrintFile = path.join(
         __dirname,
         "..",
@@ -426,7 +429,39 @@ const updateSale = async (req, res) => {
         `${property.title}.webp`
       );
 
-      await fileDelete(bluePrintFile);
+      await fileDelete(bluePrintFile, res);
+    }
+  } else {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "sales",
+      property.title
+    );
+    // Check if the folder exists
+    if (fs.existsSync(imagesFolder)) {
+      try {
+        // List all files in the folder
+        const files = await fsPromises.readdir(imagesFolder);
+
+        // Create an array of file paths
+        const outputImageURL = new URL(
+          path.join(
+            process.env.ROOT_PATH,
+            "uploads",
+            "images",
+            "sales",
+            property.title
+          )
+        ).toString();
+
+        convertedImages = files.map((file) => path.join(outputImageURL, file));
+      } catch (error) {
+        console.error("Error reading files from folder:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     }
   }
 
@@ -590,7 +625,7 @@ const deleteSale = async (req, res) => {
     result.title
   );
 
-  await fileDelete(imagesFolder);
+  await fileDelete(imagesFolder, res);
 
   // Define the path to the property's pdf file
   const pdfFile = path.join(

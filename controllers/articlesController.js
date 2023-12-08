@@ -3,6 +3,7 @@ const path = require("path");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
 const fsPromises = require("fs").promises;
+const fs = require("fs");
 
 // @desc Get searched articles
 // @route GET /articles/search
@@ -188,8 +189,8 @@ const updateArticle = async (req, res) => {
 
   if (title !== article.title && title !== undefined) {
     //* Check if new images provided
-    if (convertedImages.length === 0) {
-      await renameOldFile("articles", article.title, title);
+    if (convertedImages?.length === 0) {
+      await renameOldFile("articles", article.title, title, res);
 
       const imagesFolder = path.join(
         __dirname,
@@ -201,7 +202,7 @@ const updateArticle = async (req, res) => {
       );
 
       // Check if the folder exists
-      if (await fsPromises.stat(imagesFolder)) {
+      if (fs.existsSync(imagesFolder)) {
         try {
           // List all files in the folder
           const files = await fsPromises.readdir(imagesFolder);
@@ -222,6 +223,7 @@ const updateArticle = async (req, res) => {
           );
         } catch (error) {
           console.error("Error reading files from folder:", error);
+          res.status(500).json({ message: "Internal Server Error" });
         }
       }
     } else {
@@ -235,7 +237,66 @@ const updateArticle = async (req, res) => {
         article.title
       );
 
-      await fileDelete(imagesFolder);
+      await fileDelete(imagesFolder, res);
+    }
+
+    //* Check if new pdf provided
+    if (!pdfUrl) {
+      await renameOldPdf(`${article.title}.pdf`, `${title}.pdf`, res);
+
+      const newPdfPath = new URL(
+        path.join(
+          process.env.ROOT_PATH,
+          "uploads",
+          "factSheets",
+          `${title}.pdf`
+        )
+      ).toString();
+
+      pdfUrl = newPdfPath;
+    } else {
+      // Define the path to the factSheets folder
+      const pdfFile = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        "factSheets",
+        `${article.title}.pdf`
+      );
+
+      await fileDelete(pdfFile, res);
+    }
+  } else {
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "articles",
+      article.title
+    );
+    // Check if the folder exists
+    if (fs.existsSync(imagesFolder)) {
+      try {
+        // List all files in the folder
+        const files = await fsPromises.readdir(imagesFolder);
+
+        // Create an array of file paths
+        const outputImageURL = new URL(
+          path.join(
+            process.env.ROOT_PATH,
+            "uploads",
+            "images",
+            "articles",
+            article.title
+          )
+        ).toString();
+
+        convertedImages = files.map((file) => path.join(outputImageURL, file));
+      } catch (error) {
+        console.error("Error reading files from folder:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     }
   }
 

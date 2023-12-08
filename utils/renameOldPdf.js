@@ -1,4 +1,5 @@
 const fsPromises = require("fs").promises;
+const fs = require("fs");
 const path = require("path");
 
 const renameFile = async (oldFileName, newFileName, res) => {
@@ -20,7 +21,7 @@ const renameFile = async (oldFileName, newFileName, res) => {
 
   try {
     // Check if the file exists
-    if (await fsPromises.stat(oldPdfPath)) {
+    if (fs.existsSync(oldPdfPath)) {
       // If the file exists, proceed with renaming
       await fsPromises.rename(oldPdfPath, newPdfPath);
       console.log("File renamed successfully.");

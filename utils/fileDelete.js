@@ -1,9 +1,10 @@
 const fsPromises = require("fs").promises;
+const fs = require("fs");
 
 const deleteFolderAndContents = async (folderPath, res) => {
   try {
     // Check if the folder exists
-    if (await fsPromises.stat(folderPath)) {
+    if (fs.existsSync(folderPath)) {
       // If the folder exists, proceed with deletion
       await fsPromises.rm(folderPath, { recursive: true, force: true });
       console.log("Folder deleted successfully.");
