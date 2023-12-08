@@ -1,7 +1,7 @@
 const fsPromises = require("fs").promises;
 const path = require("path");
 
-const renameFile = async (oldFileName, newFileName) => {
+const renameFile = async (oldFileName, newFileName, res) => {
   const oldPdfPath = path.join(
     __dirname,
     "..",
@@ -18,12 +18,18 @@ const renameFile = async (oldFileName, newFileName) => {
     newFileName
   );
 
-  if (await fsPromises.stat(oldPdfPath)) {
-    try {
+  try {
+    // Check if the file exists
+    if (await fsPromises.stat(oldPdfPath)) {
+      // If the file exists, proceed with renaming
       await fsPromises.rename(oldPdfPath, newPdfPath);
-    } catch (error) {
-      console.error("Error renaming file:", error);
+      console.log("File renamed successfully.");
     }
+  } catch (error) {
+    // Handle errors and respond to the client
+    console.error("Error renaming file:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+    return; // Stop further execution
   }
 };
 

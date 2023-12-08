@@ -1,8 +1,12 @@
 function capitalize(str) {
-  return str
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  if (str.includes(" ")) {
+    return str
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  } else {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 }
 
 module.exports = capitalize;
