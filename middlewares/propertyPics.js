@@ -16,7 +16,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
   if (imageFiles.length === 0 && req.method !== "PATCH") {
     return res.status(400).json({ message: "At least one image required!" });
     // If it's a PATCH request, don't send an error response.
-  } else if (req.body.title !== undefined) {
+  } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
     // Title is provided
 
     // Check the MIME type of each uploaded image file
@@ -39,21 +39,11 @@ const uploader = (subFolderName) => async (req, res, next) => {
     );
 
     try {
-      if (await fsPromises.stat(outputFolder)) {
-        // Folder already exists, delete its contents
-        const files = await fsPromises.readdir(outputFolder);
-
-        for (const file of files) {
-          const filePath = path.join(outputFolder, file);
-          await fsPromises.unlink(filePath);
-        }
-      }
+      // Create the output folder if it doesn't exist
+      await fsPromises.mkdir(outputFolder, { recursive: true });
     } catch (error) {
-      if (error.code === "ENOENT") {
-        // Folder doesn't exist, create it
-        await fsPromises.mkdir(outputFolder, { recursive: true });
-      } else {
-        console.error("Error checking/deleting folder contents:", error);
+      if (error.code !== "EEXIST") {
+        console.error("Error creating output folder:", error);
         return res.status(500).json({ message: "Internal Server Error" });
       }
     }

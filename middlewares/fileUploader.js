@@ -1,5 +1,4 @@
 const path = require("path");
-const fs = require("fs");
 const fsPromises = require("fs").promises;
 const capitalizer = require("../utils/capitalizer");
 
@@ -17,8 +16,13 @@ const uploadPdf = async (req, res, next) => {
     const outputFolder = path.join(__dirname, "..", "uploads", "factSheets"); // Modify the folder path if needed
 
     // Create the folder if it doesn't exist
-    if (!fs.existsSync(outputFolder)) {
-      await fsPromises(outputFolder, { recursive: true });
+    try {
+      await fsPromises.mkdir(outputFolder, { recursive: true });
+    } catch (error) {
+      if (error.code !== "EEXIST") {
+        console.error("Error creating output folder:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+      }
     }
 
     // Generate a unique file name for the pdf file
@@ -28,14 +32,14 @@ const uploadPdf = async (req, res, next) => {
     const pdfFilePath = path.join(outputFolder, pdfFileName);
 
     // Move the uploaded PDF file to the destination folder
-    pdfFile.mv(pdfFilePath, (err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error saving the PDF file." });
-      }
-    });
+    try {
+      await pdfFile.mv(pdfFilePath);
+    } catch (moveError) {
+      console.error("Error moving the PDF file:", moveError);
+      return res.status(500).json({ message: "Error saving the PDF file." });
+    }
 
     // Pass the generated file name to the next middleware or route
-
     const outputPdfURL = new URL(
       path.join(
         process.env.ROOT_PATH,
