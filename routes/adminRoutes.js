@@ -9,8 +9,8 @@ router
   .get("/search", adminsController.searchAdmins)
   .get("/", adminsController.getAllAdmins)
   .get("/:id", adminsController.getAdminById)
-  .post("/", uploader("admins"), adminsController.createNewAdmin)
-  .patch("/:id", uploader("admins"), adminsController.updateAdmin)
+  .post("/", uploader, adminsController.createNewAdmin)
+  .patch("/:id", uploader, adminsController.updateAdmin)
   .delete("/:id", adminsController.deleteAdmin);
 
 module.exports = router;

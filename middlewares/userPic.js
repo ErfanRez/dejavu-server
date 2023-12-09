@@ -2,7 +2,7 @@ const sharp = require("sharp");
 const path = require("path");
 const fsPromises = require("fs").promises;
 
-const uploader = (subFolderName) => async (req, res, next) => {
+const uploader = async (req, res, next) => {
   const imageFile = req.files?.image;
 
   // Check if a file was uploaded
@@ -22,7 +22,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       "..",
       "uploads",
       "images",
-      subFolderName
+      "admins"
     );
 
     // Create the output folder if it doesn't exist
@@ -59,7 +59,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
         process.env.ROOT_PATH,
         "uploads",
         "images",
-        subFolderName,
+        "admins",
         `${req.body.username}.webp`
       )
     ).toString();

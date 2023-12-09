@@ -1,8 +1,4 @@
 const prismadb = require("../lib/prismadb");
-const path = require("path");
-const fileDelete = require("../utils/fileDelete");
-const renameOldFile = require("../utils/renameOldFile");
-const fs = require("fs");
 
 // @desc Get searched users
 // @route GET /users/search
@@ -100,10 +96,7 @@ const getUserById = async (req, res) => {
 // @route POST /user
 //! @access Private
 const createNewUser = async (req, res) => {
-  const { username, email } = req.body;
-
-  // console.log(req.files);
-  const convertedImage = req.convertedImage;
+  const { username, email, imageUrl } = req.body;
 
   //* Confirm data
 
@@ -156,11 +149,8 @@ const createNewUser = async (req, res) => {
 // @route PATCH /users/:id
 //! @access Private
 const updateUser = async (req, res) => {
-  const { username, email } = req.body;
+  const { username, email, imageUrl } = req.body;
   const { id } = req.params;
-
-  // console.log(req.files);
-  let convertedImage = req.convertedImage;
 
   //* Confirm data
 
@@ -183,60 +173,6 @@ const updateUser = async (req, res) => {
     return res.status(404).json({ message: "User not found!" });
   }
 
-  if (username !== user.username && username !== undefined) {
-    //* Check if new image provided
-    if (!convertedImage) {
-      await renameOldFile("users", `${user.username}.webp`, `${username}.webp`);
-
-      const newImagePath = new URL(
-        path.join(
-          process.env.ROOT_PATH,
-          "uploads",
-          "images",
-          "users",
-          `${username}.webp`
-        )
-      ).toString();
-
-      convertedImage = newImagePath;
-    } else {
-      // Define the path to the user's images folder
-      const imagesFolder = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "images",
-        "users",
-        `${user.username}.webp`
-      );
-
-      await fileDelete(imagesFolder);
-    }
-  } else {
-    const imagesFolder = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "images",
-      "users",
-      `${user.username}.webp`
-    );
-
-    if (fs.existsSync(imagesFolder)) {
-      const newImagePath = new URL(
-        path.join(
-          process.env.ROOT_PATH,
-          "uploads",
-          "images",
-          "users",
-          `${user.username}.webp`
-        )
-      ).toString();
-
-      convertedImage = newImagePath;
-    }
-  }
-
   //* Update user
 
   const updatedUser = await prismadb.user.update({
@@ -246,7 +182,7 @@ const updateUser = async (req, res) => {
     data: {
       username,
       email,
-      imageUrl: convertedImage,
+      imageUrl,
     },
   });
 
@@ -280,18 +216,6 @@ const deleteUser = async (req, res) => {
       id: id,
     },
   });
-
-  // Define the path to the user's images folder
-  const imagesFolder = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "images",
-    "users",
-    `${user.username}.webp`
-  );
-
-  await fileDelete(imagesFolder);
 
   res.json({
     message: `User ${result.username} with ID: ${result.id} deleted.`,
