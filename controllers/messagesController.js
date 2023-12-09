@@ -77,43 +77,6 @@ const createNewMessage = async (req, res) => {
   }
 };
 
-// @desc Delete a message
-// @route DELETE /messages/:id
-//! @access Private
-const deleteMessage = async (req, res) => {
-  const { id } = req.params;
-
-  //* Confirm data
-  if (!id) {
-    return res.status(400).json({ message: "Message ID required!" });
-  }
-
-  //? Does the message exist to delete?
-  const message = await prismadb.message.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  if (!message) {
-    return res.status(404).json({ message: "Message not found!" });
-  }
-
-  const result = await prismadb.message.delete({
-    where: {
-      id,
-    },
-  });
-
-  if (result) {
-    res.json({
-      message: "Message deleted.",
-    });
-  } else {
-    return res.status(404).json({ message: "Deleting message failed!" });
-  }
-};
-
 // @desc Delete messages
 // @route DELETE /messages
 //! @access Private
@@ -155,6 +118,5 @@ module.exports = {
   getMessageById,
   getAllMessages,
   createNewMessage,
-  deleteMessage,
   deleteMessages,
 };

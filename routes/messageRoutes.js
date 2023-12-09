@@ -7,7 +7,6 @@ router
   .get("/", verifyJWT, messagesController.getAllMessages)
   .get("/:id", verifyJWT, messagesController.getMessageById)
   .post("/", messagesController.createNewMessage)
-  .delete("/:id", verifyJWT, messagesController.deleteMessage)
   .delete("/", verifyJWT, messagesController.deleteMessages);
 
 module.exports = router;
