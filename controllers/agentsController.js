@@ -232,7 +232,7 @@ const updateAgent = async (req, res) => {
 
   if (capName !== agent.name && name !== undefined) {
     //* Check if new image provided
-    if (!convertedImage) {
+    if (!convertedImage && agent.imageUrl !== null) {
       await renameOldFile("agents", `${agent.name}.webp`, `${capName}.webp`);
 
       const newImagePath = new URL(

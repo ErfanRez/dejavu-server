@@ -199,7 +199,7 @@ const updateAdmin = async (req, res) => {
 
   if (username !== admin.username && username !== undefined) {
     //* Check if new image provided
-    if (!convertedImage) {
+    if (!convertedImage && admin.imageUrl !== null) {
       await renameOldFile(
         "admins",
         `${admin.username}.webp`,
