@@ -132,7 +132,7 @@ const createNewUser = async (req, res) => {
     data: {
       username,
       email,
-      imageUrl: convertedImage,
+      imageUrl,
     },
   });
 
