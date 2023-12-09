@@ -3,9 +3,11 @@ const router = express.Router();
 const adminsController = require("../controllers/adminsController");
 const uploader = require("../middlewares/userPic");
 const fileUpload = require("express-fileupload");
+const verifyJWT = require("../middlewares/verifyJWT");
 
 router
   .use(fileUpload())
+  .use(verifyJWT)
   .get("/search", adminsController.searchAdmins)
   .get("/", adminsController.getAllAdmins)
   .get("/:id", adminsController.getAdminById)

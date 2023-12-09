@@ -6,6 +6,7 @@ const uploadPic = require("../middlewares/propertyPics");
 const fileUpload = require("express-fileupload");
 const uploadPdf = require("../middlewares/fileUploader");
 const bluePrint = require("../middlewares/bluePrint");
+const verifyJWT = require("../middlewares/verifyJWT");
 
 router
   .use(fileUpload())
@@ -16,6 +17,7 @@ router
   .get("/sale/:sId", salePropsController.getSaleById)
   .post(
     "/sale",
+    verifyJWT,
     uploadPdf,
     bluePrint,
     uploadPic("sales"),
@@ -23,14 +25,15 @@ router
   )
   .patch(
     "/sale/:sId",
+    verifyJWT,
     uploadPdf,
     bluePrint,
     uploadPic("sales"),
     salePropsController.updateSale
   )
-  .patch("/sale/agent/:sId", salePropsController.updatePropertyAgent)
-  .delete("/sale/:sId", salePropsController.deleteSale)
-  .delete("/sale", salePropsController.deleteSales)
+  .patch("/sale/agent/:sId", verifyJWT, salePropsController.updatePropertyAgent)
+  .delete("/sale/:sId", verifyJWT, salePropsController.deleteSale)
+  .delete("/sale", verifyJWT, salePropsController.deleteSales)
 
   //! rent properties routes /rent
   .get("/rent/search", rentPropsController.searchRents)
@@ -38,18 +41,20 @@ router
   .get("/rent/:rId", rentPropsController.getRentById)
   .post(
     "/rent",
+    verifyJWT,
     uploadPdf,
     uploadPic("rents"),
     rentPropsController.createNewRent
   )
   .patch(
     "/rent/:rId",
+    verifyJWT,
     uploadPdf,
     uploadPic("rents"),
     rentPropsController.updateRent
   )
-  .patch("/rent/agent/:rId", rentPropsController.updatePropertyAgent)
-  .delete("/rent/:rId", rentPropsController.deleteRent)
-  .delete("/rent", rentPropsController.deleteRents);
+  .patch("/rent/agent/:rId", verifyJWT, rentPropsController.updatePropertyAgent)
+  .delete("/rent/:rId", verifyJWT, rentPropsController.deleteRent)
+  .delete("/rent", verifyJWT, rentPropsController.deleteRents);
 
 module.exports = router;

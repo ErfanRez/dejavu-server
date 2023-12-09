@@ -4,6 +4,7 @@ const projectsController = require("../controllers/projectsController");
 const uploadPic = require("../middlewares/propertyPics");
 const fileUpload = require("express-fileupload");
 const uploadPdf = require("../middlewares/fileUploader");
+const verifyJWT = require("../middlewares/verifyJWT");
 
 router
   .use(fileUpload())
@@ -11,6 +12,7 @@ router
   .get("/search", projectsController.searchProjects)
   .get("/", projectsController.getAllProjects)
   .get("/:id", projectsController.getProjectById)
+  .use(verifyJWT)
   .post(
     "/",
     uploadPdf,
