@@ -181,9 +181,7 @@ const createNewProject = async (req, res) => {
   const capCity = capitalize(city);
   const capCountry = capitalize(country);
 
-  offPlan
-    ? (offPlanBoolean = JSON.parse(offPlan))
-    : (offPlanBoolean = undefined);
+  const offPlanBoolean = offPlan ? JSON.parse(offPlan) : undefined;
 
   //* Create new project
 
@@ -388,9 +386,7 @@ const updateProject = async (req, res) => {
   const capCity = capitalize(city);
   const capCountry = capitalize(country);
 
-  offPlan
-    ? (offPlanBoolean = JSON.parse(offPlan))
-    : (offPlanBoolean = undefined);
+  const offPlanBoolean = offPlan ? JSON.parse(offPlan) : undefined;
 
   //* Update project
 
