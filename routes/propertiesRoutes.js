@@ -13,6 +13,7 @@ router
 
   //! sale properties routes /sale
   .get("/sale/search", salePropsController.searchSales)
+  .get("/sale/compare", salePropsController.compareSales)
   .get("/sale", salePropsController.getAllSales)
   .get("/sale/:sId", salePropsController.getSaleById)
   .post(
@@ -37,6 +38,7 @@ router
 
   //! rent properties routes /rent
   .get("/rent/search", rentPropsController.searchRents)
+  .get("/rent/compare", rentPropsController.compareRents)
   .get("/rent", rentPropsController.getAllRents)
   .get("/rent/:rId", rentPropsController.getRentById)
   .post(

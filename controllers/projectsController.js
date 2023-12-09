@@ -22,10 +22,14 @@ const searchProjects = async (req, res) => {
 
   const where = {};
 
+  const capParam = searchParams[param]
+    ? capitalize(searchParams[param])
+    : searchParams[param];
+
   for (const param in searchParams) {
     if (searchParams[param]) {
       where[param] = {
-        contains: capitalize(searchParams[param]),
+        contains: capParam,
       };
     }
   }
