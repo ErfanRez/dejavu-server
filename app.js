@@ -42,6 +42,7 @@ app.use("/api/categories", require("./routes/categoriesRoutes"));
 app.use("/api/types", require("./routes/typesRoutes"));
 app.use("/api/articles", require("./routes/articlesRoutes"));
 app.use("/api/agents", require("./routes/agentsRoutes"));
+app.use("/api/messages", require("./routes/messageRoutes"));
 
 app.all("*", (req, res) => {
   res.status(404);
