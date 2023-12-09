@@ -4,10 +4,10 @@ const messagesController = require("../controllers/messagesController");
 const verifyJWT = require("../middlewares/verifyJWT");
 
 router
-  .get("/", messagesController.getAllMessages)
-  .get("/:id", messagesController.getMessageById)
+  .get("/", verifyJWT, messagesController.getAllMessages)
+  .get("/:id", verifyJWT, messagesController.getMessageById)
   .post("/", messagesController.createNewMessage)
-  .delete("/:id", messagesController.deleteMessage)
-  .delete("/", messagesController.deleteMessages);
+  .delete("/:id", verifyJWT, messagesController.deleteMessage)
+  .delete("/", verifyJWT, messagesController.deleteMessages);
 
 module.exports = router;
