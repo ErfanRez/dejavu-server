@@ -13,8 +13,8 @@ const capitalize = require("../utils/capitalizer");
 const searchProjects = async (req, res) => {
   const searchParams = req.query; // Get the search parameters from query params
 
-  // Get the limit value from req.query
-  const limit = parseInt(req.query.limit) || 20;
+  // // Get the limit value from req.query
+  // const limit = parseInt(req.query.limit) || 20;
 
   if (Object.keys(searchParams).length === 0) {
     return res.status(400).json({ error: "No search parameters provided." });
@@ -32,7 +32,6 @@ const searchProjects = async (req, res) => {
 
   const projects = await prismadb.project.findMany({
     where: where,
-    take: limit,
     include: {
       agent: true,
       images: true,
@@ -86,11 +85,7 @@ const getProjectById = async (req, res) => {
 const getAllProjects = async (req, res) => {
   //* Get all projects from DB
 
-  // Get the limit value from req.query
-  const limit = parseInt(req.query.limit) || 20;
-
   const projects = await prismadb.project.findMany({
-    take: limit,
     include: {
       agent: true,
       images: true,

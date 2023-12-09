@@ -13,8 +13,8 @@ const capitalize = require("../utils/capitalizer");
 const searchRents = async (req, res) => {
   const searchParams = req.query; // Get the search parameters from query params
 
-  // Get the limit value from req.query
-  const limit = parseInt(req.query.limit) || 20;
+  // // Get the limit value from req.query
+  // const limit = parseInt(req.query.limit) || 20;
 
   if (Object.keys(searchParams).length === 0) {
     return res.status(400).json({ error: "No search parameters provided." });
@@ -40,7 +40,6 @@ const searchRents = async (req, res) => {
 
   const properties = await prismadb.rentProperty.findMany({
     where: where,
-    take: limit,
     include: {
       agent: true,
       images: true,
@@ -63,11 +62,7 @@ const searchRents = async (req, res) => {
 const getAllRents = async (req, res) => {
   //* Get all rents from DB
 
-  // Get the limit value from req.query
-  const limit = parseInt(req.query.limit) || 20;
-
   const properties = await prismadb.rentProperty.findMany({
-    take: limit,
     include: {
       agent: true,
       images: true,
