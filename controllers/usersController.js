@@ -1,43 +1,5 @@
 const prismadb = require("../lib/prismadb");
 
-// @desc Get searched users
-// @route GET /users/search
-//! @access Private
-const searchUsers = async (req, res) => {
-  const searchParams = req.query; // Get the search parameters from query params
-
-  if (Object.keys(searchParams).length === 0) {
-    return res.status(400).json({ error: "No search parameters provided." });
-  }
-
-  const where = {};
-
-  for (const param in searchParams) {
-    if (searchParams[param]) {
-      where[param] = {
-        contains: searchParams[param],
-      };
-    }
-  }
-
-  const users = await prismadb.user.findMany({
-    where: where,
-    include: {
-      favSales: true,
-      favRents: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  if (!users?.length) {
-    return res.status(404).json({ message: "No users found!" });
-  }
-
-  res.json(users);
-};
-
 // @desc Get all users
 // @route GET /users
 //! @access Private
@@ -223,7 +185,6 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  searchUsers,
   getUserById,
   getAllUsers,
   createNewUser,

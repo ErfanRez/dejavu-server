@@ -4,7 +4,6 @@ const categoriesControllers = require("../controllers/categoriesController");
 const verifyJWT = require("../middlewares/verifyJWT");
 
 router
-  .get("/search", categoriesControllers.searchCategories)
   .get("/", categoriesControllers.getAllCategories)
   .get("/:id", categoriesControllers.getCategoryById)
   .use(verifyJWT)

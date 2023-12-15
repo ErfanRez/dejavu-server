@@ -1,38 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const capitalize = require("../utils/capitalizer");
 
-// @desc Get searched amenities
-// @route GET /amenities/search
-//! @access Private
-const searchAmenities = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const amenities = await prismadb.amenity.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no amenities
-
-  if (!amenities?.length) {
-    return res.status(404).json({ message: "No amenities found!" });
-  }
-
-  res.json(amenities);
-};
-
 // @desc Get all amenities
 // @route GET /amenities
 //! @access Private
@@ -242,7 +210,6 @@ const deleteAmenities = async (req, res) => {
 };
 
 module.exports = {
-  searchAmenities,
   getAllAmenities,
   getAmenityById,
   createNewAmenity,

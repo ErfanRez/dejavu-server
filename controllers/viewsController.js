@@ -1,38 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const capitalize = require("../utils/capitalizer");
 
-// @desc Get searched views
-// @route GET /views/search
-//! @access Public
-const searchViews = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const views = await prismadb.view.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no views
-
-  if (!views?.length) {
-    return res.status(404).json({ message: "No views found!" });
-  }
-
-  res.json(views);
-};
-
 // @desc Get an unique view
 // @route GET /views/:id
 //! @access Public
@@ -240,7 +208,6 @@ const deleteViews = async (req, res) => {
 };
 
 module.exports = {
-  searchViews,
   getViewById,
   getAllViews,
   createNewView,

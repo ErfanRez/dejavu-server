@@ -4,7 +4,6 @@ const typesControllers = require("../controllers/typesController");
 const verifyJWT = require("../middlewares/verifyJWT");
 
 router
-  .get("/search", typesControllers.searchTypes)
   .get("/", typesControllers.getAllTypes)
   .get("/:id", typesControllers.getTypeById)
   .use(verifyJWT)

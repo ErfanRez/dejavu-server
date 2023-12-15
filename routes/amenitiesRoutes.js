@@ -4,7 +4,6 @@ const amenitiesController = require("../controllers/amenitiesController");
 const verifyJWT = require("../middlewares/verifyJWT");
 
 router
-  .get("/search", amenitiesController.searchAmenities)
   .get("/", amenitiesController.getAllAmenities)
   .get("/:id", amenitiesController.getAmenityById)
   .use(verifyJWT)

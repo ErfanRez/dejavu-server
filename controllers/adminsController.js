@@ -35,42 +35,6 @@ const excludePassword = (admin) => {
   return adminWithoutPassword;
 };
 
-// @desc Get searched admins
-// @route GET /admins/search
-//! @access Private
-const searchAdmins = async (req, res) => {
-  const searchParams = req.query; // Get the search parameters from query params
-
-  if (Object.keys(searchParams).length === 0) {
-    return res.status(400).json({ error: "No search parameters provided." });
-  }
-
-  const where = {};
-
-  for (const param in searchParams) {
-    if (searchParams[param]) {
-      where[param] = {
-        contains: searchParams[param],
-      };
-    }
-  }
-
-  const admins = await prismadb.admin.findMany({
-    where: where,
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  if (!admins?.length) {
-    return res.status(404).json({ message: "No admins found!" });
-  }
-
-  const adminsWithoutPassword = exclude(admins);
-
-  res.json(adminsWithoutPassword);
-};
-
 // @desc Get all admins
 // @route GET /admins
 //! @access Private
@@ -343,7 +307,6 @@ const deleteAdmin = async (req, res) => {
 };
 
 module.exports = {
-  searchAdmins,
   getAdminById,
   getAllAdmins,
   createNewAdmin,

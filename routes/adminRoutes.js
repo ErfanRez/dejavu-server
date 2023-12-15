@@ -7,8 +7,7 @@ const verifyJWT = require("../middlewares/verifyJWT");
 
 router
   .use(fileUpload())
-  // .use(verifyJWT)
-  .get("/search", adminsController.searchAdmins)
+  .use(verifyJWT)
   .get("/", adminsController.getAllAdmins)
   .get("/:id", adminsController.getAdminById)
   .post("/", uploader, adminsController.createNewAdmin)

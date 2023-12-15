@@ -1,38 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const capitalize = require("../utils/capitalizer");
 
-// @desc Get searched categories
-// @route GET /categories/search
-//! @access Public
-const searchCategories = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const categories = await prismadb.category.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no categories
-
-  if (!categories?.length) {
-    return res.status(404).json({ message: "No categories found!" });
-  }
-
-  res.json(categories);
-};
-
 //! @access Public
 const getAllCategories = async (req, res) => {
   //* Get all categories from DB
@@ -240,7 +208,6 @@ const deleteCategories = async (req, res) => {
 };
 
 module.exports = {
-  searchCategories,
   getCategoryById,
   getAllCategories,
   createNewCategory,

@@ -1,86 +1,5 @@
 const prismadb = require("../lib/prismadb");
 
-// @desc Get searched installments
-// @route GET /installments/search
-//! @access Private
-const searchInstallments = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const installments = await prismadb.installment.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no installments
-
-  if (!installments?.length) {
-    return res.status(404).json({ message: "No installments found!" });
-  }
-
-  res.json(installments);
-};
-
-// @desc Get searched installments related to a specific project
-// @route GET /:pId/installments/search
-//! @access Public
-const searchInstallmentsByPID = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-  const { pId } = req.params;
-
-  //* Confirm data
-  if (!pId) {
-    return res.status(400).json({ message: "Project ID Required!" });
-  }
-
-  //? Does the project exist?
-  const project = await prismadb.project.findUnique({
-    where: {
-      id: pId,
-    },
-  });
-
-  if (!project) {
-    return res.status(404).json({ message: "Project not found!" });
-  }
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const installments = await prismadb.installment.findMany({
-    where: {
-      projectId: pId,
-      title: {
-        contains: searchString,
-      },
-    },
-  });
-
-  //* If no installments
-
-  if (!installments?.length) {
-    return res
-      .status(400)
-      .json({ message: `No installments related to ${project.title} found!` });
-  }
-
-  res.json(installments);
-};
-
 // @desc Get all installments
 // @route GET /installments
 //! @access Private
@@ -316,8 +235,6 @@ const deleteInstallment = async (req, res) => {
 };
 
 module.exports = {
-  searchInstallments,
-  searchInstallmentsByPID,
   getAllInstallments,
   getAllInstallmentsByPID,
   getInstallmentById,

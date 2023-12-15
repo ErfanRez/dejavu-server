@@ -1,38 +1,6 @@
 const prismadb = require("../lib/prismadb");
 const capitalize = require("../utils/capitalizer");
 
-// @desc Get searched types
-// @route GET /types/search
-//! @access Public
-const searchTypes = async (req, res) => {
-  const searchString = req.query.q; //* Get the search string from query params
-
-  if (!searchString) {
-    return res
-      .status(400)
-      .json({ error: "Search query parameter is missing." });
-  }
-
-  const types = await prismadb.type.findMany({
-    where: {
-      title: {
-        contains: searchString,
-      },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no types
-
-  if (!types?.length) {
-    return res.status(404).json({ message: "No types found!" });
-  }
-
-  res.json(types);
-};
-
 // @desc Get an unique type
 // @route GET /types/:id
 //! @access Public
@@ -240,7 +208,6 @@ const deleteTypes = async (req, res) => {
 };
 
 module.exports = {
-  searchTypes,
   getTypeById,
   getAllTypes,
   createNewType,

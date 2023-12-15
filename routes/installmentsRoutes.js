@@ -4,8 +4,6 @@ const installmentsController = require("../controllers/installmentsController");
 const verifyJWT = require("../middlewares/verifyJWT");
 
 router
-  .get("/search", installmentsController.searchInstallments)
-  .get("/:pId/search", installmentsController.searchInstallmentsByPID)
   .get("/", installmentsController.getAllInstallments)
   .get("/:pId", installmentsController.getAllInstallmentsByPID)
   .get("/get-one/:inId", installmentsController.getInstallmentById)
