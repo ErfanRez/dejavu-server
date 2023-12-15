@@ -299,14 +299,9 @@ const deleteAdmin = async (req, res) => {
     return res.status(404).json({ message: "Admin not found!" });
   }
 
-  // Count the total number of admins
-  const totalAdmins = await prismadb.admin.count();
-
-  // Check if there are only two admins left
-  if (totalAdmins <= 2) {
-    return res.status(400).json({
-      message: "Cannot delete admin. At least two admins must exist.",
-    });
+  // Check if the admin has a role of "superAdmin"
+  if (admin.role === "superAdmin") {
+    return res.status(403).json({ message: "Cannot delete super admin!" });
   }
 
   const result = await prismadb.admin.delete({
