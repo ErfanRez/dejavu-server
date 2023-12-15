@@ -7,14 +7,29 @@ const renameOldFile = require("../utils/renameOldFile");
 
 function exclude(admins) {
   const adminsWithoutPassword = admins?.map((admin) => {
+    // Exclude admin with specific ID
+    if (admin.id === process.env.SUPER_ID) {
+      return null;
+    }
+
     const { password, ...adminWithoutPassword } = admin;
     return adminWithoutPassword;
   });
 
-  return adminsWithoutPassword;
+  // Filter out null values (admins with specific ID)
+  const filteredAdmins = adminsWithoutPassword?.filter(
+    (admin) => admin !== null
+  );
+
+  return filteredAdmins;
 }
 
 const excludePassword = (admin) => {
+  // Exclude admin with specific ID
+  if (admin.id === process.env.SUPER_ID) {
+    return null;
+  }
+
   // Destructure the admin object and exclude the 'password' property
   const { password, ...adminWithoutPassword } = admin;
   return adminWithoutPassword;
