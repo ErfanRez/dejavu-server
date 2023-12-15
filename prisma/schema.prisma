@@ -15,8 +15,9 @@ model Admin {
   id       String  @id @default(uuid())
   username String  @unique
   email    String  @unique
-  password String  @default("")
+  password String
   imageUrl String?
+  role     String  @default("admin")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -83,7 +84,7 @@ model Project {
   location       String
   category       String
   mapUrl         String
-  offPlan        Boolean  @default(false)
+  offPlan        Boolean  @default(true)
   completionDate String?
   pdfUrl         String?
   description    String?  @db.Text
