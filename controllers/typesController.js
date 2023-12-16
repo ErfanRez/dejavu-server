@@ -39,7 +39,7 @@ const getAllTypes = async (req, res) => {
   //* If no types
 
   if (!types?.length) {
-    return res.status(404).json({ message: "No types found" });
+    return res.status(404).json({ message: "No types found!" });
   }
 
   res.json(types);
