@@ -156,19 +156,12 @@ const createNewAgent = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicateUsername = await prismadb.agent.findUnique({
+  const duplicate = await prismadb.agent.findFirst({
     where: {
       name: capName,
-    },
-  });
-
-  const duplicateEmail = await prismadb.agent.findUnique({
-    where: {
       email,
     },
   });
-
-  const duplicate = duplicateUsername || duplicateEmail;
 
   if (duplicate) {
     return res.status(409).json({ message: "Agent already exists!" });

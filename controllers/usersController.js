@@ -68,87 +68,34 @@ const createNewUser = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicateUsername = await prismadb.user.findUnique({
+  const duplicate = await prismadb.user.findFirst({
     where: {
+      email,
       username,
     },
   });
-
-  const duplicateEmail = await prismadb.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  const duplicate = duplicateUsername || duplicateEmail;
 
   if (duplicate) {
-    return res
-      .status(409)
-      .json({ message: "Username or email already exists!" });
-  }
-
-  //* Create new user
-
-  const user = await prismadb.user.create({
-    data: {
-      username,
-      email,
-      imageUrl,
-    },
-  });
-
-  if (user) {
-    //*created
-
-    res.status(201).json({ message: `New user ${username} created.` });
+    return res.status(200).json(duplicate);
   } else {
-    res.status(400).json({ message: "Invalid user data received!" });
+    //* Create new user
+
+    const user = await prismadb.user.create({
+      data: {
+        username,
+        email,
+        imageUrl,
+      },
+    });
+
+    if (user) {
+      //*created
+
+      res.status(201).json(user);
+    } else {
+      res.status(400).json({ message: "Invalid user data received!" });
+    }
   }
-};
-
-// @desc Update a user
-// @route PATCH /users/:id
-//! @access Private
-const updateUser = async (req, res) => {
-  const { username, email, imageUrl } = req.body;
-  const { id } = req.params;
-
-  //* Confirm data
-
-  if (!id) {
-    return res.status(400).json({ message: "User ID required!" });
-  }
-
-  if (!username || !email) {
-    return res.status(400).json({ message: "Username and email required!" });
-  }
-
-  //? Does the user exist to update?
-  const user = await prismadb.user.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  if (!user) {
-    return res.status(404).json({ message: "User not found!" });
-  }
-
-  //* Update user
-
-  const updatedUser = await prismadb.user.update({
-    where: {
-      id: id,
-    },
-    data: {
-      username,
-      email,
-      imageUrl,
-    },
-  });
-
-  res.json({ message: `user ${updatedUser.username} updated.` });
 };
 
 // @desc Delete a user
@@ -188,6 +135,5 @@ module.exports = {
   getUserById,
   getAllUsers,
   createNewUser,
-  updateUser,
   deleteUser,
 };

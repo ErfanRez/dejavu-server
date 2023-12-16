@@ -9,7 +9,7 @@ router
   .get("/:uId/fav-sales", favSalesController.getAllUnitsByUID)
   .post("/:uId/fav-sales", favSalesController.createNewFavSale)
   .delete("/:uId/fav-sales", favSalesController.deleteFavSale)
-  //! Favorite sale units routes /fav-rents
+  //! Favorite rent units routes /fav-rents
   .get("/:uId/fav-rents/search", favRentsController.searchUnitsByUID)
   .get("/:uId/fav-rents", favRentsController.getAllUnitsByUID)
   .post("/:uId/fav-rents", favRentsController.createNewFavRent)
