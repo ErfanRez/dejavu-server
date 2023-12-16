@@ -25,7 +25,7 @@ model Admin {
 
 model User {
   id       String  @id @default(uuid())
-  username String  @unique
+  username String
   email    String  @unique
   imageUrl String?
 

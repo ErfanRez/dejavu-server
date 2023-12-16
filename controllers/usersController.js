@@ -68,10 +68,9 @@ const createNewUser = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.user.findFirst({
+  const duplicate = await prismadb.user.findUnique({
     where: {
       email,
-      username,
     },
   });
 
