@@ -39,7 +39,7 @@ const getAllViews = async (req, res) => {
   //* If no views
 
   if (!views?.length) {
-    return res.status(404).json({ message: "No views found" });
+    return res.status(404).json({ message: "No views found!" });
   }
 
   res.json(views);

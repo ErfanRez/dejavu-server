@@ -38,7 +38,7 @@ const getAllMessages = async (req, res) => {
   //* If no messages
 
   if (!messages?.length) {
-    return res.status(404).json({ message: "No messages found" });
+    return res.status(404).json({ message: "No messages found!" });
   }
 
   res.json(messages);
