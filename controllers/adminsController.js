@@ -102,7 +102,7 @@ const createNewAdmin = async (req, res) => {
 
   //? Check for duplicate
 
-  const duplicate = await prismadb.user.findFirst({
+  const duplicate = await prismadb.admin.findFirst({
     where: {
       email,
       username,
