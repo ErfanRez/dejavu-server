@@ -64,43 +64,6 @@ const searchRents = async (req, res) => {
   res.json(properties);
 };
 
-// @desc Get selected rents
-// @route GET /rent
-//! @access Public
-const compareRents = async (req, res) => {
-  const { ids } = req.body;
-
-  //* Confirm data
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res
-      .status(400)
-      .json({ message: "Property IDs required in an array!" });
-  }
-
-  const properties = await prismadb.rentProperty.findMany({
-    where: {
-      id: {
-        in: ids,
-      },
-    },
-    include: {
-      agent: true,
-      images: true,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
-
-  //* If no properties
-
-  if (!properties?.length) {
-    return res.status(400).json({ message: "No such properties found!" });
-  }
-
-  res.json(properties);
-};
-
 // @desc Get all rentProperties
 // @route GET /rents
 //! @access Public
@@ -700,7 +663,6 @@ const deleteRents = async (req, res) => {
 
 module.exports = {
   searchRents,
-  compareRents,
   getAllRents,
   getRentById,
   createNewRent,
