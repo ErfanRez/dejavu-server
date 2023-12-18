@@ -124,11 +124,11 @@ const createNewProject = async (req, res) => {
     offPlan,
     completionDate,
     description,
-    amenities,
     agentId,
   } = req.body;
 
-  // console.log(req.files);
+  let { amenities } = req.body;
+
   const convertedImages = req.convertedImages;
   const pdfUrl = req.pdfUrl;
 
@@ -151,6 +151,10 @@ const createNewProject = async (req, res) => {
   //* converts
 
   const capTitle = capitalize(title);
+
+  if (!Array.isArray(amenities)) {
+    amenities = [amenities];
+  }
 
   //? Does the agent exist?
   const agent = await prismadb.agent.findUnique({
@@ -236,8 +240,9 @@ const updateProject = async (req, res) => {
     offPlan,
     completionDate,
     description,
-    amenities,
   } = req.body;
+
+  let { amenities } = req.body;
 
   const { id } = req.params;
 
@@ -253,8 +258,12 @@ const updateProject = async (req, res) => {
   if (!title) {
     return res.status(400).json({ message: "Title required!" });
   }
-
+  //* converts
   const capTitle = capitalize(title);
+
+  if (amenities && !Array.isArray(amenities)) {
+    amenities = [amenities];
+  }
 
   //? Does the project exist to update?
 

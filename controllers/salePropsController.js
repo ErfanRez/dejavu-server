@@ -140,15 +140,14 @@ const createNewSale = async (req, res) => {
     parkingCount,
     mapUrl,
     description,
-    amenities,
-    views,
     agentId,
   } = req.body;
+
+  let { amenities, views } = req.body;
 
   const pdfUrl = req.pdfUrl;
   const bluePrint = req.bluePrint;
 
-  // console.log(req.files);
   const convertedImages = req.convertedImages;
 
   //* Confirm data
@@ -177,6 +176,14 @@ const createNewSale = async (req, res) => {
   //* converts
 
   const capTitle = capitalize(title);
+
+  if (!Array.isArray(amenities)) {
+    amenities = [amenities];
+  }
+
+  if (!Array.isArray(views)) {
+    views = [views];
+  }
 
   //? Does the agent exist?
   const agent = await prismadb.agent.findUnique({
@@ -284,9 +291,9 @@ const updateSale = async (req, res) => {
     parkingCount,
     mapUrl,
     description,
-    amenities,
-    views,
   } = req.body;
+
+  let { amenities, views } = req.body;
 
   let pdfUrl = req.pdfUrl;
   let bluePrint = req.bluePrint;
@@ -308,6 +315,14 @@ const updateSale = async (req, res) => {
   //* converts
 
   const capTitle = capitalize(title);
+
+  if (amenities && !Array.isArray(amenities)) {
+    amenities = [amenities];
+  }
+
+  if (views && !Array.isArray(views)) {
+    views = [views];
+  }
 
   //? Does the property exist to update?
 

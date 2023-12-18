@@ -40,6 +40,9 @@ const searchUnitsByUID = async (req, res) => {
             contains: searchString,
           },
         },
+        include: {
+          images: true,
+        },
       },
     },
   });
@@ -84,7 +87,11 @@ const getAllUnitsByUID = async (req, res) => {
       userId: uId,
     },
     include: {
-      rentUnit: true,
+      rentUnit: {
+        include: {
+          images: true,
+        },
+      },
     },
   });
 
