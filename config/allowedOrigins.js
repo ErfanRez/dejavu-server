@@ -4,7 +4,8 @@ const allowedOrigins = [
   "https://deja-vu-reve.vercel.app",
   "https://dejavu-cms.vercel.app",
   "https://panel.dejavureve.com",
-  "http://panel.dejavureve.com",
+  "https://www.dejavureve.com",
+  "https://dejavureve.com",
 ];
 
 module.exports = allowedOrigins;
