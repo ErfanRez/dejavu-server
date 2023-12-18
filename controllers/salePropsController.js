@@ -356,20 +356,20 @@ const updateSale = async (req, res) => {
           // List all files in the folder
           const files = await fsPromises.readdir(imagesFolder);
 
-          // Create an array of file paths
-          const outputImageURL = new URL(
-            path.join(
-              process.env.ROOT_PATH,
-              "uploads",
-              "images",
-              "sales",
-              capTitle
-            )
-          ).toString();
+          for (const file of files) {
+            const outputImageURL = new URL(
+              path.join(
+                process.env.ROOT_PATH,
+                "uploads",
+                "images",
+                "sales",
+                property.title,
+                file
+              )
+            ).toString();
 
-          convertedImages = files.map((file) =>
-            path.join(outputImageURL, file)
-          );
+            convertedImages.push(outputImageURL);
+          }
         } catch (error) {
           console.error("Error reading files from folder:", error);
           res.status(500).json({ message: "Internal Server Error" });
@@ -464,18 +464,20 @@ const updateSale = async (req, res) => {
         // List all files in the folder
         const files = await fsPromises.readdir(imagesFolder);
 
-        // Create an array of file paths
-        const outputImageURL = new URL(
-          path.join(
-            process.env.ROOT_PATH,
-            "uploads",
-            "images",
-            "sales",
-            property.title
-          )
-        ).toString();
+        for (const file of files) {
+          const outputImageURL = new URL(
+            path.join(
+              process.env.ROOT_PATH,
+              "uploads",
+              "images",
+              "sales",
+              property.title,
+              file
+            )
+          ).toString();
 
-        convertedImages = files.map((file) => path.join(outputImageURL, file));
+          convertedImages.push(outputImageURL);
+        }
       } catch (error) {
         console.error("Error reading files from folder:", error);
         res.status(500).json({ message: "Internal Server Error" });

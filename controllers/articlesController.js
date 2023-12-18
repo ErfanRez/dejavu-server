@@ -207,20 +207,20 @@ const updateArticle = async (req, res) => {
           // List all files in the folder
           const files = await fsPromises.readdir(imagesFolder);
 
-          // Create an array of file paths
-          const outputImageURL = new URL(
-            path.join(
-              process.env.ROOT_PATH,
-              "uploads",
-              "images",
-              "articles",
-              title
-            )
-          ).toString();
+          for (const file of files) {
+            const outputImageURL = new URL(
+              path.join(
+                process.env.ROOT_PATH,
+                "uploads",
+                "images",
+                "articles",
+                article.title,
+                file
+              )
+            ).toString();
 
-          convertedImages = files.map((file) =>
-            path.join(outputImageURL, file)
-          );
+            convertedImages.push(outputImageURL);
+          }
         } catch (error) {
           console.error("Error reading files from folder:", error);
           res.status(500).json({ message: "Internal Server Error" });
@@ -281,18 +281,20 @@ const updateArticle = async (req, res) => {
         // List all files in the folder
         const files = await fsPromises.readdir(imagesFolder);
 
-        // Create an array of file paths
-        const outputImageURL = new URL(
-          path.join(
-            process.env.ROOT_PATH,
-            "uploads",
-            "images",
-            "articles",
-            article.title
-          )
-        ).toString();
+        for (const file of files) {
+          const outputImageURL = new URL(
+            path.join(
+              process.env.ROOT_PATH,
+              "uploads",
+              "images",
+              "articles",
+              article.title,
+              file
+            )
+          ).toString();
 
-        convertedImages = files.map((file) => path.join(outputImageURL, file));
+          convertedImages.push(outputImageURL);
+        }
       } catch (error) {
         console.error("Error reading files from folder:", error);
         res.status(500).json({ message: "Internal Server Error" });
