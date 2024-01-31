@@ -255,11 +255,14 @@ const updateProject = async (req, res) => {
     return res.status(400).json({ message: "Project ID required!" });
   }
 
-  if (!title) {
+  if (!title || !owner || !city || !country) {
     return res.status(400).json({ message: "Title required!" });
   }
   //* converts
   const capTitle = capitalize(title);
+  const capOwner = capitalize(owner);
+  const capCity = capitalize(city);
+  const capCountry = capitalize(country);
 
   if (amenities && !Array.isArray(amenities)) {
     amenities = [amenities];
@@ -313,7 +316,7 @@ const updateProject = async (req, res) => {
           }
         } catch (error) {
           console.error("Error reading files from folder:", error);
-          res.status(500).json({ message: "Internal Server Error" });
+          return res.status(500).json({ message: "Internal Server Error" });
         }
       }
     } else {
@@ -393,9 +396,6 @@ const updateProject = async (req, res) => {
   }
 
   //* converts
-  const capOwner = capitalize(owner);
-  const capCity = capitalize(city);
-  const capCountry = capitalize(country);
 
   const offPlanBoolean = offPlan ? JSON.parse(offPlan) : undefined;
 

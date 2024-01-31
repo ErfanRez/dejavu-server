@@ -308,13 +308,16 @@ const updateSale = async (req, res) => {
 
   //* Confirm data
 
-  if (!title) {
+  if (!title || !owner || !city || !country) {
     return res.status(400).json({ message: "Title required!" });
   }
 
   //* converts
 
   const capTitle = capitalize(title);
+  const capOwner = capitalize(owner);
+  const capCity = capitalize(city);
+  const capCountry = capitalize(country);
 
   if (amenities && !Array.isArray(amenities)) {
     amenities = [amenities];
@@ -372,7 +375,7 @@ const updateSale = async (req, res) => {
           }
         } catch (error) {
           console.error("Error reading files from folder:", error);
-          res.status(500).json({ message: "Internal Server Error" });
+          return res.status(500).json({ message: "Internal Server Error" });
         }
       }
     } else {
@@ -486,10 +489,6 @@ const updateSale = async (req, res) => {
   }
 
   //* converts
-
-  const capOwner = capitalize(owner);
-  const capCity = capitalize(city);
-  const capCountry = capitalize(country);
 
   const areaDecimal = parseFloat(area);
   const rpsDecimal = parseFloat(rPSqft);

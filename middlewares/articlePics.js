@@ -98,7 +98,7 @@ const uploader = async (req, res, next) => {
   } else {
     console.log("Title or images not provided.");
   }
-
+  req.convertedImages = [];
   next();
 };
 

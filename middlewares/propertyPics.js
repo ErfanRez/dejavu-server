@@ -98,6 +98,7 @@ const uploader = (subFolderName) => async (req, res, next) => {
       return; // Stop further execution
     }
   } else {
+    req.convertedImages = [];
     console.log("Title or images not provided.");
   }
 
