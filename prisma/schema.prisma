@@ -141,8 +141,8 @@ model SaleProperty {
   location     String
   type         String
   area         Decimal
-  rPSqft       Decimal
-  totalPrice   Decimal
+  rPSqft       Decimal?
+  totalPrice   Decimal?
   bedrooms     Int
   bathrooms    Int
   parkingCount Int
@@ -187,7 +187,7 @@ model RentProperty {
   type         String
   floor        String?
   area         Decimal
-  totalPrice   Decimal
+  totalPrice   Decimal?
   bedrooms     Int
   bathrooms    Int
   parkingCount Int

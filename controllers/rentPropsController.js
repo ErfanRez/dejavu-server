@@ -157,7 +157,6 @@ const createNewRent = async (req, res) => {
     !location ||
     !type ||
     !area ||
-    !totalPrice ||
     !bedrooms ||
     !bathrooms ||
     !parkingCount ||

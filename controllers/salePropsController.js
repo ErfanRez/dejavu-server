@@ -160,8 +160,6 @@ const createNewSale = async (req, res) => {
     !location ||
     !type ||
     !area ||
-    !rPSqft ||
-    !totalPrice ||
     !bedrooms ||
     !bathrooms ||
     !parkingCount ||
