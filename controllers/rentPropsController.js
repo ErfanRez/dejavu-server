@@ -350,18 +350,35 @@ const updateRent = async (req, res) => {
 
           for (const file of files) {
             const outputImageURL = new URL(
-              path.join(
-                process.env.ROOT_PATH,
-                "uploads",
-                "images",
-                "rents",
-                property.title,
-                file
-              )
+              path.join(process.env.ROOT_PATH, imagesFolder, file)
             ).toString();
 
             convertedImages.push(outputImageURL);
           }
+
+          await prismadb.rentProperty.update({
+            where: {
+              id: rId,
+            },
+            data: {
+              images: {
+                deleteMany: {},
+              },
+            },
+          });
+
+          await prismadb.rentProperty.update({
+            where: {
+              id: rId,
+            },
+            data: {
+              images: {
+                create: convertedImages.map((url) => ({
+                  url,
+                })),
+              },
+            },
+          });
         } catch (error) {
           console.error("Error reading files from folder:", error);
           return res.status(500).json({ message: "Internal Server Error" });
@@ -408,38 +425,30 @@ const updateRent = async (req, res) => {
       await fileDelete(pdfFile, res);
     }
   } else {
-    const imagesFolder = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "images",
-      "rents",
-      property.title
-    );
-    // Check if the folder exists
-    if (fs.existsSync(imagesFolder)) {
-      try {
-        // List all files in the folder
-        const files = await fsPromises.readdir(imagesFolder);
+    if (convertedImages.length !== 0) {
+      await prismadb.rentProperty.update({
+        where: {
+          id: rId,
+        },
+        data: {
+          images: {
+            deleteMany: {},
+          },
+        },
+      });
 
-        for (const file of files) {
-          const outputImageURL = new URL(
-            path.join(
-              process.env.ROOT_PATH,
-              "uploads",
-              "images",
-              "rents",
-              property.title,
-              file
-            )
-          ).toString();
-
-          convertedImages.push(outputImageURL);
-        }
-      } catch (error) {
-        console.error("Error reading files from folder:", error);
-        return res.status(500).json({ message: "Internal Server Error" });
-      }
+      await prismadb.rentProperty.update({
+        where: {
+          id: rId,
+        },
+        data: {
+          images: {
+            create: convertedImages.map((url) => ({
+              url,
+            })),
+          },
+        },
+      });
     }
   }
 
@@ -454,7 +463,7 @@ const updateRent = async (req, res) => {
 
   //* Update rentProperty
 
-  await prismadb.rentProperty.update({
+  const updatedProperty = await prismadb.rentProperty.update({
     where: {
       id: rId,
     },
@@ -477,22 +486,6 @@ const updateRent = async (req, res) => {
       description,
       amenities,
       views,
-      images: {
-        deleteMany: {},
-      },
-    },
-  });
-
-  const updatedProperty = await prismadb.rentProperty.update({
-    where: {
-      id: rId,
-    },
-    data: {
-      images: {
-        create: convertedImages.map((url) => ({
-          url,
-        })),
-      },
     },
   });
 

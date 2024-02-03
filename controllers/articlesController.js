@@ -209,18 +209,35 @@ const updateArticle = async (req, res) => {
 
           for (const file of files) {
             const outputImageURL = new URL(
-              path.join(
-                process.env.ROOT_PATH,
-                "uploads",
-                "images",
-                "articles",
-                article.title,
-                file
-              )
+              path.join(process.env.ROOT_PATH, imagesFolder, file)
             ).toString();
 
             convertedImages.push(outputImageURL);
           }
+
+          await prismadb.article.update({
+            where: {
+              id,
+            },
+            data: {
+              images: {
+                deleteMany: {},
+              },
+            },
+          });
+
+          await prismadb.article.update({
+            where: {
+              id,
+            },
+            data: {
+              images: {
+                create: convertedImages.map((url) => ({
+                  url,
+                })),
+              },
+            },
+          });
         } catch (error) {
           console.error("Error reading files from folder:", error);
           res.status(500).json({ message: "Internal Server Error" });
@@ -239,72 +256,37 @@ const updateArticle = async (req, res) => {
 
       await fileDelete(imagesFolder, res);
     }
-
-    //* Check if new pdf provided
-    if (!pdfUrl) {
-      await renameOldPdf(`${article.title}.pdf`, `${title}.pdf`, res);
-
-      const newPdfPath = new URL(
-        path.join(
-          process.env.ROOT_PATH,
-          "uploads",
-          "factSheets",
-          `${title}.pdf`
-        )
-      ).toString();
-
-      pdfUrl = newPdfPath;
-    } else {
-      // Define the path to the factSheets folder
-      const pdfFile = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "factSheets",
-        `${article.title}.pdf`
-      );
-
-      await fileDelete(pdfFile, res);
-    }
   } else {
-    const imagesFolder = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "images",
-      "articles",
-      article.title
-    );
-    // Check if the folder exists
-    if (fs.existsSync(imagesFolder)) {
-      try {
-        // List all files in the folder
-        const files = await fsPromises.readdir(imagesFolder);
+    if (convertedImages.length !== 0) {
+      await prismadb.article.update({
+        where: {
+          id,
+        },
+        data: {
+          images: {
+            deleteMany: {},
+          },
+        },
+      });
 
-        for (const file of files) {
-          const outputImageURL = new URL(
-            path.join(
-              process.env.ROOT_PATH,
-              "uploads",
-              "images",
-              "articles",
-              article.title,
-              file
-            )
-          ).toString();
-
-          convertedImages.push(outputImageURL);
-        }
-      } catch (error) {
-        console.error("Error reading files from folder:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-      }
+      await prismadb.article.update({
+        where: {
+          id,
+        },
+        data: {
+          images: {
+            create: convertedImages.map((url) => ({
+              url,
+            })),
+          },
+        },
+      });
     }
   }
 
   //* Update article
 
-  await prismadb.article.update({
+  const updatedArticle = await prismadb.article.update({
     where: {
       id,
     },
@@ -312,22 +294,6 @@ const updateArticle = async (req, res) => {
       title,
       description,
       body,
-      images: {
-        deleteMany: {},
-      },
-    },
-  });
-
-  const updatedArticle = await prismadb.article.update({
-    where: {
-      id,
-    },
-    data: {
-      images: {
-        create: convertedImages.map((url) => ({
-          url,
-        })),
-      },
     },
   });
 

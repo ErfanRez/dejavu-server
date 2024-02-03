@@ -13,13 +13,9 @@ const uploader = async (req, res, next) => {
   }
 
   // Check if any files were uploaded
-  if (
-    imageFiles.length === 0 &&
-    req.method !== "PATCH" &&
-    req.method !== "patch"
-  ) {
-    return res.status(400).json({ message: "At least one image required!" });
-    // If it's a PATCH request, don't send an error response.
+  if (imageFiles.length === 0) {
+    console.log("No files were uploaded.");
+    req.convertedImages = [];
   } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
     // Title is provided
 
@@ -92,13 +88,10 @@ const uploader = async (req, res, next) => {
       req.convertedImages = convertedImages;
     } catch (error) {
       console.error("Error creating/deleting folder:", error);
-      res.status(500).json({ message: "Internal Server Error" });
-      return; // Stop further execution
+      return res.status(500).json({ message: "Internal Server Error" });
     }
-  } else {
-    console.log("Title or images not provided.");
   }
-  req.convertedImages = [];
+
   next();
 };
 

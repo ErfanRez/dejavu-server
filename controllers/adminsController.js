@@ -1,6 +1,5 @@
 const prismadb = require("../lib/prismadb");
 const path = require("path");
-const fs = require("fs");
 const bcrypt = require("bcrypt");
 const fileDelete = require("../utils/fileDelete");
 const renameOldFile = require("../utils/renameOldFile");
@@ -201,29 +200,6 @@ const updateAdmin = async (req, res) => {
       );
 
       await fileDelete(imagesFolder);
-    }
-  } else {
-    const imagesFolder = path.join(
-      __dirname,
-      "..",
-      "uploads",
-      "images",
-      "admins",
-      `${admin.username}.webp`
-    );
-
-    if (fs.existsSync(imagesFolder)) {
-      const newImagePath = new URL(
-        path.join(
-          process.env.ROOT_PATH,
-          "uploads",
-          "images",
-          "admins",
-          `${admin.username}.webp`
-        )
-      ).toString();
-
-      convertedImage = newImagePath;
     }
   }
 
