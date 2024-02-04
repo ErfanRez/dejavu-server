@@ -164,17 +164,6 @@ const updateArticle = async (req, res) => {
     return res.status(400).json({ message: "All fields required!" });
   }
 
-  //? Check for duplicate
-  const duplicate = await prismadb.article.findUnique({
-    where: {
-      title,
-    },
-  });
-
-  if (duplicate) {
-    return res.status(409).json({ message: "Article title already exists!" });
-  }
-
   //? Does the article exist to update?
 
   const article = await prismadb.article.findUnique({
@@ -209,7 +198,14 @@ const updateArticle = async (req, res) => {
 
           for (const file of files) {
             const outputImageURL = new URL(
-              path.join(process.env.ROOT_PATH, imagesFolder, file)
+              path.join(
+                process.env.ROOT_PATH,
+                "uploads",
+                "images",
+                "articles",
+                title,
+                file
+              )
             ).toString();
 
             convertedImages.push(outputImageURL);
@@ -345,6 +341,57 @@ const deleteArticle = async (req, res) => {
   });
 };
 
+// @desc Delete articles
+// @route DELETE /articles
+//! @access Private
+const deleteArticles = async (req, res) => {
+  const { ids } = req.body;
+
+  //* Confirm data
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "Article IDs required in an array!" });
+  }
+
+  for (const id of ids) {
+    //? Does the article exist to delete?
+    const article = await prismadb.article.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!article) {
+      return res
+        .status(404)
+        .json({ message: `Article with ID ${id} not found!` });
+    }
+
+    const result = await prismadb.article.delete({
+      where: {
+        id,
+      },
+    });
+
+    // Define the path to the article's images folder
+    const imagesFolder = path.join(
+      __dirname,
+      "..",
+      "uploads",
+      "images",
+      "articles",
+      result.title
+    );
+
+    await fileDelete(imagesFolder);
+  }
+
+  res.json({
+    message: "Articles deleted successfully.",
+  });
+};
+
 module.exports = {
   searchArticles,
   getArticleById,
@@ -352,4 +399,5 @@ module.exports = {
   createNewArticle,
   updateArticle,
   deleteArticle,
+  deleteArticles,
 };

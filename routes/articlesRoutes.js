@@ -13,6 +13,7 @@ router
   .use(verifyJWT)
   .post("/", uploader, articlesControllers.createNewArticle)
   .patch("/:id", uploader, articlesControllers.updateArticle)
-  .delete("/:id", articlesControllers.deleteArticle);
+  .delete("/:id", articlesControllers.deleteArticle)
+  .delete("/", articlesControllers.deleteArticles);
 
 module.exports = router;

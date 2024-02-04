@@ -13,9 +13,13 @@ const uploader = async (req, res, next) => {
   }
 
   // Check if any files were uploaded
-  if (imageFiles.length === 0) {
-    console.log("No files were uploaded.");
-    req.convertedImages = [];
+  if (
+    imageFiles.length === 0 &&
+    req.method !== "PATCH" &&
+    req.method !== "patch"
+  ) {
+    return res.status(400).json({ message: "At least one image required!" });
+    // If it's a PATCH request, don't send an error response.
   } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
     // Title is provided
 
@@ -26,7 +30,7 @@ const uploader = async (req, res, next) => {
       "uploads",
       "images",
       "articles",
-      title
+      req.body.title
     );
 
     // Check if the file already exists
@@ -74,7 +78,7 @@ const uploader = async (req, res, next) => {
             "uploads",
             "images",
             "articles",
-            title,
+            req.body.title,
             webpFileName
           )
         ).toString();
@@ -90,6 +94,9 @@ const uploader = async (req, res, next) => {
       console.error("Error creating/deleting folder:", error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
+  } else {
+    req.convertedImages = [];
+    console.log("Title or images not provided.");
   }
 
   next();
