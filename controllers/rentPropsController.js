@@ -350,7 +350,14 @@ const updateRent = async (req, res) => {
 
           for (const file of files) {
             const outputImageURL = new URL(
-              path.join(process.env.ROOT_PATH, imagesFolder, file)
+              path.join(
+                process.env.ROOT_PATH,
+                "uploads",
+                "images",
+                "rents",
+                capTitle,
+                file
+              )
             ).toString();
 
             convertedImages.push(outputImageURL);
