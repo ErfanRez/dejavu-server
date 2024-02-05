@@ -12,8 +12,7 @@ const deleteFolderAndContents = async (folderPath, res) => {
   } catch (error) {
     // Handle errors and respond to the client
     console.error("Error deleting folder:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-    return; // Stop further execution
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

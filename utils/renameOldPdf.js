@@ -29,8 +29,7 @@ const renameFile = async (oldFileName, newFileName, res) => {
   } catch (error) {
     // Handle errors and respond to the client
     console.error("Error renaming file:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-    return; // Stop further execution
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
