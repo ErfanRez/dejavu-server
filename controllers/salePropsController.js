@@ -339,7 +339,7 @@ const updateSale = async (req, res) => {
 
   if (capTitle !== property.title && title !== undefined) {
     const newTitle = capTitle.match(/[a-zA-Z]+/g).join(" ");
-    const oldTitle = project.title.match(/[a-zA-Z]+/g).join(" ");
+    const oldTitle = property.title.match(/[a-zA-Z]+/g).join(" ");
 
     //* Check if new images provided
     if (convertedImages.length === 0) {
