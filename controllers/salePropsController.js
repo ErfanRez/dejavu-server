@@ -338,9 +338,12 @@ const updateSale = async (req, res) => {
   }
 
   if (capTitle !== property.title && title !== undefined) {
+    const newTitle = capTitle.match(/[a-zA-Z]+/g).join(" ");
+    const oldTitle = project.title.match(/[a-zA-Z]+/g).join(" ");
+
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      await renameOldFile("sales", property.title, capTitle, res);
+      await renameOldFile("sales", oldTitle, newTitle, res);
 
       const imagesFolder = path.join(
         __dirname,
@@ -348,7 +351,7 @@ const updateSale = async (req, res) => {
         "uploads",
         "images",
         "sales",
-        capTitle
+        newTitle
       );
 
       // Check if the folder exists
@@ -364,7 +367,7 @@ const updateSale = async (req, res) => {
                 "uploads",
                 "images",
                 "sales",
-                capTitle,
+                newTitle,
                 file
               )
             ).toString();
@@ -408,7 +411,7 @@ const updateSale = async (req, res) => {
         "uploads",
         "images",
         "sales",
-        property.title
+        oldTitle
       );
 
       await fileDelete(imagesFolder, res);
@@ -416,14 +419,14 @@ const updateSale = async (req, res) => {
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      await renameOldPdf(`${property.title}.pdf`, `${capTitle}.pdf`, res);
+      await renameOldPdf(`${oldTitle}.pdf`, `${newTitle}.pdf`, res);
 
       const newPdfPath = new URL(
         path.join(
           process.env.ROOT_PATH,
           "uploads",
           "factSheets",
-          `${capTitle}.pdf`
+          `${newTitle}.pdf`
         )
       ).toString();
 
@@ -435,7 +438,7 @@ const updateSale = async (req, res) => {
         "..",
         "uploads",
         "factSheets",
-        `${property.title}.pdf`
+        `${oldTitle}.pdf`
       );
 
       await fileDelete(pdfFile, res);
@@ -445,8 +448,8 @@ const updateSale = async (req, res) => {
     if (!bluePrint) {
       await renameOldFile(
         "bluePrints",
-        `${property.title}.webp`,
-        `${capTitle}.webp`,
+        `${oldTitle}.webp`,
+        `${newTitle}.webp`,
         res
       );
 
@@ -456,7 +459,7 @@ const updateSale = async (req, res) => {
           "uploads",
           "images",
           "bluePrints",
-          `${capTitle}.webp`
+          `${newTitle}.webp`
         )
       ).toString();
 
@@ -469,7 +472,7 @@ const updateSale = async (req, res) => {
         "uploads",
         "images",
         "bluePrints",
-        `${property.title}.webp`
+        `${oldTitle}.webp`
       );
 
       await fileDelete(bluePrintFile, res);

@@ -13,7 +13,8 @@ const uploadPdf = async (req, res, next) => {
       return res.status(400).json({ message: "Only PDF files are allowed." });
     }
 
-    const capTitle = capitalizer(req.body.title);
+    const fileName = req.body.title.match(/[a-zA-Z]+/g).join(" ");
+    const capTitle = capitalizer(fileName);
 
     const outputFolder = path.join(__dirname, "..", "uploads", "factSheets"); // Modify the folder path if needed
 

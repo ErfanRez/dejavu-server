@@ -14,7 +14,8 @@ const uploader = async (req, res, next) => {
       return res.status(400).json({ message: "Only image files are allowed." });
     }
 
-    const capTitle = capitalizer(req.body.title);
+    const fileName = req.body.title.match(/[a-zA-Z]+/g).join(" ");
+    const capTitle = capitalizer(fileName);
 
     // Get the uploaded file data
     const imageData = imageFile.data;

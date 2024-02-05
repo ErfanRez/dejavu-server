@@ -177,9 +177,12 @@ const updateArticle = async (req, res) => {
   }
 
   if (title !== article.title && title !== undefined) {
+    const newTitle = title.match(/[a-zA-Z]+/g).join(" ");
+    const oldTitle = article.title.match(/[a-zA-Z]+/g).join(" ");
+
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      await renameOldFile("articles", article.title, title, res);
+      await renameOldFile("articles", oldTitle, newTitle, res);
 
       const imagesFolder = path.join(
         __dirname,
@@ -187,7 +190,7 @@ const updateArticle = async (req, res) => {
         "uploads",
         "images",
         "articles",
-        title
+        newTitle
       );
 
       // Check if the folder exists
@@ -203,7 +206,7 @@ const updateArticle = async (req, res) => {
                 "uploads",
                 "images",
                 "articles",
-                title,
+                newTitle,
                 file
               )
             ).toString();
@@ -236,7 +239,7 @@ const updateArticle = async (req, res) => {
           });
         } catch (error) {
           console.error("Error reading files from folder:", error);
-          res.status(500).json({ message: "Internal Server Error" });
+          return res.status(500).json({ message: "Internal Server Error" });
         }
       }
     } else {
@@ -247,7 +250,7 @@ const updateArticle = async (req, res) => {
         "uploads",
         "images",
         "articles",
-        article.title
+        oldTitle
       );
 
       await fileDelete(imagesFolder, res);

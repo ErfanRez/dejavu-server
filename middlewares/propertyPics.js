@@ -23,7 +23,10 @@ const uploader = (subFolderName) => async (req, res, next) => {
     // If it's a PATCH request, don't send an error response.
   } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
     // Title is provided
-    const capTitle = capitalizer(req.body.title);
+
+    const fileName = req.body.title.match(/[a-zA-Z]+/g).join(" ");
+
+    const capTitle = capitalizer(fileName);
 
     // Define the output folder for converted images
     const outputFolder = path.join(

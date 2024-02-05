@@ -281,9 +281,12 @@ const updateProject = async (req, res) => {
   }
 
   if (capTitle !== project.title && title !== undefined) {
+    const newTitle = capTitle.match(/[a-zA-Z]+/g).join(" ");
+    const oldTitle = project.title.match(/[a-zA-Z]+/g).join(" ");
+
     //* Check if new images provided
     if (convertedImages.length === 0) {
-      await renameOldFile("projects", project.title, capTitle, res);
+      await renameOldFile("projects", oldTitle, newTitle, res);
 
       const imagesFolder = path.join(
         __dirname,
@@ -291,7 +294,7 @@ const updateProject = async (req, res) => {
         "uploads",
         "images",
         "projects",
-        capTitle
+        newTitle
       );
 
       // Check if the folder exists
@@ -307,7 +310,7 @@ const updateProject = async (req, res) => {
                 "uploads",
                 "images",
                 "projects",
-                capTitle,
+                newTitle,
                 file
               )
             ).toString();
@@ -351,7 +354,7 @@ const updateProject = async (req, res) => {
         "uploads",
         "images",
         "projects",
-        project.title
+        oldTitle
       );
 
       await fileDelete(imagesFolder, res);
@@ -359,14 +362,14 @@ const updateProject = async (req, res) => {
 
     //* Check if new pdf provided
     if (!pdfUrl) {
-      await renameOldPdf(`${project.title}.pdf`, `${capTitle}.pdf`, res);
+      await renameOldPdf(`${oldTitle}.pdf`, `${newTitle}.pdf`, res);
 
       const newPdfPath = new URL(
         path.join(
           process.env.ROOT_PATH,
           "uploads",
           "factSheets",
-          `${capTitle}.pdf`
+          `${newTitle}.pdf`
         )
       ).toString();
 
@@ -378,7 +381,7 @@ const updateProject = async (req, res) => {
         "..",
         "uploads",
         "factSheets",
-        `${project.title}.pdf`
+        `${oldTitle}.pdf`
       );
 
       await fileDelete(pdfFile, res);

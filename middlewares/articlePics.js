@@ -23,6 +23,8 @@ const uploader = async (req, res, next) => {
   } else if (imageFiles.length !== 0 && req.body.title !== undefined) {
     // Title is provided
 
+    const fileName = req.body.title.match(/[a-zA-Z]+/g).join(" ");
+
     // Define the output folder for converted images
     const outputFolder = path.join(
       __dirname,
@@ -30,7 +32,7 @@ const uploader = async (req, res, next) => {
       "uploads",
       "images",
       "articles",
-      req.body.title
+      fileName
     );
 
     // Check if the file already exists
@@ -78,7 +80,7 @@ const uploader = async (req, res, next) => {
             "uploads",
             "images",
             "articles",
-            req.body.title,
+            fileName,
             webpFileName
           )
         ).toString();
