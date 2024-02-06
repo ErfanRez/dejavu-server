@@ -89,6 +89,8 @@ const getProjectById = async (req, res) => {
 const getAllProjects = async (req, res) => {
   //* Get all projects from DB
 
+  const take = parseInt(req.query.take) || 15;
+
   const projects = await prismadb.project.findMany({
     include: {
       agent: true,
@@ -98,6 +100,7 @@ const getAllProjects = async (req, res) => {
     orderBy: {
       updatedAt: "desc",
     },
+    take,
   });
 
   //* If no projects
@@ -106,7 +109,11 @@ const getAllProjects = async (req, res) => {
     return res.status(404).json({ message: "No projects found!" });
   }
 
-  res.json(projects);
+  //* Get count of all existing projects
+
+  const totalCount = await prismadb.project.count();
+
+  res.json({ totalCount, projects });
 };
 
 // @desc Create new project

@@ -71,6 +71,8 @@ const searchSales = async (req, res) => {
 const getAllSales = async (req, res) => {
   //* Get all sales from DB
 
+  const take = parseInt(req.query.take) || 15;
+
   const properties = await prismadb.saleProperty.findMany({
     include: {
       agent: true,
@@ -79,6 +81,7 @@ const getAllSales = async (req, res) => {
     orderBy: {
       updatedAt: "desc",
     },
+    take,
   });
 
   //* If no properties
@@ -87,7 +90,9 @@ const getAllSales = async (req, res) => {
     return res.status(400).json({ message: "No properties found!" });
   }
 
-  res.json(properties);
+  const totalCount = await prismadb.saleProperty.count();
+
+  res.json({ totalCount, properties });
 };
 
 // @desc Get an unique saleProperty
