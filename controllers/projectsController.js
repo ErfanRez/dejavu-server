@@ -89,7 +89,7 @@ const getProjectById = async (req, res) => {
 const getAllProjects = async (req, res) => {
   //* Get all projects from DB
 
-  const take = parseInt(req.query.take) || 15;
+  const take = parseInt(req.query.take) || undefined;
 
   const projects = await prismadb.project.findMany({
     include: {

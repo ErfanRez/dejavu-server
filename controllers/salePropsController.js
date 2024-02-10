@@ -71,7 +71,7 @@ const searchSales = async (req, res) => {
 const getAllSales = async (req, res) => {
   //* Get all sales from DB
 
-  const take = parseInt(req.query.take) || 15;
+  const take = parseInt(req.query.take) || undefined;
 
   const properties = await prismadb.saleProperty.findMany({
     include: {

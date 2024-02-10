@@ -48,7 +48,7 @@ const searchArticles = async (req, res) => {
 const getAllArticles = async (req, res) => {
   //* Get all articles from DB
 
-  const take = parseInt(req.query.take) || 15;
+  const take = parseInt(req.query.take) || undefined;
 
   const articles = await prismadb.article.findMany({
     include: {

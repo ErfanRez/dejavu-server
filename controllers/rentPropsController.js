@@ -70,7 +70,7 @@ const searchRents = async (req, res) => {
 const getAllRents = async (req, res) => {
   //* Get all rents from DB
 
-  const take = parseInt(req.query.take) || 15;
+  const take = parseInt(req.query.take) || undefined;
 
   const properties = await prismadb.rentProperty.findMany({
     include: {
