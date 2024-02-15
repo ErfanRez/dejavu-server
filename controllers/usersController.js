@@ -145,7 +145,7 @@ const googleAuth = async (req, res) => {
 // @desc Sign in user
 // @route POST /users
 //! @access Public
-const SignIn = async (req, res) => {
+const signIn = async (req, res) => {
   const { email, password } = req.body;
 
   //* Confirm data
@@ -213,6 +213,6 @@ module.exports = {
   getAllUsers,
   signUp,
   googleAuth,
-  SignIn,
+  signIn,
   deleteUser,
 };
