@@ -5,7 +5,7 @@ const usersController = require("../controllers/usersController");
 router
   .get("/", usersController.getAllUsers)
   .get("/:id", usersController.getUserById)
-  .post("/", usersController.createNewUser)
+  .post("/google", usersController.createNewUser)
   .delete("/:id", usersController.deleteUser);
 
 module.exports = router;
