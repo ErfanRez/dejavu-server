@@ -1,4 +1,5 @@
 const prismadb = require("../lib/prismadb");
+const bcrypt = require("bcrypt");
 
 // @desc Get all users
 // @route GET /users
@@ -54,10 +55,54 @@ const getUserById = async (req, res) => {
   res.json(user);
 };
 
-// @desc Create new user
-// @route POST /user
-//! @access Private
-const createNewUser = async (req, res) => {
+// @desc Sign up new user
+// @route POST /users
+//! @access Public
+const signUp = async (req, res) => {
+  const { username, email, password, phone } = req.body;
+
+  //* Confirm data
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: "All fields required!" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const duplicate = await prismadb.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (duplicate)
+    return res.status(409).json({ message: "User email already exists!" });
+
+  //* Create new user
+  const user = await prismadb.user.create({
+    data: {
+      username,
+      email,
+      password: hashedPassword,
+      phone,
+    },
+  });
+
+  if (user) {
+    //*created
+
+    const { password: hashedPWd, ...userWithoutPassword } = user;
+
+    res.status(201).json(userWithoutPassword);
+  } else {
+    res.status(400).json({ message: "Invalid user data received!" });
+  }
+};
+
+// @desc Sign up new user via google
+// @route POST /users/google
+//! @access Public
+const googleAuth = async (req, res) => {
   const { username, email, imageUrl } = req.body;
 
   //* Confirm data
@@ -75,7 +120,7 @@ const createNewUser = async (req, res) => {
   });
 
   if (duplicate) {
-    return res.status(200).json(duplicate);
+    return res.status(409).json({ message: "User email already exists!" });
   } else {
     //* Create new user
 
@@ -90,11 +135,44 @@ const createNewUser = async (req, res) => {
     if (user) {
       //*created
 
-      res.status(201).json(user);
+      res.status(201).json({ message: "User created successfully." });
     } else {
       res.status(400).json({ message: "Invalid user data received!" });
     }
   }
+};
+
+// @desc Sign in user
+// @route POST /users
+//! @access Public
+const SignIn = async (req, res) => {
+  const { email, password } = req.body;
+
+  //* Confirm data
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password required!" });
+  }
+
+  //? Does the user exist?
+  const user = await prismadb.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found!" });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+
+  if (!validPassword)
+    return res.status(401).json({ message: "Wrong credentials!" });
+
+  const { password: hashedPWd, ...userWithoutPassword } = user;
+
+  return res.status(200).json(userWithoutPassword);
 };
 
 // @desc Delete a user
@@ -133,6 +211,8 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getUserById,
   getAllUsers,
-  createNewUser,
+  signUp,
+  googleAuth,
+  SignIn,
   deleteUser,
 };
