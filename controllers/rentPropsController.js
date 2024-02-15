@@ -36,8 +36,8 @@ const searchRents = async (req, res) => {
     type: { contains: capType },
     area: { lte: parseFloat(searchParams.area) },
     totalPrice: { lte: parseFloat(searchParams.totalPrice) },
-    bedrooms: { gte: parseInt(searchParams.bedrooms) },
-    bathrooms: { gte: parseInt(searchParams.bathrooms) },
+    bedrooms: { equals: parseInt(searchParams.bedrooms) },
+    bathrooms: { equals: parseInt(searchParams.bathrooms) },
   };
 
   for (const param in searchParams) {
