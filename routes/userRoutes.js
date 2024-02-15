@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const usersController = require("../controllers/usersController");
+const verifyJWT = require("../middlewares/verifyJWT");
 
 router
-  .get("/", usersController.getAllUsers)
+  .get("/", verifyJWT, usersController.getAllUsers)
   .get("/:id", usersController.getUserById)
   .post("/", usersController.signUp)
   .post("/google", usersController.googleAuth)
-  .delete("/:id", usersController.deleteUser)
+  .delete("/:id", verifyJWT, usersController.deleteUser)
 
   //! Users Auth Routes
-  .post("/sign-in", usersController.SignIn);
+  .post("/sign-in", usersController.signIn);
 
 module.exports = router;
