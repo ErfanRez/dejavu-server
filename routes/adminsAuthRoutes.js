@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const authController = require("../controllers/AdminAuthController");
+const authController = require("../controllers/adminsAuthController");
 const loginLimiter = require("../middlewares/loginLimiter");
 
 router.route("/").post(loginLimiter, authController.login);
