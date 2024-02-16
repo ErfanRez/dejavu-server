@@ -134,7 +134,7 @@ const googleAuth = async (req, res) => {
   });
 
   if (duplicate) {
-    return res.status(409).json({ message: "User email already exists!" });
+    return res.status(200).json(duplicate);
   } else {
     //* Create new user
 
