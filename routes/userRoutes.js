@@ -8,7 +8,7 @@ router
   .get("/:id", usersController.getUserById)
   .post("/", usersController.signUp)
   .post("/google", usersController.googleAuth)
-  .delete("/:id", verifyJWT, usersController.deleteUser)
+  .delete("/", verifyJWT, usersController.deleteUsers)
 
   //! Users Auth Routes
   .post("/sign-in", usersController.signIn);

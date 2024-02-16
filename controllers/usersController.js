@@ -175,36 +175,40 @@ const signIn = async (req, res) => {
   return res.status(200).json(userWithoutPassword);
 };
 
-// @desc Delete a user
-// @route DELETE /users/:id
+// @desc Delete multiple users
+// @route DELETE /users
 //! @access Private
-const deleteUser = async (req, res) => {
-  const { id } = req.params;
+const deleteUsers = async (req, res) => {
+  const { ids } = req.body;
 
   //* Confirm data
-  if (!id) {
-    return res.status(400).json({ message: "User ID required!" });
+  if (!ids) {
+    return res.status(400).json({ message: "Users IDs required!" });
   }
 
-  //? Does the user exist to delete?
-  const user = await prismadb.user.findUnique({
+  //? Does the users exist to delete?
+  const users = await prismadb.user.findMany({
     where: {
-      id,
+      id: {
+        in: ids,
+      },
     },
   });
 
-  if (!user) {
-    return res.status(404).json({ message: "User not found!" });
+  if (!users) {
+    return res.status(404).json({ message: "Users not found!" });
   }
 
-  const result = await prismadb.user.delete({
+  await prismadb.user.deleteMany({
     where: {
-      id: id,
+      id: {
+        in: ids,
+      },
     },
   });
 
   res.json({
-    message: `User ${result.username} with ID: ${result.id} deleted.`,
+    message: "Users deleted.",
   });
 };
 
@@ -214,5 +218,5 @@ module.exports = {
   signUp,
   googleAuth,
   signIn,
-  deleteUser,
+  deleteUsers,
 };
