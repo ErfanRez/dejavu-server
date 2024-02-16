@@ -8,18 +8,6 @@ const getAllUsers = async (req, res) => {
   //* Get all users from DB
 
   const users = await prismadb.user.findMany({
-    include: {
-      favSales: {
-        include: {
-          saleUnit: true,
-        },
-      },
-      favRents: {
-        include: {
-          rentUnit: true,
-        },
-      },
-    },
     orderBy: {
       updatedAt: "desc",
     },
@@ -53,12 +41,20 @@ const getUserById = async (req, res) => {
     include: {
       favSales: {
         include: {
-          saleUnit: true,
+          saleUnit: {
+            include: {
+              images: true,
+            },
+          },
         },
       },
       favRents: {
         include: {
-          rentUnit: true,
+          rentUnit: {
+            include: {
+              images: true,
+            },
+          },
         },
       },
     },

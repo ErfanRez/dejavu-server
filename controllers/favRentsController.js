@@ -58,54 +58,6 @@ const searchUnitsByUID = async (req, res) => {
   res.json(units);
 };
 
-// @desc Get all favRents related to a specific user
-// @route GET /:uId/fav-rents
-//! @access Public
-const getAllUnitsByUID = async (req, res) => {
-  const { uId } = req.params;
-
-  //* Confirm data
-  if (!uId) {
-    return res.status(400).json({ message: "User ID Required!" });
-  }
-
-  //? Does the user exist?
-  const user = await prismadb.user.findUnique({
-    where: {
-      id: uId,
-    },
-  });
-
-  if (!user) {
-    return res.status(400).json({ message: "User not found!" });
-  }
-
-  //* Get all favRents from DB
-
-  const units = await prismadb.favRent.findMany({
-    where: {
-      userId: uId,
-    },
-    include: {
-      rentUnit: {
-        include: {
-          images: true,
-        },
-      },
-    },
-  });
-
-  //* If no units
-
-  if (!units?.length) {
-    return res
-      .status(400)
-      .json({ message: `No favorite units found for ${user.username}!` });
-  }
-
-  res.json(units);
-};
-
 // @desc Create new favRent
 // @route POST /:uId/fav-rents
 //! @access Private
@@ -226,7 +178,6 @@ const deleteFavRent = async (req, res) => {
 
 module.exports = {
   searchUnitsByUID,
-  getAllUnitsByUID,
   createNewFavRent,
   deleteFavRent,
 };
