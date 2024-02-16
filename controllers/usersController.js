@@ -9,8 +9,16 @@ const getAllUsers = async (req, res) => {
 
   const users = await prismadb.user.findMany({
     include: {
-      favSales: true,
-      favRents: true,
+      favSales: {
+        include: {
+          saleUnit: true,
+        },
+      },
+      favRents: {
+        include: {
+          rentUnit: true,
+        },
+      },
     },
     orderBy: {
       updatedAt: "desc",
@@ -43,8 +51,16 @@ const getUserById = async (req, res) => {
       id,
     },
     include: {
-      favSales: true,
-      favRents: true,
+      favSales: {
+        include: {
+          saleUnit: true,
+        },
+      },
+      favRents: {
+        include: {
+          rentUnit: true,
+        },
+      },
     },
   });
 
@@ -52,7 +68,9 @@ const getUserById = async (req, res) => {
     return res.status(404).json({ message: "User not found!" });
   }
 
-  res.json(user);
+  const { password: hashedPWd, ...userWithoutPassword } = user;
+
+  res.json(userWithoutPassword);
 };
 
 // @desc Sign up new user
