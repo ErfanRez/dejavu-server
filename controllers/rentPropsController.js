@@ -70,8 +70,6 @@ const searchRents = async (req, res) => {
 const getAllRents = async (req, res) => {
   //* Get all rents from DB
 
-  const take = parseInt(req.query.take) || undefined;
-
   const properties = await prismadb.rentProperty.findMany({
     include: {
       agent: true,
@@ -80,7 +78,6 @@ const getAllRents = async (req, res) => {
     orderBy: {
       updatedAt: "desc",
     },
-    take,
   });
 
   //* If no properties
@@ -89,9 +86,7 @@ const getAllRents = async (req, res) => {
     return res.status(404).json({ message: "No properties found!" });
   }
 
-  const totalCount = await prismadb.rentProperty.count();
-
-  res.json({ totalCount, properties });
+  res.json(properties);
 };
 
 // @desc Get an unique rentProperty

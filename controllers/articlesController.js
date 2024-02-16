@@ -48,8 +48,6 @@ const searchArticles = async (req, res) => {
 const getAllArticles = async (req, res) => {
   //* Get all articles from DB
 
-  const take = parseInt(req.query.take) || undefined;
-
   const articles = await prismadb.article.findMany({
     include: {
       images: true,
@@ -57,7 +55,6 @@ const getAllArticles = async (req, res) => {
     orderBy: {
       updatedAt: "desc",
     },
-    take,
   });
 
   //* If no articles
@@ -66,11 +63,7 @@ const getAllArticles = async (req, res) => {
     return res.status(404).json({ message: "No articles found!" });
   }
 
-  //* Get count of all existing articles
-
-  const totalCount = await prismadb.article.count();
-
-  res.json({ totalCount, articles });
+  res.json(articles);
 };
 
 // @desc Get an unique article
