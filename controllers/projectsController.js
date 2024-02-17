@@ -89,6 +89,8 @@ const getProjectById = async (req, res) => {
 const getAllProjects = async (req, res) => {
   //* Get all projects from DB
 
+  const take = parseInt(req.query.take) || undefined;
+
   const projects = await prismadb.project.findMany({
     include: {
       agent: true,
@@ -98,6 +100,7 @@ const getAllProjects = async (req, res) => {
     orderBy: {
       updatedAt: "desc",
     },
+    take,
   });
 
   //* If no projects
